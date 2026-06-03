@@ -260,6 +260,7 @@ textarea.form-control{resize:vertical;min-height:68px;}
   <div class="sidebar-section">
     <div class="sidebar-label">Workforce</div>
     <div class="nav-item" data-target="roster"><span class="icon">👷</span> Flagman Roster</div>
+    <div class="nav-item" data-target="overtime"><span class="icon">⏰</span> Overtime Availability <span class="nav-badge">5</span></div>
     <div class="nav-item" data-target="vacation"><span class="icon">🏖️</span> Vacation Management</div>
   </div>
   <div class="sidebar-divider"></div>
@@ -292,11 +293,13 @@ textarea.form-control{resize:vertical;min-height:68px;}
 <div id="sec-dashboard" class="page-section active">
   <div class="alert alert-danger">⚠️ <strong>3 unscheduled jobs</strong> require flagman assignment before the week begins. <button class="btn btn-sm btn-primary" style="margin-left:auto;" onclick="navigate('jobs')">View Jobs →</button></div>
   <div class="alert alert-info">📩 <strong>3 new flagging requests</strong> are awaiting your review. <button class="btn btn-sm btn-blue" style="margin-left:auto;" onclick="navigate('incoming')">Review Now →</button></div>
+  <div class="alert alert-warning">🕐 <strong>Overtime availability window closes Friday Jun 6 at 5 PM.</strong> 5 of 11 flagmen have responded. <button class="btn btn-sm btn-secondary" style="margin-left:auto;" onclick="navigate('overtime')">View Responses →</button></div>
   <div class="stats-row">
     <div class="stat-card" onclick="navigate('jobs')"><div class="stat-label">Active Jobs</div><div class="stat-value">8</div><div class="stat-sub">This week</div></div>
     <div class="stat-card red" onclick="navigate('jobs')"><div class="stat-label">Unscheduled</div><div class="stat-value">3</div><div class="stat-sub">Need assignment</div></div>
     <div class="stat-card blue" onclick="navigate('roster')"><div class="stat-label">Flagmen On Cycle</div><div class="stat-value">12</div><div class="stat-sub">Available this week</div></div>
-    <div class="stat-card green" onclick="navigate('vacation')"><div class="stat-label">On Vacation</div><div class="stat-value">2</div><div class="stat-sub">This week</div></div>
+    <div class="stat-card green" onclick="navigate('overtime')"><div class="stat-label">OT Responses</div><div class="stat-value">5</div><div class="stat-sub">Available for OT</div></div>
+    <div class="stat-card" onclick="navigate('vacation')"><div class="stat-label">On Vacation</div><div class="stat-value">2</div><div class="stat-sub">This week</div></div>
     <div class="stat-card orange" onclick="navigate('completed')"><div class="stat-label">Completed Jobs</div><div class="stat-value">47</div><div class="stat-sub">YTD 2026</div></div>
   </div>
   <div class="two-col">
@@ -633,6 +636,47 @@ textarea.form-control{resize:vertical;min-height:68px;}
           <tr><td><strong>Singh, Arsh</strong></td><td><span class="badge badge-contracted">Contracted</span></td><td>BC</td><td>9&amp;5</td><td>—</td><td>604-555-0302</td><td>a.singh@contractor.ca</td><td>Training · Terrace</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Singh, Arsh')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Singh, Arsh','Next Available')">Assign</button></td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ OVERTIME ══════════ -->
+<div id="sec-overtime" class="page-section">
+  <div class="alert alert-warning">🕐 Overtime availability window for the week of Jun 7 closes <strong>Friday Jun 6 at 5 PM</strong>. 5 of 11 flagmen have responded.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header"><h2>✅ Availability Responses — Week of Jun 7</h2><div class="card-actions"><button class="btn btn-secondary btn-sm" onclick="toast('Reminder sent to non-responders ✓','success')">📩 Send Reminder</button></div></div>
+      <div class="card-body">
+        <div class="avail-list">
+          <div class="avail-item"><div class="avail-avatar">RW</div><div><div class="avail-name">Williams, Ryan</div><div class="avail-meta">8&amp;6 · Alberta · Responded Thu 4:12 PM</div></div><div class="avail-days"><div class="day-chip day-avail" title="Saturday">Sa</div><div class="day-chip day-off" title="Sunday">Su</div></div></div>
+          <div class="avail-item"><div class="avail-avatar">JB</div><div><div class="avail-name">Brule, Joshua</div><div class="avail-meta">5&amp;2 · Alberta · Responded Thu 2:45 PM</div></div><div class="avail-days"><div class="day-chip day-avail">Sa</div><div class="day-chip day-avail">Su</div></div></div>
+          <div class="avail-item"><div class="avail-avatar">NB</div><div><div class="avail-name">Bozor, Nicolson</div><div class="avail-meta">9&amp;5 · BC · Contracted · Responded Thu 9:00 AM</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-avail">Su</div></div></div>
+          <div class="avail-item"><div class="avail-avatar">MT</div><div><div class="avail-name">Toft, Mark</div><div class="avail-meta">8&amp;6 · Alberta · Responded Wed 6:30 PM</div></div><div class="avail-days"><div class="day-chip day-avail">Sa</div><div class="day-chip day-avail">Su</div></div></div>
+          <div class="avail-item"><div class="avail-avatar">KA</div><div><div class="avail-name">Ajiboye, Kenny</div><div class="avail-meta">5&amp;2 · Alberta · Responded Thu 11:00 AM</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+          <div class="avail-item" style="opacity:.55;"><div class="avail-avatar" style="background:#aaa;">KR</div><div><div class="avail-name">Roy, Kolton</div><div class="avail-meta">8&amp;6 · BC · No response yet</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+          <div class="avail-item" style="opacity:.55;"><div class="avail-avatar" style="background:#aaa;">TA</div><div><div class="avail-name">Anderson, Tyler</div><div class="avail-meta">8&amp;6 · BC · No response yet</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+          <div class="avail-item" style="opacity:.55;"><div class="avail-avatar" style="background:#aaa;">DJ</div><div><div class="avail-name">Jiawan, Daneel</div><div class="avail-meta">5&amp;2 · BC · No response yet</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+          <div class="avail-item" style="opacity:.55;"><div class="avail-avatar" style="background:#aaa;">WO</div><div><div class="avail-name">O'Hearn, Wade</div><div class="avail-meta">8&amp;6 · BC · No response yet</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+          <div class="avail-item" style="opacity:.55;"><div class="avail-avatar" style="background:#aaa;">DM</div><div><div class="avail-name">Muhammad, Danjuma</div><div class="avail-meta">5&amp;2 · Alberta · No response yet</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+          <div class="avail-item" style="opacity:.55;"><div class="avail-avatar" style="background:#aaa;">AS</div><div><div class="avail-name">Singh, Arsh</div><div class="avail-meta">9&amp;5 · BC · Contracted · No response yet</div></div><div class="avail-days"><div class="day-chip day-off">Sa</div><div class="day-chip day-off">Su</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h2>📅 OT Collection History</h2></div>
+      <div class="card-body">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Requests sent every <strong>Wednesday</strong> for the upcoming off-cycle weekend. Due by <strong>Friday 5 PM</strong>.</div>
+        <table class="tbl">
+          <thead><tr><th>Weekend</th><th>Sent</th><th>Due</th><th>Responses</th><th>OT Assigned</th></tr></thead>
+          <tbody>
+            <tr style="background:#fff8e1;"><td>Jun 7–8</td><td>Jun 4</td><td>Jun 6 5PM</td><td>5 / 11</td><td>— Pending</td></tr>
+            <tr><td>May 31–Jun 1</td><td>May 28</td><td>May 30 5PM</td><td>9 / 11 ✅</td><td>3 assigned</td></tr>
+            <tr><td>May 24–25</td><td>May 21</td><td>May 23 5PM</td><td>11 / 11 ✅</td><td>2 assigned</td></tr>
+            <tr><td>May 17–18</td><td>May 14</td><td>May 16 5PM</td><td>8 / 11 ✅</td><td>1 assigned</td></tr>
+            <tr><td>May 10–11</td><td>May 7</td><td>May 9 5PM</td><td>10 / 11 ✅</td><td>4 assigned</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -1372,6 +1416,7 @@ const pageConfig = {
   schedule:  { title: 'Working Schedule — June 2026', sub: 'All flagmen · 3-shift view', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-job\')">+ Add Assignment</button>' },
   weekly:    { title: 'Weekly Schedule', sub: 'Send and export weekly schedules to flagmen', actions: '<button class="btn btn-primary" onclick="toast(\'Weekly schedule sent ✓\',\'success\')">📤 Send to All Flagmen</button>' },
   roster:    { title: 'Flagman Roster', sub: '11 flagmen · 9 CN Employees · 2 Contracted', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-flagman\')">+ Add Flagman</button>' },
+  overtime:  { title: 'Overtime Availability', sub: 'Week of June 7, 2026 · Deadline: Friday Jun 6 at 5 PM', actions: '<button class="btn btn-secondary" onclick="toast(\'Reminder sent to non-responders ✓\',\'success\')">📩 Send Reminder to Non-Responders</button>' },
   vacation:  { title: 'Vacation Management', sub: 'All flagmen · 2026 vacation year · Max 25 days per flagman', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-vacation\')">+ Add Vacation Entry</button>' },
   incoming:  { title: 'Incoming Requests', sub: '3 new requests awaiting review', actions: '' },
   submit:    { title: 'Submit a Flagging Request', sub: 'For internal CN departments and external companies requiring flagging coverage on CN track', actions: '' },
