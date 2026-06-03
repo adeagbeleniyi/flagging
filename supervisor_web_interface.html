@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CN Flagging Scheduling System — Supervisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cn-red:#B5091D;--cn-dark:#1A1A1A;--cn-blue:#005A9C;
+  --cn-light-blue:#E8F1F9;--bg:#F4F5F7;--white:#FFFFFF;
+  --border:#DDE1E7;--text-primary:#1A1A1A;--text-secondary:#5E6778;
+  --text-muted:#9AA3B0;--success:#1E7E34;--success-bg:#D4EDDA;
+  --warning:#856404;--warning-bg:#FFF3CD;--danger:#B5091D;
+  --danger-bg:#F8D7DA;--info-bg:#E8F1F9;--sidebar-w:248px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;}
+/* NAV */
+.topnav{height:56px;background:var(--cn-dark);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:200;flex-shrink:0;}
+.brand{display:flex;align-items:center;gap:10px;}
+.logo-box{width:32px;height:32px;background:var(--cn-red);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;}
+.brand span{color:#fff;font-weight:600;font-size:15px;}
+.brand small{color:#aaa;font-size:11px;margin-left:4px;}
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:16px;}
+.notif-btn{width:32px;height:32px;background:#333;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;border:none;font-size:15px;}
+.notif-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;background:var(--cn-red);border-radius:50%;}
+.avatar{width:32px;height:32px;background:var(--cn-blue);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;}
+.user-info{color:#ccc;font-size:12px;}
+.user-info strong{display:block;color:#fff;font-size:13px;}
+/* LAYOUT */
+.app-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px);}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sidebar-section{padding:14px 10px 6px;}
+.sidebar-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);padding:0 8px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:2px;user-select:none;transition:background .15s;}
+.nav-item:hover{background:var(--bg);}
+.nav-item.active{background:var(--cn-light-blue);color:var(--cn-blue);font-weight:600;}
+.nav-item .icon{width:18px;text-align:center;font-size:14px;}
+.nav-badge{margin-left:auto;background:var(--cn-red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;}
+.sidebar-divider{height:1px;background:var(--border);margin:6px 10px;}
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.page-header{background:var(--white);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;flex-shrink:0;}
+.page-header h1{font-size:17px;font-weight:700;}
+.page-header .sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.page-header .hdr-actions{margin-left:auto;display:flex;gap:8px;}
+.content{padding:22px 28px;flex:1;}
+/* SECTIONS */
+.page-section{display:none;}
+.page-section.active{display:block;}
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s;}
+.btn:hover{opacity:.88;}
+.btn-primary{background:var(--cn-red);color:#fff;}
+.btn-secondary{background:var(--white);color:var(--text-primary);border:1px solid var(--border);}
+.btn-blue{background:var(--cn-blue);color:#fff;}
+.btn-success{background:#1E7E34;color:#fff;}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.btn-xs{padding:3px 8px;font-size:10px;font-weight:700;}
+.btn-approve{background:#1E7E34;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;}
+.btn-reject{background:#fff;color:var(--cn-red);border:1px solid var(--cn-red);border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;}
+.btn-review{background:var(--cn-blue);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;}
+.btn-edit{background:#f0f0f0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;padding:4px 10px;}
+/* ALERTS */
+.alert{padding:10px 16px;border-radius:6px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.alert-warning{background:var(--warning-bg);color:var(--warning);border:1px solid #ffc107;}
+.alert-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #f5c6cb;}
+.alert-info{background:var(--info-bg);color:var(--cn-blue);border:1px solid #b3d4f5;}
+.alert-success{background:var(--success-bg);color:var(--success);border:1px solid #c3e6cb;}
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px;}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.card-header h2{font-size:14px;font-weight:700;}
+.card-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.card-body{padding:16px 18px;}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:box-shadow .15s;}
+.stat-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);}
+.stat-value{font-size:26px;font-weight:700;margin:4px 0 2px;}
+.stat-sub{font-size:11px;color:var(--text-muted);}
+.stat-card.red .stat-value{color:var(--cn-red);}
+.stat-card.blue .stat-value{color:var(--cn-blue);}
+.stat-card.green .stat-value{color:var(--success);}
+.stat-card.orange .stat-value{color:#d97706;}
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.badge-pending{background:var(--warning-bg);color:var(--warning);}
+.badge-scheduled{background:var(--info-bg);color:var(--cn-blue);}
+.badge-inprogress{background:#D4EDDA;color:var(--success);}
+.badge-complete{background:#e9ecef;color:#555;}
+.badge-delayed{background:var(--danger-bg);color:var(--danger);}
+.badge-unknown{background:#f0f0f0;color:#888;}
+.badge-new{background:#fff0f3;color:#B5091D;border:1px solid #f5c6cb;}
+.badge-review{background:#fff8e1;color:#856404;border:1px solid #ffe082;}
+.badge-approved{background:#D4EDDA;color:#1E7E34;}
+.badge-rejected{background:#e9ecef;color:#555;}
+.badge-cn{background:#e8f4fd;color:#005A9C;}
+.badge-contracted{background:#fff8e1;color:#856404;}
+.badge-morning{background:#FFF9C4;color:#7a6000;}
+.badge-afternoon{background:#FFE0B2;color:#7a3500;}
+.badge-night{background:#E8EAF6;color:#283593;}
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:#f8f9fa;padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.tbl tr:hover td{background:#fafbfc;}
+.tbl-scroll{overflow-x:auto;max-height:420px;overflow-y:auto;}
+/* SCHEDULE GRID */
+.sg-table{width:100%;border-collapse:collapse;font-size:11px;}
+.sg-table th{background:var(--cn-dark);color:#fff;padding:7px 8px;text-align:center;font-weight:600;white-space:nowrap;}
+.sg-table th.name-col{text-align:left;min-width:160px;}
+.sg-table td{border:1px solid var(--border);padding:3px 5px;text-align:center;vertical-align:middle;min-width:90px;height:34px;}
+.sg-table td.name-cell{text-align:left;font-weight:600;padding:5px 10px;background:#fafafa;white-space:nowrap;}
+.sg-table td.cycle-cell{font-size:10px;color:var(--text-muted);background:#fafafa;white-space:nowrap;}
+.cell-job{font-size:10px;font-weight:600;padding:2px 5px;border-radius:3px;line-height:1.3;cursor:pointer;display:block;}
+.cell-pink-on{background:#FFB6C1;color:#7a0020;}
+.cell-dark-pink{background:#C71585;color:#fff;}
+.cell-light-pink{background:#FFD1DC;color:#7a0020;}
+.cell-light-blue{background:#ADD8E6;color:#003366;}
+.cell-dark-blue{background:#00008B;color:#fff;}
+.cell-orange{background:#FFA500;color:#5c3000;}
+.cell-afternoon{background:#FFE0B2;color:#7a3500;}
+.cell-empty{color:var(--text-muted);font-size:10px;cursor:pointer;}
+.cell-empty:hover{background:var(--cn-light-blue);}
+.legend{display:flex;flex-wrap:wrap;gap:10px;padding:10px 18px;border-top:1px solid var(--border);}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;}
+.legend-dot{width:12px;height:12px;border-radius:2px;flex-shrink:0;}
+.export-row{display:flex;gap:10px;padding:10px 18px;border-top:1px solid var(--border);}
+.export-btn{flex:1;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;gap:6px;}
+.export-btn.bc{border-color:var(--cn-blue);color:var(--cn-blue);}
+.export-btn.ab{border-color:var(--cn-red);color:var(--cn-red);}
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-bottom:20px;}
+.two-col-eq{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+/* FORM */
+.form-section{margin-bottom:18px;}
+.form-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--cn-blue);border-bottom:2px solid var(--cn-light-blue);padding-bottom:5px;margin-bottom:10px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-group{display:flex;flex-direction:column;gap:3px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;}
+.req{color:var(--cn-red);margin-left:2px;}
+.form-control{padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;background:#fff;}
+.form-control:focus{outline:none;border-color:var(--cn-blue);box-shadow:0 0 0 3px rgba(0,90,156,.1);}
+textarea.form-control{resize:vertical;min-height:68px;}
+.form-note{font-size:10px;color:var(--text-muted);}
+.form-actions{display:flex;gap:10px;padding-top:14px;border-top:1px solid var(--border);}
+.radio-group{display:flex;gap:14px;padding-top:4px;}
+.radio-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;cursor:pointer;}
+/* REQUESTER FORM */
+.req-form-wrapper{background:linear-gradient(135deg,#1A1A1A 0%,#2a2a2a 100%);border-radius:12px;padding:22px;margin-bottom:20px;}
+.req-form-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.req-form-header .logo-box{width:36px;height:36px;background:var(--cn-red);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px;}
+.req-form-header h2{color:#fff;font-size:16px;font-weight:700;}
+.req-form-header p{color:#aaa;font-size:12px;margin-top:2px;}
+.req-form-body{background:#fff;border-radius:8px;padding:18px;}
+/* AVAIL */
+.avail-list{display:flex;flex-direction:column;gap:7px;}
+.avail-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:#fafafa;border:1px solid var(--border);}
+.avail-avatar{width:30px;height:30px;border-radius:50%;background:var(--cn-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.avail-name{font-size:12px;font-weight:600;}
+.avail-meta{font-size:10px;color:var(--text-muted);}
+.avail-days{margin-left:auto;display:flex;gap:4px;}
+.day-chip{width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.day-avail{background:#ADD8E6;color:#003366;}
+.day-off{background:#eee;color:#aaa;}
+/* DETAIL PANEL */
+.detail-panel{background:#fafbfc;border:1px solid var(--border);border-radius:8px;padding:16px;}
+.detail-title{font-size:15px;font-weight:700;}
+.detail-sub{font-size:11px;color:var(--text-muted);margin-top:2px;margin-bottom:12px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.dg-item{display:flex;flex-direction:column;gap:2px;}
+.dg-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);}
+.dg-value{font-size:12px;font-weight:500;}
+.notes-box{background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:12px;}
+/* ASSIGN */
+.assign-section{background:var(--cn-light-blue);border-radius:6px;padding:12px;margin-bottom:10px;}
+.assign-title{font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;}
+.assign-group-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin:8px 0 4px;}
+.flagman-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;background:#fff;border:1px solid var(--border);margin-bottom:5px;cursor:pointer;}
+.flagman-opt:hover{border-color:var(--cn-blue);}
+.flagman-opt input[type=radio]{accent-color:var(--cn-blue);}
+.flagman-opt-name{font-size:12px;font-weight:600;flex:1;}
+.flagman-opt-meta{font-size:10px;color:var(--text-muted);}
+.avail-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-green{background:#1E7E34;}
+.dot-yellow{background:#ffc107;}
+.dot-red{background:var(--cn-red);}
+/* PRIORITY */
+.priority-high{background:#fde8ea;color:#B5091D;}
+.priority-normal{background:#e8f4fd;color:#005A9C;}
+.priority-low{background:#f0f0f0;color:#666;}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;position:sticky;top:0;background:#fff;z-index:1;}
+.modal-header h3{font-size:15px;font-weight:700;flex:1;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:0 4px;}
+.modal-body{padding:20px;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:#fff;}
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+.toast{background:#1A1A1A;color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;}
+.toast.success{background:#1E7E34;}
+.toast.error{background:var(--cn-red);}
+.toast.warning{background:#856404;}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+/* HOTEL INLINE */
+.hotel-card{background:#f0f7ff;border:1px solid #b3d4f5;border-radius:6px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.hotel-icon{font-size:20px;}
+.hotel-info{flex:1;}
+.hotel-name{font-size:13px;font-weight:700;}
+.hotel-detail{font-size:11px;color:var(--text-muted);}
+/* SITE INFO INLINE */
+.si-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.si-row{display:flex;flex-direction:column;gap:2px;}
+.si-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);}
+.si-value{font-size:12px;font-weight:500;}
+/* COMPLETED JOBS */
+.completed-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+/* SEARCH BAR */
+.search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.search-bar input,.search-bar select{padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;}
+.search-bar input{flex:1;min-width:180px;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="logo-box">CN</div>
+    <span>Flagging Scheduling System</span>
+    <small>Western Region</small>
+  </div>
+  <div class="topnav-right">
+    <button class="notif-btn" onclick="showModal('modal-notifications')">🔔<span class="notif-dot"></span></button>
+    <div class="user-info"><strong>Sarah Mitchell</strong>Flagging Supervisor</div>
+    <div class="avatar">SM</div>
+  </div>
+</nav>
+
+<div class="app-body">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <div class="nav-item active" data-target="dashboard"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-item" data-target="jobs"><span class="icon">📋</span> Active Jobs <span class="nav-badge" id="badge-jobs">8</span></div>
+    <div class="nav-item" data-target="completed"><span class="icon">✅</span> Completed Jobs</div>
+    <div class="nav-item" data-target="schedule"><span class="icon">📅</span> Working Schedule</div>
+    <div class="nav-item" data-target="weekly"><span class="icon">📆</span> Weekly Schedule</div>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Workforce</div>
+    <div class="nav-item" data-target="roster"><span class="icon">👷</span> Flagman Roster</div>
+    <div class="nav-item" data-target="vacation"><span class="icon">🏖️</span> Vacation Management</div>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Requests</div>
+    <div class="nav-item" data-target="incoming"><span class="icon">📩</span> Incoming Requests <span class="nav-badge" id="badge-incoming">3</span></div>
+    <div class="nav-item" data-target="submit"><span class="icon">📝</span> Submit a Request</div>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Reports &amp; Settings</div>
+    <div class="nav-item" data-target="export"><span class="icon">📤</span> Export Schedules</div>
+    <div class="nav-item" data-target="reports"><span class="icon">📈</span> Reports</div>
+    <div class="nav-item" data-target="settings"><span class="icon">⚙️</span> Settings</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+<div class="page-header">
+  <div><h1 id="pageTitle">Dashboard — Week of June 2, 2026</h1><div class="sub" id="pageSubtitle">Western Region · Alberta &amp; BC Flagmen</div></div>
+  <div class="hdr-actions" id="pageActions">
+    <button class="btn btn-secondary" onclick="showModal('modal-add-job')">+ Add Job</button>
+    <button class="btn btn-primary" onclick="toast('Weekly schedule sent to all flagmen ✓','success')">📤 Send Weekly Schedule</button>
+  </div>
+</div>
+<div class="content">
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div id="sec-dashboard" class="page-section active">
+  <div class="alert alert-danger">⚠️ <strong>3 unscheduled jobs</strong> require flagman assignment before the week begins. <button class="btn btn-sm btn-primary" style="margin-left:auto;" onclick="navigate('jobs')">View Jobs →</button></div>
+  <div class="alert alert-info">📩 <strong>3 new flagging requests</strong> are awaiting your review. <button class="btn btn-sm btn-blue" style="margin-left:auto;" onclick="navigate('incoming')">Review Now →</button></div>
+  <div class="stats-row">
+    <div class="stat-card" onclick="navigate('jobs')"><div class="stat-label">Active Jobs</div><div class="stat-value">8</div><div class="stat-sub">This week</div></div>
+    <div class="stat-card red" onclick="navigate('jobs')"><div class="stat-label">Unscheduled</div><div class="stat-value">3</div><div class="stat-sub">Need assignment</div></div>
+    <div class="stat-card blue" onclick="navigate('roster')"><div class="stat-label">Flagmen On Cycle</div><div class="stat-value">12</div><div class="stat-sub">Available this week</div></div>
+    <div class="stat-card green" onclick="navigate('vacation')"><div class="stat-label">On Vacation</div><div class="stat-value">2</div><div class="stat-sub">This week</div></div>
+    <div class="stat-card orange" onclick="navigate('completed')"><div class="stat-label">Completed Jobs</div><div class="stat-value">47</div><div class="stat-sub">YTD 2026</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header"><h2>📋 This Week's Jobs</h2><div class="card-actions"><button class="btn btn-sm btn-secondary" onclick="navigate('jobs')">View All →</button></div></div>
+      <table class="tbl">
+        <thead><tr><th>Company</th><th>Flagman</th><th>Subdivision</th><th>Shift</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><strong>Elworthy</strong></td><td>O'Hearn, Wade</td><td>Yale FRB</td><td><span class="badge badge-night">Night</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('elworthy')">View</button></td></tr>
+          <tr><td><strong>City of Calgary</strong></td><td>Muhammad, Danjuma</td><td>Drumheller</td><td><span class="badge badge-morning">Morning</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('calgary')">View</button></td></tr>
+          <tr><td><strong>Amrize</strong></td><td>Williams, Ryan</td><td>Sangudo</td><td><span class="badge badge-morning">Morning</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('amrize')">View</button></td></tr>
+          <tr><td><strong>Embridge</strong></td><td>Anderson, Tyler</td><td>Prince George</td><td><span class="badge badge-afternoon">Afternoon</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('embridge')">View</button></td></tr>
+          <tr style="background:#fff8e1;"><td><strong>BC Hydro</strong></td><td style="color:var(--cn-red);font-weight:700;">Unassigned</td><td>Lillooet</td><td>—</td><td><span class="badge badge-unknown">Unknown Dates</span></td><td><button class="btn-review btn-xs" onclick="openAssignModal('BC Hydro','Lillooet')">Assign</button></td></tr>
+          <tr style="background:#fff8e1;"><td><strong>SIMPCW</strong></td><td style="color:var(--cn-red);font-weight:700;">Unassigned</td><td>Clearwater</td><td>—</td><td><span class="badge badge-unknown">Unknown Dates</span></td><td><button class="btn-review btn-xs" onclick="openAssignModal('SIMPCW','Clearwater')">Assign</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-header"><h2>📩 New Requests</h2><div class="card-actions"><button class="btn btn-sm btn-blue" onclick="navigate('incoming')">View All</button></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:7px;">
+          <div style="padding:8px 10px;background:#fff5f5;border:1px solid #f5c6cb;border-radius:6px;font-size:12px;cursor:pointer;" onclick="navigate('incoming')"><strong>BC Hydro — Lillooet</strong><br><span style="color:var(--text-muted);">Jun 2 · 1 flagman · 5 days · Morning shift</span></div>
+          <div style="padding:8px 10px;background:#fffbf0;border:1px solid #ffe082;border-radius:6px;font-size:12px;cursor:pointer;" onclick="navigate('incoming')"><strong>Parsons — Bulkley</strong><br><span style="color:var(--text-muted);">Jun 1 · 1 flagman · 3 days · Afternoon shift</span></div>
+          <div style="padding:8px 10px;background:#fff5f5;border:1px solid #f5c6cb;border-radius:6px;font-size:12px;cursor:pointer;" onclick="navigate('incoming')"><strong>SIMPCW — Clearwater</strong><br><span style="color:var(--text-muted);">May 30 · 2 flagmen · TBD</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ACTIVE JOBS ══════════ -->
+<div id="sec-jobs" class="page-section">
+  <div class="search-bar">
+    <input type="text" id="jobs-search" placeholder="🔍 Search by company, flagman, subdivision..." oninput="filterJobs()">
+    <select id="jobs-status-filter" onchange="filterJobs()"><option value="">All Statuses</option><option>In Progress</option><option>Scheduled</option><option>Pending</option><option>Delayed</option><option>Unknown Dates</option></select>
+    <select id="jobs-shift-filter" onchange="filterJobs()"><option value="">All Shifts</option><option>Morning</option><option>Afternoon</option><option>Night</option></select>
+    <select id="jobs-region-filter" onchange="filterJobs()"><option value="">All Regions</option><option>BC</option><option>Alberta</option></select>
+    <button class="btn btn-primary btn-sm" onclick="showModal('modal-add-job')">+ New Job</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><h2>Active Jobs</h2><div class="card-actions"><span id="jobs-count" style="font-size:12px;color:var(--text-muted);">8 jobs</span></div></div>
+    <div class="tbl-scroll">
+      <table class="tbl" id="jobs-table">
+        <thead><tr><th>Company</th><th>Status</th><th>Subdivision</th><th>Mile</th><th>Shift</th><th>Start</th><th>End</th><th>Days</th><th>Project #</th><th>Assigned To</th><th>Type</th><th>Actions</th></tr></thead>
+        <tbody id="jobs-tbody">
+          <tr data-status="In Progress" data-shift="Night" data-region="BC"><td><strong>Elworthy</strong></td><td><span class="badge badge-inprogress">In Progress</span></td><td>Yale</td><td>118</td><td><span class="badge badge-night">Night</span></td><td>Jun 1</td><td>Jun 14</td><td>14</td><td>CG594003</td><td>O'Hearn, Wade</td><td><span class="badge badge-cn">CN Employee</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('elworthy')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Elworthy','Yale')">Reassign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Morning" data-region="Alberta"><td><strong>City of Calgary</strong></td><td><span class="badge badge-inprogress">In Progress</span></td><td>Drumheller</td><td>01S</td><td><span class="badge badge-morning">Morning</span></td><td>Jun 2</td><td>Jun 20</td><td>18</td><td>721363</td><td>Muhammad, Danjuma</td><td><span class="badge badge-cn">CN Employee</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('calgary')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('City of Calgary','Drumheller')">Reassign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Morning" data-region="Alberta"><td><strong>Amrize</strong></td><td><span class="badge badge-inprogress">In Progress</span></td><td>Sangudo</td><td>6.7</td><td><span class="badge badge-morning">Morning</span></td><td>May 28</td><td>Jun 10</td><td>12</td><td>718527</td><td>Williams, Ryan</td><td><span class="badge badge-cn">CN Employee</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('amrize')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Amrize','Sangudo')">Reassign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Afternoon" data-region="BC"><td><strong>Embridge</strong></td><td><span class="badge badge-inprogress">In Progress</span></td><td>Prince George</td><td>425.92</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Jun 1</td><td>Jun 15</td><td>14</td><td>FR#720312</td><td>Anderson, Tyler</td><td><span class="badge badge-cn">CN Employee</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('embridge')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Embridge','Prince George')">Reassign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Night" data-region="BC"><td><strong>Waste Water — McClain</strong></td><td><span class="badge badge-inprogress">In Progress</span></td><td>McClain</td><td>—</td><td><span class="badge badge-night">Night</span></td><td>Jun 1</td><td>Jun 14</td><td>14</td><td>—</td><td>Bozor, Nicolson</td><td><span class="badge badge-contracted">Contracted</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('wastewater')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Waste Water','McClain')">Reassign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Morning" data-region="Alberta"><td><strong>Dreger</strong></td><td><span class="badge badge-inprogress">In Progress</span></td><td>Sangudo</td><td>8.2</td><td><span class="badge badge-morning">Morning</span></td><td>Jun 1</td><td>Jun 12</td><td>12</td><td>718530</td><td>Toft, Mark</td><td><span class="badge badge-cn">CN Employee</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('dreger')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Dreger','Sangudo')">Reassign</button></td></tr>
+          <tr style="background:#fff8e1;" data-status="Unknown Dates" data-shift="" data-region="BC"><td><strong>BC Hydro</strong></td><td><span class="badge badge-unknown">Unknown Dates</span></td><td>Lillooet</td><td>200.81</td><td>—</td><td>N/A</td><td>N/A</td><td>—</td><td>FR-722006</td><td style="color:var(--cn-red);font-weight:700;">Unassigned</td><td>—</td><td><button class="btn-review btn-xs" onclick="openAssignModal('BC Hydro','Lillooet')">Assign</button> <button class="btn-edit btn-xs" onclick="openJobDetail('bchydro')">View</button></td></tr>
+          <tr style="background:#fff8e1;" data-status="Unknown Dates" data-shift="" data-region="BC"><td><strong>SIMPCW First Nation</strong></td><td><span class="badge badge-unknown">Unknown Dates</span></td><td>Clearwater</td><td>25.15</td><td>—</td><td>N/A</td><td>N/A</td><td>—</td><td>718157</td><td style="color:var(--cn-red);font-weight:700;">Unassigned</td><td>—</td><td><button class="btn-review btn-xs" onclick="openAssignModal('SIMPCW','Clearwater')">Assign</button> <button class="btn-edit btn-xs" onclick="openJobDetail('simpcw')">View</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ COMPLETED JOBS ══════════ -->
+<div id="sec-completed" class="page-section">
+  <div class="completed-stats">
+    <div class="stat-card green"><div class="stat-label">Total Completed</div><div class="stat-value">47</div><div class="stat-sub">YTD 2026</div></div>
+    <div class="stat-card blue"><div class="stat-label">Total Days Flagged</div><div class="stat-value">312</div><div class="stat-sub">YTD 2026</div></div>
+    <div class="stat-card"><div class="stat-label">Avg Job Duration</div><div class="stat-value">6.6</div><div class="stat-sub">Days per job</div></div>
+    <div class="stat-card orange"><div class="stat-label">Flagmen Utilized</div><div class="stat-value">10</div><div class="stat-sub">Unique flagmen</div></div>
+  </div>
+  <div class="search-bar">
+    <input type="text" placeholder="🔍 Search completed jobs...">
+    <select><option>All Shifts</option><option>Morning</option><option>Afternoon</option><option>Night</option></select>
+    <select><option>All Regions</option><option>BC</option><option>Alberta</option></select>
+    <select><option>All of 2026</option><option>Q1 2026</option><option>Q2 2026</option><option>May 2026</option><option>April 2026</option></select>
+    <button class="btn btn-secondary btn-sm" onclick="toast('Exporting completed jobs report...','success')">📤 Export</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><h2>✅ Completed Jobs — 2026</h2><div class="card-actions"><span style="font-size:12px;color:var(--text-muted);">47 jobs completed</span></div></div>
+    <div class="tbl-scroll">
+      <table class="tbl">
+        <thead><tr><th>Company</th><th>Subdivision</th><th>Mile</th><th>Shift</th><th>Flagman</th><th>Type</th><th>Start</th><th>End</th><th>Days</th><th>Project #</th><th>Region</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Milestone</strong></td><td>Squamish</td><td>12.4</td><td><span class="badge badge-morning">Morning</span></td><td>Jiawan, Daneel</td><td><span class="badge badge-cn">CN Employee</span></td><td>May 20</td><td>May 31</td><td>10</td><td>CG591200</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Milestone...','')">Summary</button></td></tr>
+          <tr><td><strong>CN Engineering</strong></td><td>Wainwright</td><td>14.0</td><td><span class="badge badge-morning">Morning</span></td><td>Brule, Joshua</td><td><span class="badge badge-cn">CN Employee</span></td><td>May 15</td><td>May 22</td><td>7</td><td>721001</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for CN Engineering...','')">Summary</button></td></tr>
+          <tr><td><strong>Valard Construction</strong></td><td>Edson</td><td>13.87</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Toft, Mark</td><td><span class="badge badge-cn">CN Employee</span></td><td>May 5</td><td>May 14</td><td>9</td><td>718400</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Valard...','')">Summary</button></td></tr>
+          <tr><td><strong>BC Hydro</strong></td><td>Lillooet</td><td>198.0</td><td><span class="badge badge-night">Night</span></td><td>O'Hearn, Wade</td><td><span class="badge badge-cn">CN Employee</span></td><td>Apr 28</td><td>May 4</td><td>7</td><td>FR-719500</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for BC Hydro...','')">Summary</button></td></tr>
+          <tr><td><strong>Parsons</strong></td><td>Bulkley</td><td>0.25</td><td><span class="badge badge-morning">Morning</span></td><td>Singh, Arsh</td><td><span class="badge badge-contracted">Contracted</span></td><td>Apr 20</td><td>Apr 26</td><td>6</td><td>FR-718900</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Parsons...','')">Summary</button></td></tr>
+          <tr><td><strong>City of Edmonton</strong></td><td>Vegreville</td><td>22.1</td><td><span class="badge badge-morning">Morning</span></td><td>Ajiboye, Kenny</td><td><span class="badge badge-cn">CN Employee</span></td><td>Apr 14</td><td>Apr 20</td><td>6</td><td>720800</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for City of Edmonton...','')">Summary</button></td></tr>
+          <tr><td><strong>Kinder Morgan</strong></td><td>Sangudo</td><td>5.5</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Williams, Ryan</td><td><span class="badge badge-cn">CN Employee</span></td><td>Apr 7</td><td>Apr 13</td><td>7</td><td>718200</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Kinder Morgan...','')">Summary</button></td></tr>
+          <tr><td><strong>Fortis BC</strong></td><td>Prince George</td><td>430.0</td><td><span class="badge badge-night">Night</span></td><td>Anderson, Tyler</td><td><span class="badge badge-cn">CN Employee</span></td><td>Mar 25</td><td>Apr 5</td><td>12</td><td>FR-717600</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Fortis BC...','')">Summary</button></td></tr>
+          <tr><td><strong>Elworthy</strong></td><td>Yale</td><td>116.0</td><td><span class="badge badge-morning">Morning</span></td><td>Jiawan, Daneel</td><td><span class="badge badge-cn">CN Employee</span></td><td>Mar 18</td><td>Mar 28</td><td>10</td><td>CG589100</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Elworthy (Mar)...','')">Summary</button></td></tr>
+          <tr><td><strong>ATCO Gas</strong></td><td>Drumheller</td><td>05S</td><td><span class="badge badge-morning">Morning</span></td><td>Muhammad, Danjuma</td><td><span class="badge badge-cn">CN Employee</span></td><td>Mar 10</td><td>Mar 17</td><td>7</td><td>720100</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for ATCO Gas...','')">Summary</button></td></tr>
+          <tr><td><strong>Waste Water — McClain</strong></td><td>McClain</td><td>—</td><td><span class="badge badge-night">Night</span></td><td>Bozor, Nicolson</td><td><span class="badge badge-contracted">Contracted</span></td><td>Feb 20</td><td>Mar 5</td><td>14</td><td>—</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Waste Water (Feb)...','')">Summary</button></td></tr>
+          <tr><td><strong>Amrize</strong></td><td>Sangudo</td><td>6.7</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Toft, Mark</td><td><span class="badge badge-cn">CN Employee</span></td><td>Feb 10</td><td>Feb 18</td><td>8</td><td>717100</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for Amrize (Feb)...','')">Summary</button></td></tr>
+          <tr><td><strong>TELUS</strong></td><td>Clearwater</td><td>28.0</td><td><span class="badge badge-morning">Morning</span></td><td>Roy, Kolton</td><td><span class="badge badge-cn">CN Employee</span></td><td>Jan 22</td><td>Jan 28</td><td>6</td><td>FR-716200</td><td>BC</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for TELUS...','')">Summary</button></td></tr>
+          <tr><td><strong>SaskPower</strong></td><td>Wainwright</td><td>18.3</td><td><span class="badge badge-morning">Morning</span></td><td>Brule, Joshua</td><td><span class="badge badge-cn">CN Employee</span></td><td>Jan 8</td><td>Jan 16</td><td>8</td><td>715900</td><td>Alberta</td><td><button class="btn-edit btn-xs" onclick="toast('Opening job summary for SaskPower...','')">Summary</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ WORKING SCHEDULE ══════════ -->
+<div id="sec-schedule" class="page-section">
+  <div class="card">
+    <div class="card-header">
+      <h2>Working Schedule — June 2026</h2>
+      <div class="card-actions">
+        <button class="btn btn-secondary btn-sm" onclick="toast('Navigated to May 2026','')">◀ May</button>
+        <button class="btn btn-secondary btn-sm" onclick="toast('Navigated to July 2026','')">July ▶</button>
+        <button class="btn btn-primary btn-sm" onclick="showModal('modal-add-job')">+ Add Assignment</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="sg-table">
+        <thead>
+          <tr>
+            <th class="name-col">Flagman</th><th>Cycle</th>
+            <th>Mon 2</th><th>Tue 3</th><th>Wed 4</th><th>Thu 5</th><th>Fri 6</th>
+            <th>Sat 7</th><th>Sun 8</th><th>Mon 9</th><th>Tue 10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="11" style="background:#1A1A1A;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;text-align:left;">ALBERTA FLAGMEN</td></tr>
+          <tr>
+            <td class="name-cell">Brule, Joshua</td><td class="cycle-cell">5&amp;2</td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — Foreman Duties — Morning','')">Foreman · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — Foreman Duties — Morning','')">Foreman · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — CN D&C Vegreville — Morning','')">CN D&amp;C · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — CN D&C Vegreville — Morning','')">CN D&amp;C · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — Foreman Duties — Morning','')">Foreman · AM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Brule, Joshua','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Brule, Joshua','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — Foreman Duties — Morning','')">Foreman · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Brule — Foreman Duties — Morning','')">Foreman · AM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Muhammad, Danjuma</td><td class="cycle-cell">5&amp;2</td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Muhammad, Danjuma','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Muhammad, Danjuma','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('calgary')">Calgary · AM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Williams, Ryan</td><td class="cycle-cell">8&amp;6</td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+            <td><div class="cell-job cell-light-blue" onclick="toast('Williams OT Day — Saturday','success')">OT · AM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Williams, Ryan','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('amrize')">Amrize · AM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Toft, Mark</td><td class="cycle-cell">8&amp;6</td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Toft, Mark','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Toft, Mark','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('dreger')">Dreger · AM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Ajiboye, Kenny</td><td class="cycle-cell">5&amp;2</td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Ajiboye — Track Patrols — Morning','')">Track Patrol · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Ajiboye — Track Patrols — Morning','')">Track Patrol · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Ajiboye — Track Patrols — Afternoon','')">Track Patrol · PM</div></td>
+            <td><div class="cell-job cell-afternoon" onclick="toast('Ajiboye — Track Patrols — Afternoon','')">Track Patrol · PM</div></td>
+            <td><div class="cell-job cell-afternoon" onclick="toast('Ajiboye — Track Patrols — Afternoon','')">Track Patrol · PM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Ajiboye, Kenny','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Ajiboye, Kenny','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Ajiboye — Track Patrols — Morning','')">Track Patrol · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Ajiboye — Track Patrols — Morning','')">Track Patrol · AM</div></td>
+          </tr>
+          <tr><td colspan="11" style="background:#1A1A1A;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;text-align:left;">BC FLAGMEN</td></tr>
+          <tr>
+            <td class="name-cell">Jiawan, Daneel</td><td class="cycle-cell">5&amp;2</td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Jiawan — Milestone Squamish — Morning','')">Milestone · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Jiawan — Foreman Duties — Morning','')">Foreman · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('elworthy')">Elworthy · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="openJobDetail('wastewater')">Waste Water · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Jiawan — Foreman Duties — Morning','')">Foreman · AM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Jiawan, Daneel','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Jiawan, Daneel','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Jiawan — Milestone Squamish — Morning','')">Milestone · AM</div></td>
+            <td><div class="cell-job cell-pink-on" onclick="toast('Jiawan — Milestone Squamish — Morning','')">Milestone · AM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">O'Hearn, Wade</td><td class="cycle-cell">8&amp;6</td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+            <td class="cell-empty" onclick="openAssignModal('O\'Hearn, Wade','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('O\'Hearn, Wade','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('elworthy')">Elworthy · Night</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Anderson, Tyler</td><td class="cycle-cell">8&amp;6</td>
+            <td><div class="cell-job cell-afternoon" onclick="openJobDetail('embridge')">Embridge · PM</div></td>
+            <td><div class="cell-job cell-afternoon" onclick="openJobDetail('embridge')">Embridge · PM</div></td>
+            <td><div class="cell-job cell-orange" onclick="toast('Anderson — Vacation','')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="toast('Anderson — Vacation','')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="toast('Anderson — PLD','')">PLD</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Anderson, Tyler','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Anderson, Tyler','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-afternoon" onclick="openJobDetail('embridge')">Embridge · PM</div></td>
+            <td><div class="cell-job cell-afternoon" onclick="openJobDetail('embridge')">Embridge · PM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Bozor, Nicolson <span class="badge badge-contracted" style="font-size:9px;">C</span></td><td class="cycle-cell">9&amp;5</td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Bozor, Nicolson','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Bozor, Nicolson','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+            <td><div class="cell-job cell-dark-pink" onclick="openJobDetail('wastewater')">Waste Water · Night</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Singh, Arsh <span class="badge badge-contracted" style="font-size:9px;">C</span></td><td class="cycle-cell">9&amp;5</td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+            <td class="cell-empty" onclick="openAssignModal('Singh, Arsh','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Singh, Arsh','Sun Jun 8')">OFF</td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+            <td><div class="cell-job cell-light-pink" onclick="toast('Singh — Training Terrace — Morning','')">Training · AM</div></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Roy, Kolton</td><td class="cycle-cell">8&amp;6</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Mon Jun 2')">+ Assign</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Tue Jun 3')">+ Assign</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Wed Jun 4')">+ Assign</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Thu Jun 5')">+ Assign</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Fri Jun 6')">+ Assign</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Sat Jun 7')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Sun Jun 8')">OFF</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Mon Jun 9')">+ Assign</td>
+            <td class="cell-empty" onclick="openAssignModal('Roy, Kolton','Tue Jun 10')">+ Assign</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#FFB6C1;"></div>On Cycle · Morning (AM)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#FFE0B2;"></div>On Cycle · Afternoon (PM)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#C71585;"></div>On Cycle · Night</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#FFD1DC;"></div>Training</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ADD8E6;"></div>OT Day</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00008B;"></div>OT Night</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#FFA500;"></div>Vacation / PLD</div>
+    </div>
+    <div class="export-row">
+      <button class="export-btn bc" onclick="toast('Exporting BC Weekly Schedule PDF...','success')">📤 Export BC Weekly Schedule</button>
+      <button class="export-btn ab" onclick="toast('Exporting Alberta Weekly Schedule PDF...','success')">📤 Export Alberta Weekly Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ WEEKLY SCHEDULE ══════════ -->
+<div id="sec-weekly" class="page-section">
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header"><h2>📆 Week of June 7, 2026 — Preview</h2><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="toast('Weekly schedule sent to all flagmen ✓','success')">📤 Send to All Flagmen</button></div></div>
+      <table class="tbl">
+        <thead><tr><th>Flagman</th><th>Sat Jun 7</th><th>Sun Jun 8</th><th>Mon Jun 9</th><th>Tue Jun 10</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Williams, Ryan</strong></td><td><span class="badge badge-morning">OT · AM</span></td><td>OFF</td><td><span class="badge badge-morning">Amrize · AM</span></td><td><span class="badge badge-morning">Amrize · AM</span></td></tr>
+          <tr><td><strong>O'Hearn, Wade</strong></td><td>OFF</td><td>OFF</td><td><span class="badge badge-night">Elworthy · Night</span></td><td><span class="badge badge-night">Elworthy · Night</span></td></tr>
+          <tr><td><strong>Anderson, Tyler</strong></td><td>OFF</td><td>OFF</td><td><span class="badge badge-afternoon">Embridge · PM</span></td><td><span class="badge badge-afternoon">Embridge · PM</span></td></tr>
+          <tr><td><strong>Muhammad, Danjuma</strong></td><td>OFF</td><td>OFF</td><td><span class="badge badge-morning">Calgary · AM</span></td><td><span class="badge badge-morning">Calgary · AM</span></td></tr>
+          <tr><td><strong>Toft, Mark</strong></td><td>OFF</td><td>OFF</td><td><span class="badge badge-morning">Dreger · AM</span></td><td><span class="badge badge-morning">Dreger · AM</span></td></tr>
+          <tr><td><strong>Bozor, Nicolson</strong></td><td>OFF</td><td>OFF</td><td><span class="badge badge-night">Waste Water · Night</span></td><td><span class="badge badge-night">Waste Water · Night</span></td></tr>
+          <tr><td><strong>Roy, Kolton</strong></td><td>OFF</td><td>OFF</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td></tr>
+        </tbody>
+      </table>
+      <div class="export-row">
+        <button class="export-btn bc" onclick="toast('Exporting BC PDF...','success')">📤 Export BC PDF</button>
+        <button class="export-btn ab" onclick="toast('Exporting Alberta PDF...','success')">📤 Export Alberta PDF</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h2>📩 Send Options</h2></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px;"><label>Send To</label><select class="form-control"><option>All Flagmen (BC + Alberta)</option><option>BC Flagmen Only</option><option>Alberta Flagmen Only</option></select></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Delivery Method</label><select class="form-control"><option>Email + In-App Notification</option><option>Email Only</option><option>In-App Only</option></select></div>
+        <div class="form-group" style="margin-bottom:14px;"><label>Additional Note</label><textarea class="form-control" placeholder="Optional message to include with the schedule..."></textarea></div>
+        <button class="btn btn-primary" style="width:100%;" onclick="toast('Weekly schedule sent to all flagmen ✓','success')">📤 Send Weekly Schedule</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FLAGMAN ROSTER ══════════ -->
+<div id="sec-roster" class="page-section">
+  <div class="search-bar">
+    <input type="text" placeholder="🔍 Search flagmen...">
+    <select><option>All Regions</option><option>BC</option><option>Alberta</option></select>
+    <select><option>All Types</option><option>CN Employee</option><option>Contracted</option></select>
+    <button class="btn btn-primary btn-sm" onclick="showModal('modal-add-flagman')">+ Add Flagman</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><h2>👷 Flagman Roster</h2><div class="card-actions"><span style="font-size:12px;color:var(--text-muted);">11 flagmen · 9 CN Employees · 2 Contracted</span></div></div>
+    <div class="tbl-scroll">
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>Type</th><th>Region</th><th>Cycle</th><th>Seniority</th><th>Phone</th><th>Email</th><th>Current Job</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Brule, Joshua</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>Alberta</td><td>5&amp;2</td><td>#3</td><td>780-555-0101</td><td>j.brule@cn.ca</td><td>Foreman Duties</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Brule, Joshua')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Brule, Joshua','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Muhammad, Danjuma</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>Alberta</td><td>5&amp;2</td><td>#7</td><td>780-555-0102</td><td>d.muhammad@cn.ca</td><td>City of Calgary</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Muhammad, Danjuma')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Muhammad, Danjuma','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Williams, Ryan</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>Alberta</td><td>8&amp;6</td><td>#9</td><td>780-555-0103</td><td>r.williams@cn.ca</td><td>Amrize</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Williams, Ryan')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Williams, Ryan','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Toft, Mark</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>Alberta</td><td>8&amp;6</td><td>#11</td><td>780-555-0104</td><td>m.toft@cn.ca</td><td>Dreger</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Toft, Mark')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Toft, Mark','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Ajiboye, Kenny</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>Alberta</td><td>5&amp;2</td><td>#14</td><td>780-555-0105</td><td>k.ajiboye@cn.ca</td><td>Track Patrols</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Ajiboye, Kenny')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Ajiboye, Kenny','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Jiawan, Daneel</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>BC</td><td>5&amp;2</td><td>#5</td><td>604-555-0201</td><td>d.jiawan@cn.ca</td><td>Milestone / Foreman</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Jiawan, Daneel')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Jiawan, Daneel','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>O'Hearn, Wade</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>BC</td><td>8&amp;6</td><td>#12</td><td>604-555-0202</td><td>w.ohearn@cn.ca</td><td>Elworthy FRB</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','O\'Hearn, Wade')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('O\'Hearn, Wade','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Anderson, Tyler</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>BC</td><td>8&amp;6</td><td>#16</td><td>604-555-0203</td><td>t.anderson@cn.ca</td><td>Embridge</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Anderson, Tyler')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Anderson, Tyler','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Roy, Kolton</strong></td><td><span class="badge badge-cn">CN Employee</span></td><td>BC</td><td>8&amp;6</td><td>#18</td><td>604-555-0204</td><td>k.roy@cn.ca</td><td style="color:var(--cn-red);">Unassigned</td><td><span class="badge badge-pending">Available</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Roy, Kolton')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Roy, Kolton','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Bozor, Nicolson</strong></td><td><span class="badge badge-contracted">Contracted</span></td><td>BC</td><td>9&amp;5</td><td>—</td><td>604-555-0301</td><td>n.bozor@contractor.ca</td><td>Waste Water</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Bozor, Nicolson')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Bozor, Nicolson','Next Available')">Assign</button></td></tr>
+          <tr><td><strong>Singh, Arsh</strong></td><td><span class="badge badge-contracted">Contracted</span></td><td>BC</td><td>9&amp;5</td><td>—</td><td>604-555-0302</td><td>a.singh@contractor.ca</td><td>Training · Terrace</td><td><span class="badge badge-inprogress">Active</span></td><td><button class="btn-edit btn-xs" onclick="showModal('modal-flagman-profile','Singh, Arsh')">View</button> <button class="btn-review btn-xs" onclick="openAssignModal('Singh, Arsh','Next Available')">Assign</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ VACATION MANAGEMENT ══════════ -->
+<div id="sec-vacation" class="page-section">
+  <div class="alert alert-info">ℹ️ Each flagman is entitled to a maximum of <strong>25 vacation days per calendar year</strong>. Vacation days cannot be assigned on on-cycle working days without supervisor override. Contracted flagmen manage their own availability.</div>
+
+  <!-- Summary cards -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+    <div class="stat-card green"><div class="stat-label">Total Vacation Used</div><div class="stat-value">87</div><div class="stat-sub">Days across all flagmen YTD</div></div>
+    <div class="stat-card blue"><div class="stat-label">Currently On Vacation</div><div class="stat-value">2</div><div class="stat-sub">Anderson · Jiawan</div></div>
+    <div class="stat-card orange"><div class="stat-label">Upcoming Vacation</div><div class="stat-value">3</div><div class="stat-sub">Entries in next 30 days</div></div>
+    <div class="stat-card red"><div class="stat-label">Near Limit (&gt;20 days)</div><div class="stat-value">2</div><div class="stat-sub">Williams · Toft</div></div>
+  </div>
+
+  <!-- Vacation balance table -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <h2>🏖️ 2026 Vacation Balances</h2>
+      <div class="card-actions">
+        <select style="padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-size:11px;">
+          <option>All Regions</option><option>BC</option><option>Alberta</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="showModal('modal-add-vacation')">+ Add Vacation Entry</button>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Flagman</th><th>Type</th><th>Region</th><th>Cycle</th>
+            <th>Entitlement</th><th>Used</th><th>Remaining</th><th>Balance Bar</th>
+            <th>Current / Next Vacation</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Alberta -->
+          <tr><td colspan="10" style="background:#1A1A1A;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;">ALBERTA FLAGMEN</td></tr>
+          <tr>
+            <td><strong>Brule, Joshua</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>Alberta</td><td>5&amp;2</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#1E7E34;">8</td>
+            <td style="text-align:center;font-weight:700;">17</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#1E7E34;border-radius:4px;height:8px;width:32%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">32% used</div></td>
+            <td style="font-size:11px;">Jun 23–27 (5 days planned)</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Brule, Joshua')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Brule, Joshua')">+ Add</button></td>
+          </tr>
+          <tr>
+            <td><strong>Muhammad, Danjuma</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>Alberta</td><td>5&amp;2</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#1E7E34;">5</td>
+            <td style="text-align:center;font-weight:700;">20</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#1E7E34;border-radius:4px;height:8px;width:20%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">20% used</div></td>
+            <td style="font-size:11px;">Jul 14–18 (5 days planned)</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Muhammad, Danjuma')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Muhammad, Danjuma')">+ Add</button></td>
+          </tr>
+          <tr style="background:#fff8e1;">
+            <td><strong>Williams, Ryan</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>Alberta</td><td>8&amp;6</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#d97706;">21</td>
+            <td style="text-align:center;font-weight:700;color:#d97706;">4</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#d97706;border-radius:4px;height:8px;width:84%;"></div></div><div style="font-size:10px;color:#d97706;margin-top:2px;">⚠️ 84% used</div></td>
+            <td style="font-size:11px;">Aug 4–7 (4 days remaining)</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Williams, Ryan')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Williams, Ryan')">+ Add</button></td>
+          </tr>
+          <tr style="background:#fff8e1;">
+            <td><strong>Toft, Mark</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>Alberta</td><td>8&amp;6</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#d97706;">20</td>
+            <td style="text-align:center;font-weight:700;color:#d97706;">5</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#d97706;border-radius:4px;height:8px;width:80%;"></div></div><div style="font-size:10px;color:#d97706;margin-top:2px;">⚠️ 80% used</div></td>
+            <td style="font-size:11px;">Jul 28–Aug 1 (5 days planned)</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Toft, Mark')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Toft, Mark')">+ Add</button></td>
+          </tr>
+          <tr>
+            <td><strong>Ajiboye, Kenny</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>Alberta</td><td>5&amp;2</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#1E7E34;">10</td>
+            <td style="text-align:center;font-weight:700;">15</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#1E7E34;border-radius:4px;height:8px;width:40%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">40% used</div></td>
+            <td style="font-size:11px;">None scheduled</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Ajiboye, Kenny')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Ajiboye, Kenny')">+ Add</button></td>
+          </tr>
+          <!-- BC -->
+          <tr><td colspan="10" style="background:#1A1A1A;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;">BC FLAGMEN</td></tr>
+          <tr style="background:#f0f7ff;">
+            <td><strong>Jiawan, Daneel</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>BC</td><td>5&amp;2</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#005A9C;">12</td>
+            <td style="text-align:center;font-weight:700;">13</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#005A9C;border-radius:4px;height:8px;width:48%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">48% used — <span style="color:#005A9C;font-weight:700;">On Vacation Now</span></div></td>
+            <td style="font-size:11px;"><span class="badge badge-inprogress">Jun 4–8 (5 days)</span></td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Jiawan, Daneel')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Jiawan, Daneel')">+ Add</button></td>
+          </tr>
+          <tr>
+            <td><strong>O'Hearn, Wade</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>BC</td><td>8&amp;6</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#1E7E34;">7</td>
+            <td style="text-align:center;font-weight:700;">18</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#1E7E34;border-radius:4px;height:8px;width:28%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">28% used</div></td>
+            <td style="font-size:11px;">Jul 7–11 (5 days planned)</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('O\'Hearn, Wade')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('O\'Hearn, Wade')">+ Add</button></td>
+          </tr>
+          <tr style="background:#f0f7ff;">
+            <td><strong>Anderson, Tyler</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>BC</td><td>8&amp;6</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#005A9C;">15</td>
+            <td style="text-align:center;font-weight:700;">10</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#005A9C;border-radius:4px;height:8px;width:60%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">60% used — <span style="color:#005A9C;font-weight:700;">On Vacation Now</span></div></td>
+            <td style="font-size:11px;"><span class="badge badge-inprogress">Jun 4–6 (3 days)</span></td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Anderson, Tyler')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Anderson, Tyler')">+ Add</button></td>
+          </tr>
+          <tr>
+            <td><strong>Roy, Kolton</strong></td>
+            <td><span class="badge badge-cn">CN Employee</span></td>
+            <td>BC</td><td>8&amp;6</td>
+            <td style="text-align:center;">25</td>
+            <td style="text-align:center;font-weight:700;color:#1E7E34;">3</td>
+            <td style="text-align:center;font-weight:700;">22</td>
+            <td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100%;"><div style="background:#1E7E34;border-radius:4px;height:8px;width:12%;"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">12% used</div></td>
+            <td style="font-size:11px;">None scheduled</td>
+            <td><button class="btn-edit btn-xs" onclick="openVacationDetail('Roy, Kolton')">View</button> <button class="btn-review btn-xs" onclick="openAddVacation('Roy, Kolton')">+ Add</button></td>
+          </tr>
+          <tr>
+            <td><strong>Bozor, Nicolson</strong></td>
+            <td><span class="badge badge-contracted">Contracted</span></td>
+            <td>BC</td><td>9&amp;5</td>
+            <td style="text-align:center;color:var(--text-muted);">N/A</td>
+            <td style="text-align:center;color:var(--text-muted);">—</td>
+            <td style="text-align:center;color:var(--text-muted);">—</td>
+            <td><div style="font-size:10px;color:var(--text-muted);">Contracted — self-managed</div></td>
+            <td style="font-size:11px;color:var(--text-muted);">Manages own availability</td>
+            <td><button class="btn-edit btn-xs" onclick="toast('Contracted flagmen manage their own availability','')" style="opacity:.5;">N/A</button></td>
+          </tr>
+          <tr>
+            <td><strong>Singh, Arsh</strong></td>
+            <td><span class="badge badge-contracted">Contracted</span></td>
+            <td>BC</td><td>9&amp;5</td>
+            <td style="text-align:center;color:var(--text-muted);">N/A</td>
+            <td style="text-align:center;color:var(--text-muted);">—</td>
+            <td style="text-align:center;color:var(--text-muted);">—</td>
+            <td><div style="font-size:10px;color:var(--text-muted);">Contracted — self-managed</div></td>
+            <td style="font-size:11px;color:var(--text-muted);">Manages own availability</td>
+            <td><button class="btn-edit btn-xs" onclick="toast('Contracted flagmen manage their own availability','')" style="opacity:.5;">N/A</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Vacation calendar view -->
+  <div class="card">
+    <div class="card-header">
+      <h2>📅 Vacation Calendar — June 2026</h2>
+      <div class="card-actions">
+        <button class="btn btn-secondary btn-sm" onclick="toast('Navigated to May 2026','')">◀ May</button>
+        <button class="btn btn-secondary btn-sm" onclick="toast('Navigated to July 2026','')">July ▶</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="sg-table">
+        <thead>
+          <tr>
+            <th class="name-col">Flagman</th><th>Cycle</th>
+            <th>Mon 2</th><th>Tue 3</th><th>Wed 4</th><th>Thu 5</th><th>Fri 6</th>
+            <th>Sat 7</th><th>Sun 8</th><th>Mon 9</th><th>Tue 10</th><th>Wed 11</th><th>Thu 12</th><th>Fri 13</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="14" style="background:#1A1A1A;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;">ALBERTA FLAGMEN</td></tr>
+          <tr>
+            <td class="name-cell">Brule, Joshua</td><td class="cycle-cell">5&amp;2</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Muhammad, Danjuma</td><td class="cycle-cell">5&amp;2</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Williams, Ryan</td><td class="cycle-cell">8&amp;6</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Toft, Mark</td><td class="cycle-cell">8&amp;6</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Ajiboye, Kenny</td><td class="cycle-cell">5&amp;2</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr><td colspan="14" style="background:#1A1A1A;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;">BC FLAGMEN</td></tr>
+          <tr>
+            <td class="name-cell">Jiawan, Daneel</td><td class="cycle-cell">5&amp;2</td>
+            <td></td><td></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Jiawan, Daneel')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Jiawan, Daneel')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Jiawan, Daneel')">Vacation</div></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Jiawan, Daneel')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Jiawan, Daneel')">Vacation</div></td>
+            <td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">O'Hearn, Wade</td><td class="cycle-cell">8&amp;6</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Anderson, Tyler</td><td class="cycle-cell">8&amp;6</td>
+            <td></td><td></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Anderson, Tyler')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Anderson, Tyler')">Vacation</div></td>
+            <td><div class="cell-job cell-orange" onclick="openVacationDetail('Anderson, Tyler')">Vacation</div></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="name-cell">Roy, Kolton</td><td class="cycle-cell">8&amp;6</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td class="cell-empty">OFF</td><td class="cell-empty">OFF</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#FFA500;"></div>Vacation / PLD</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#eee;border:1px solid #ccc;"></div>Off Cycle (not a vacation day)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff;"></div>Working Day</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ INCOMING REQUESTS ══════════ -->
+<div id="sec-incoming" class="page-section">
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <h2>📩 Request Queue</h2>
+        <div class="card-actions">
+          <select style="padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-size:11px;"><option>All Statuses</option><option>New</option><option>Under Review</option><option>Approved</option><option>Rejected</option></select>
+          <select style="padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-size:11px;"><option>All Regions</option><option>BC</option><option>Alberta</option></select>
+        </div>
+      </div>
+      <div class="tbl-scroll">
+        <table class="tbl">
+          <thead><tr><th>Ref #</th><th>Requester</th><th>Subdivision</th><th>Shift</th><th>Dates</th><th>Days</th><th>Flagmen</th><th>Priority</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr style="background:#fff5f5;"><td><strong>REQ-041</strong></td><td><strong>BC Hydro</strong><br><span style="font-size:10px;color:var(--text-muted);">External</span></td><td>Lillooet · MP 200.81</td><td><span class="badge badge-morning">Morning</span></td><td>Jun 9–13</td><td>5</td><td>1</td><td><span class="badge priority-high">High</span></td><td><span class="badge badge-new">New</span></td><td><div style="display:flex;gap:4px;"><button class="btn-review btn-xs" onclick="openRequestDetail('bchydro-req')">Review</button></div></td></tr>
+            <tr style="background:#fffbf0;"><td><strong>REQ-040</strong></td><td><strong>Parsons</strong><br><span style="font-size:10px;color:var(--text-muted);">External</span></td><td>Bulkley · MP 0.25</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Jun 10–12</td><td>3</td><td>1</td><td><span class="badge priority-normal">Normal</span></td><td><span class="badge badge-review">Under Review</span></td><td><div style="display:flex;gap:4px;"><button class="btn-approve btn-xs" onclick="approveRequest('REQ-040','Parsons')">Approve</button><button class="btn-reject btn-xs" onclick="rejectRequest('REQ-040')">Reject</button></div></td></tr>
+            <tr style="background:#fff5f5;"><td><strong>REQ-039</strong></td><td><strong>SIMPCW First Nation</strong><br><span style="font-size:10px;color:var(--text-muted);">External</span></td><td>Clearwater · MP 25.15</td><td>—</td><td>TBD</td><td>—</td><td>2</td><td><span class="badge priority-normal">Normal</span></td><td><span class="badge badge-new">New</span></td><td><div style="display:flex;gap:4px;"><button class="btn-review btn-xs" onclick="openRequestDetail('simpcw-req')">Review</button></div></td></tr>
+            <tr><td><strong>REQ-038</strong></td><td><strong>CN Engineering</strong><br><span style="font-size:10px;color:var(--text-muted);">Internal</span></td><td>Wainwright · MP 14</td><td><span class="badge badge-morning">Morning</span></td><td>Jun 16–20</td><td>5</td><td>1</td><td><span class="badge priority-low">Low</span></td><td><span class="badge badge-approved">Approved</span></td><td><div style="display:flex;gap:4px;"><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-038 details','')">View</button></div></td></tr>
+            <tr><td><strong>REQ-037</strong></td><td><strong>Valard Construction</strong><br><span style="font-size:10px;color:var(--text-muted);">External</span></td><td>Edson · MP 13.87</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>TBD</td><td>—</td><td>1</td><td><span class="badge priority-high">High</span></td><td><span class="badge badge-delayed">Delayed</span></td><td><div style="display:flex;gap:4px;"><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-037 details','')">View</button></div></td></tr>
+            <tr><td><strong>REQ-036</strong></td><td><strong>Fortis BC</strong><br><span style="font-size:10px;color:var(--text-muted);">External</span></td><td>Prince George · MP 430</td><td><span class="badge badge-night">Night</span></td><td>Jun 22–28</td><td>7</td><td>1</td><td><span class="badge priority-normal">Normal</span></td><td><span class="badge badge-review">Under Review</span></td><td><div style="display:flex;gap:4px;"><button class="btn-approve btn-xs" onclick="approveRequest('REQ-036','Fortis BC')">Approve</button><button class="btn-reject btn-xs" onclick="rejectRequest('REQ-036')">Reject</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="request-detail-panel">
+      <div class="card">
+        <div class="card-header"><h2>📋 Request Detail — REQ-041</h2><span class="badge badge-new" style="margin-left:auto;">New</span></div>
+        <div class="card-body">
+          <div class="detail-panel">
+            <div class="detail-title">BC Hydro — Lillooet</div>
+            <div class="detail-sub">Submitted Jun 2, 2026 · External · <span class="badge priority-high">High Priority</span></div>
+            <div class="detail-grid">
+              <div class="dg-item"><div class="dg-label">Subdivision</div><div class="dg-value">Lillooet</div></div>
+              <div class="dg-item"><div class="dg-label">Mileage</div><div class="dg-value">MP 200.81</div></div>
+              <div class="dg-item"><div class="dg-label">Proposed Dates</div><div class="dg-value">Jun 9 – Jun 13</div></div>
+              <div class="dg-item"><div class="dg-label">Shift</div><div class="dg-value"><span class="badge badge-morning">Morning</span></div></div>
+              <div class="dg-item"><div class="dg-label">Start Time</div><div class="dg-value">07:00 AM</div></div>
+              <div class="dg-item"><div class="dg-label">Hours / Day</div><div class="dg-value">10 hrs</div></div>
+              <div class="dg-item"><div class="dg-label">Flagmen Required</div><div class="dg-value">1</div></div>
+              <div class="dg-item"><div class="dg-label">Distance to Track</div><div class="dg-value">On Track</div></div>
+              <div class="dg-item"><div class="dg-label">Machinery</div><div class="dg-value">Yes — Crane</div></div>
+              <div class="dg-item"><div class="dg-label">Excavation</div><div class="dg-value">No</div></div>
+              <div class="dg-item"><div class="dg-label">Contact</div><div class="dg-value">Dave Holt</div></div>
+              <div class="dg-item"><div class="dg-label">Phone</div><div class="dg-value" style="color:var(--cn-blue);">778-555-0198</div></div>
+            </div>
+            <div class="dg-label" style="margin-bottom:4px;">Description of Work</div>
+            <div class="notes-box">Transmission line maintenance adjacent to CN track. Crane will be used within 3m of track. Flagging required for full duration of crane operations.</div>
+            <div class="dg-label" style="margin-bottom:4px;">Accommodation Required</div>
+            <div class="notes-box" style="margin-bottom:10px;">Yes — 5 nights required near Lillooet, BC</div>
+            <div class="assign-section">
+              <div class="assign-title">Assign Flagman — Supervisor Decision</div>
+              <div class="assign-group-label">CN Employees</div>
+              <div class="flagman-opt"><input type="radio" name="assign-req041" id="r041-f1"><label for="r041-f1" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Jiawan, Daneel</div><div class="flagman-opt-meta">BC · 5&amp;2 · Available Jun 9–13</div></label><div class="avail-dot dot-green"></div></div>
+              <div class="flagman-opt" style="opacity:.6;"><input type="radio" name="assign-req041" id="r041-f2" disabled><label for="r041-f2" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">O'Hearn, Wade</div><div class="flagman-opt-meta">BC · 8&amp;6 · On Elworthy Jun 9–13</div></label><div class="avail-dot dot-red"></div></div>
+              <div class="flagman-opt"><input type="radio" name="assign-req041" id="r041-f3"><label for="r041-f3" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Roy, Kolton</div><div class="flagman-opt-meta">BC · 8&amp;6 · Currently unassigned</div></label><div class="avail-dot dot-green"></div></div>
+              <div class="assign-group-label">Contracted Flagmen</div>
+              <div class="flagman-opt"><input type="radio" name="assign-req041" id="r041-f4"><label for="r041-f4" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Bozor, Nicolson</div><div class="flagman-opt-meta">BC · 9&amp;5 · Contracted · Available Jun 9–11 only</div></label><div class="avail-dot dot-yellow"></div></div>
+              <div class="flagman-opt"><input type="radio" name="assign-req041" id="r041-f5"><label for="r041-f5" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Singh, Arsh</div><div class="flagman-opt-meta">BC · 9&amp;5 · Contracted · In training until Jun 8</div></label><div class="avail-dot dot-yellow"></div></div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:10px;">
+              <button class="btn btn-success btn-sm" style="flex:1;" onclick="approveRequest('REQ-041','BC Hydro')">✅ Approve &amp; Assign</button>
+              <button class="btn btn-secondary btn-sm" onclick="toast('Info request sent to BC Hydro ✓','')">Request More Info</button>
+              <button class="btn btn-sm" style="background:#fff;color:var(--cn-red);border:1px solid var(--cn-red);" onclick="rejectRequest('REQ-041')">✗ Reject</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SUBMIT A REQUEST ══════════ -->
+<div id="sec-submit" class="page-section">
+  <div class="req-form-wrapper">
+    <div class="req-form-header">
+      <div class="logo-box">CN</div>
+      <div><h2>Flagging Coverage Request</h2><p>For internal CN departments and external companies requiring flagging coverage on CN track. Complete all required fields — your request will be reviewed by the Flagging Supervisor within 1 business day.</p></div>
+    </div>
+    <div class="req-form-body">
+      <div class="form-section">
+        <div class="form-section-title">1. Requester Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Requester Type <span class="req">*</span></label><div class="radio-group"><label class="radio-label"><input type="radio" name="req_type" checked> Internal (CN Department)</label><label class="radio-label"><input type="radio" name="req_type"> External Company</label></div></div>
+          <div class="form-group"><label>Company / Department Name <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. Elworthy Construction or CN Engineering"></div>
+          <div class="form-group"><label>Contact Name <span class="req">*</span></label><input type="text" class="form-control" placeholder="First and last name"></div>
+          <div class="form-group"><label>Contact Phone <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. 604-555-0123"></div>
+          <div class="form-group"><label>Contact Email <span class="req">*</span></label><input type="text" class="form-control" placeholder="name@company.com"></div>
+          <div class="form-group"><label>CN Project / Permit Number</label><input type="text" class="form-control" placeholder="e.g. CG594003 or FR-722006"><div class="form-note">Leave blank if not yet assigned</div></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">2. Work Location</div>
+        <div class="form-grid">
+          <div class="form-group"><label>CN Subdivision <span class="req">*</span></label><select class="form-control"><option value="">— Select Subdivision —</option><option>Yale</option><option>Clearwater</option><option>Lillooet</option><option>Bulkley</option><option>Prince George</option><option>Squamish</option><option>Drumheller</option><option>Sangudo</option><option>Edson</option><option>Wainwright</option><option>Vegreville</option><option>Other</option></select></div>
+          <div class="form-group"><label>Mileage / MP <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. Mile 118.4 or MP 425.92"></div>
+          <div class="form-group full"><label>Specific Work Location Description <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. Fraser River Bridge, North Side — B&S Building"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">3. Work Details</div>
+        <div class="form-grid">
+          <div class="form-group full"><label>Description of Work <span class="req">*</span></label><textarea class="form-control" placeholder="Describe the nature of the work being performed on or near CN track (e.g. electrical improvements, pipeline installation, road crossing upgrade)"></textarea></div>
+          <div class="form-group"><label>Proposed Start Date <span class="req">*</span></label><input type="date" class="form-control"></div>
+          <div class="form-group"><label>Proposed End Date <span class="req">*</span></label><input type="date" class="form-control"></div>
+          <div class="form-group"><label>Estimated Number of Days <span class="req">*</span></label><input type="number" class="form-control" placeholder="e.g. 5"></div>
+          <div class="form-group"><label>Preferred Shift <span class="req">*</span></label><select class="form-control"><option>Morning (approx. 06:00–14:00)</option><option>Afternoon (approx. 14:00–22:00)</option><option>Night (approx. 22:00–06:00)</option><option>Flexible / No Preference</option></select></div>
+          <div class="form-group"><label>Proposed Start Time</label><input type="time" class="form-control"></div>
+          <div class="form-group"><label>Estimated Hours per Day</label><input type="number" class="form-control" placeholder="e.g. 8"></div>
+          <div class="form-group"><label>Number of Flagmen Required <span class="req">*</span></label><select class="form-control"><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+        </div>
+        <div class="alert alert-info" style="margin-top:10px;font-size:11px;">ℹ️ <strong>Note:</strong> The assignment of CN employee or contracted flagmen is determined solely by the Flagging Supervisor based on availability and operational requirements.</div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">4. Site Conditions</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Distance of Work from Track <span class="req">*</span></label><select class="form-control"><option>On Track</option><option>Within 3m of Track</option><option>3m – 7.5m from Track</option><option>Over 7.5m from Track</option></select></div>
+          <div class="form-group"><label>Will Excavation be Required? <span class="req">*</span></label><div class="radio-group" style="padding-top:6px;"><label class="radio-label"><input type="radio" name="excavation"> Yes</label><label class="radio-label"><input type="radio" name="excavation" checked> No</label></div></div>
+          <div class="form-group"><label>Will Machinery be Utilized? <span class="req">*</span></label><div class="radio-group" style="padding-top:6px;"><label class="radio-label"><input type="radio" name="machinery"> Yes</label><label class="radio-label"><input type="radio" name="machinery" checked> No</label></div></div>
+          <div class="form-group"><label>Is Accommodation Required?</label><div class="radio-group" style="padding-top:6px;"><label class="radio-label"><input type="radio" name="accom"> Yes</label><label class="radio-label"><input type="radio" name="accom" checked> No</label></div></div>
+          <div class="form-group full"><label>Additional Site Notes / Special Requirements</label><textarea class="form-control" placeholder="Any hazards, access restrictions, special equipment, or other details the supervisor should know"></textarea></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="submitRequest()">📩 Submit Request</button>
+        <button class="btn btn-secondary" onclick="toast('Request saved as draft ✓','')">Save as Draft</button>
+        <button class="btn btn-secondary" style="margin-left:auto;" onclick="toast('Form cleared','')">Clear Form</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EXPORT ══════════ -->
+<div id="sec-export" class="page-section">
+  <div class="card">
+    <div class="card-header"><h2>📤 Export Schedules</h2></div>
+    <div class="card-body">
+      <div class="form-grid" style="margin-bottom:16px;">
+        <div class="form-group"><label>Region</label><select class="form-control"><option>BC + Alberta (Combined)</option><option>BC Only</option><option>Alberta Only</option></select></div>
+        <div class="form-group"><label>Week</label><input type="date" class="form-control"></div>
+        <div class="form-group"><label>Format</label><select class="form-control"><option>PDF</option><option>Excel (.xlsx)</option><option>CSV</option></select></div>
+        <div class="form-group"><label>Include</label><select class="form-control"><option>All Flagmen</option><option>CN Employees Only</option><option>Contracted Only</option></select></div>
+      </div>
+      <button class="btn btn-primary" onclick="toast('Generating schedule export... Download will begin shortly ✓','success')">📤 Generate &amp; Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ REPORTS ══════════ -->
+<div id="sec-reports" class="page-section">
+  <div class="two-col-eq">
+    <div class="card">
+      <div class="card-header"><h2>📈 Generate Report</h2></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px;"><label>Report Type</label><select class="form-control"><option>Flagman Utilization</option><option>Overtime Hours Summary</option><option>Jobs by Subdivision</option><option>Unscheduled Jobs Log</option><option>Request Response Times</option><option>Completed Jobs Summary</option><option>Shift Distribution (AM/PM/Night)</option></select></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Date Range</label><select class="form-control"><option>This Month</option><option>Last Month</option><option>Last 3 Months</option><option>YTD 2026</option><option>Custom Range</option></select></div>
+        <div class="form-group" style="margin-bottom:14px;"><label>Region</label><select class="form-control"><option>All Regions</option><option>BC Only</option><option>Alberta Only</option></select></div>
+        <button class="btn btn-primary" onclick="toast('Generating report... Download will begin shortly ✓','success')">📊 Generate Report</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h2>📋 Recent Reports</h2></div>
+      <div class="card-body">
+        <table class="tbl">
+          <thead><tr><th>Report</th><th>Generated</th><th>By</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Flagman Utilization — May 2026</td><td>Jun 1</td><td>S. Mitchell</td><td><button class="btn-edit btn-xs" onclick="toast('Downloading Utilization Report...','success')">Download</button></td></tr>
+            <tr><td>Overtime Summary — May 2026</td><td>Jun 1</td><td>S. Mitchell</td><td><button class="btn-edit btn-xs" onclick="toast('Downloading OT Report...','success')">Download</button></td></tr>
+            <tr><td>Completed Jobs — Q1 2026</td><td>Apr 2</td><td>S. Mitchell</td><td><button class="btn-edit btn-xs" onclick="toast('Downloading Completed Jobs Report...','success')">Download</button></td></tr>
+            <tr><td>Shift Distribution — Q1 2026</td><td>Apr 2</td><td>S. Mitchell</td><td><button class="btn-edit btn-xs" onclick="toast('Downloading Shift Report...','success')">Download</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SETTINGS ══════════ -->
+<div id="sec-settings" class="page-section">
+  <div class="two-col-eq">
+    <div class="card">
+      <div class="card-header"><h2>⚙️ Notification Preferences</h2></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px;"><label>New Request Notifications</label><select class="form-control"><option>Email + In-App</option><option>Email Only</option><option>In-App Only</option></select></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>OT Reminder Day</label><select class="form-control"><option>Wednesday</option><option>Thursday</option></select></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>OT Response Deadline</label><select class="form-control"><option>Friday 5:00 PM</option><option>Friday 3:00 PM</option><option>Thursday 5:00 PM</option></select></div>
+        <div class="form-group" style="margin-bottom:14px;"><label>Weekly Schedule Send Day</label><select class="form-control"><option>Friday</option><option>Thursday</option></select></div>
+        <button class="btn btn-primary" onclick="toast('Settings saved ✓','success')">Save Settings</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h2>👤 My Profile</h2></div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:10px;"><label>Full Name</label><input type="text" class="form-control" value="Sarah Mitchell"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Email</label><input type="text" class="form-control" value="s.mitchell@cn.ca"></div>
+        <div class="form-group" style="margin-bottom:10px;"><label>Phone</label><input type="text" class="form-control" value="604-555-0001"></div>
+        <div class="form-group" style="margin-bottom:14px;"><label>Region</label><select class="form-control"><option>Western Region (BC + Alberta)</option><option>BC Only</option><option>Alberta Only</option></select></div>
+        <button class="btn btn-primary" onclick="toast('Profile updated ✓','success')">Save Profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /app-body -->
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Notifications -->
+<div id="modal-notifications" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>🔔 Notifications</h3><button class="modal-close" onclick="closeModal('modal-notifications')">×</button></div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="padding:10px 12px;background:#fff5f5;border:1px solid #f5c6cb;border-radius:6px;font-size:12px;"><strong>📩 New Request — BC Hydro (REQ-041)</strong><br><span style="color:var(--text-muted);">Jun 2 at 10:14 AM · Lillooet · 5 days · Morning shift</span></div>
+        <div style="padding:10px 12px;background:#fff5f5;border:1px solid #f5c6cb;border-radius:6px;font-size:12px;"><strong>📩 New Request — SIMPCW (REQ-039)</strong><br><span style="color:var(--text-muted);">May 30 at 2:00 PM · Clearwater · 2 flagmen · TBD</span></div>
+        <div style="padding:10px 12px;background:#fffbf0;border:1px solid #ffe082;border-radius:6px;font-size:12px;"><strong>⏰ OT Deadline Approaching</strong><br><span style="color:var(--text-muted);">Availability window closes Friday Jun 6 at 5 PM. 5 of 11 responded.</span></div>
+        <div style="padding:10px 12px;background:#fff8e1;border:1px solid #ffe082;border-radius:6px;font-size:12px;"><strong>⚠️ Unscheduled Jobs</strong><br><span style="color:var(--text-muted);">BC Hydro and SIMPCW jobs have no flagman assigned.</span></div>
+        <div style="padding:10px 12px;background:#f0f7ff;border:1px solid #b3d4f5;border-radius:6px;font-size:12px;"><strong>✅ REQ-038 Approved — CN Engineering</strong><br><span style="color:var(--text-muted);">Jun 1 at 9:00 AM · Wainwright · Assigned to
+ Brule, Joshua</span></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-notifications')">Mark All Read</button></div>
+  </div>
+</div>
+
+<!-- Add Job Modal -->
+<div id="modal-add-job" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>+ Add New Job</h3><button class="modal-close" onclick="closeModal('modal-add-job')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Company Name <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. Elworthy Construction"></div>
+        <div class="form-group"><label>CN Project / Permit # <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. CG594003"></div>
+        <div class="form-group"><label>Subdivision <span class="req">*</span></label><select class="form-control"><option value="">— Select —</option><option>Yale</option><option>Clearwater</option><option>Lillooet</option><option>Bulkley</option><option>Prince George</option><option>Squamish</option><option>Drumheller</option><option>Sangudo</option><option>Edson</option><option>Wainwright</option><option>Vegreville</option></select></div>
+        <div class="form-group"><label>Mileage / MP <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. 118.4"></div>
+        <div class="form-group"><label>Work Location</label><input type="text" class="form-control" placeholder="e.g. Fraser River Bridge"></div>
+        <div class="form-group"><label>Description of Work</label><input type="text" class="form-control" placeholder="e.g. Electrical improvements"></div>
+        <div class="form-group"><label>Start Date <span class="req">*</span></label><input type="date" class="form-control"></div>
+        <div class="form-group"><label>End Date</label><input type="date" class="form-control"></div>
+        <div class="form-group"><label>Shift <span class="req">*</span></label><select class="form-control"><option>Morning (06:00–14:00)</option><option>Afternoon (14:00–22:00)</option><option>Night (22:00–06:00)</option></select></div>
+        <div class="form-group"><label>Start Time</label><input type="time" class="form-control"></div>
+        <div class="form-group"><label>Hours per Day</label><input type="number" class="form-control" placeholder="e.g. 10"></div>
+        <div class="form-group"><label>Number of Flagmen</label><select class="form-control"><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+        <div class="form-group"><label>Assign Flagman</label><select class="form-control"><option value="">— Assign Later —</option><option>Brule, Joshua (Alberta · 5&2)</option><option>Muhammad, Danjuma (Alberta · 5&2)</option><option>Williams, Ryan (Alberta · 8&6)</option><option>Toft, Mark (Alberta · 8&6)</option><option>Ajiboye, Kenny (Alberta · 5&2)</option><option>Jiawan, Daneel (BC · 5&2)</option><option>O'Hearn, Wade (BC · 8&6)</option><option>Anderson, Tyler (BC · 8&6)</option><option>Roy, Kolton (BC · 8&6) — Available</option><option>Bozor, Nicolson (BC · Contracted)</option><option>Singh, Arsh (BC · Contracted)</option></select></div>
+        <div class="form-group"><label>Accommodation Required?</label><div class="radio-group" style="padding-top:6px;"><label class="radio-label"><input type="radio" name="modal-accom"> Yes</label><label class="radio-label"><input type="radio" name="modal-accom" checked> No</label></div></div>
+        <div class="form-group full"><label>Hotel / Accommodation Details</label><input type="text" class="form-control" placeholder="e.g. Sandman Inn — Hope, BC · 5 nights"></div>
+        <div class="form-group full"><label>Field Contact Name &amp; Phone</label><input type="text" class="form-control" placeholder="e.g. Rob Romaniuk — 604-671-3427"></div>
+        <div class="form-group full"><label>Notes</label><textarea class="form-control" placeholder="Any additional notes for this job..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-job')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-add-job');toast('New job added successfully ✓','success')">Save Job</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assign Flagman Modal (Cycle-Aware) -->
+<div id="modal-assign" class="modal-overlay hidden">
+  <div class="modal" style="max-width:780px;">
+    <div class="modal-header"><h3 id="modal-assign-title">Assign Flagman</h3><button class="modal-close" onclick="closeModal('modal-assign')">×</button></div>
+    <div class="modal-body">
+      <div class="alert alert-info" style="margin-bottom:14px;">ℹ️ <strong>Supervisor Decision:</strong> Assignment of CN employees vs. contracted flagmen is at your discretion. The system will highlight off-cycle days once a flagman is selected for a multi-week job.</div>
+
+      <!-- Step 1: Job dates and shift -->
+      <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--cn-blue);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Step 1 — Confirm Job Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div class="form-group"><label>Shift <span class="req">*</span></label><select class="form-control" id="assign-shift" onchange="updateCyclePreview()"><option>Morning (06:00–14:00)</option><option>Afternoon (14:00–22:00)</option><option>Night (22:00–06:00)</option></select></div>
+          <div class="form-group"><label>Start Date <span class="req">*</span></label><input type="date" class="form-control" id="assign-start" value="2026-06-09" onchange="updateCyclePreview()"></div>
+          <div class="form-group"><label>End Date <span class="req">*</span></label><input type="date" class="form-control" id="assign-end" value="2026-06-27" onchange="updateCyclePreview()"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Select flagman -->
+      <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--cn-blue);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Step 2 — Select Primary Flagman</div>
+        <div class="assign-group-label">CN Employees — Available</div>
+        <div class="flagman-opt" onclick="selectFlagman(this,'Roy, Kolton','8&amp;6','BC')"><input type="radio" name="modal-assign-f" id="maf1"><label for="maf1" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Roy, Kolton</div><div class="flagman-opt-meta">BC · <strong>8&amp;6 cycle</strong> · Currently unassigned · 22 vacation days remaining</div></label><div class="avail-dot dot-green"></div></div>
+        <div class="flagman-opt" onclick="selectFlagman(this,'Jiawan, Daneel','5&amp;2','BC')"><input type="radio" name="modal-assign-f" id="maf2"><label for="maf2" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Jiawan, Daneel</div><div class="flagman-opt-meta">BC · <strong>5&amp;2 cycle</strong> · Available Jun 9+ · 13 vacation days remaining</div></label><div class="avail-dot dot-yellow"></div></div>
+        <div class="flagman-opt" onclick="selectFlagman(this,'Brule, Joshua','5&amp;2','Alberta')"><input type="radio" name="modal-assign-f" id="maf3"><label for="maf3" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Brule, Joshua</div><div class="flagman-opt-meta">Alberta · <strong>5&amp;2 cycle</strong> · Available weekdays · 17 vacation days remaining</div></label><div class="avail-dot dot-green"></div></div>
+        <div class="assign-group-label">Contracted Flagmen — Available</div>
+        <div class="flagman-opt" onclick="selectFlagman(this,'Bozor, Nicolson','9&amp;5','BC')"><input type="radio" name="modal-assign-f" id="maf4"><label for="maf4" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Bozor, Nicolson</div><div class="flagman-opt-meta">BC · <strong>9&amp;5 cycle</strong> · Contracted · Available Jun 9+</div></label><div class="avail-dot dot-yellow"></div></div>
+        <div class="flagman-opt" onclick="selectFlagman(this,'Singh, Arsh','9&amp;5','BC')"><input type="radio" name="modal-assign-f" id="maf5"><label for="maf5" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Singh, Arsh</div><div class="flagman-opt-meta">BC · <strong>9&amp;5 cycle</strong> · Contracted · Available after Jun 8</div></label><div class="avail-dot dot-yellow"></div></div>
+        <div class="assign-group-label">CN Employees — Currently On Job</div>
+        <div class="flagman-opt" style="opacity:.5;"><input type="radio" name="modal-assign-f" id="maf6" disabled><label for="maf6" style="flex:1;"><div class="flagman-opt-name">O'Hearn, Wade</div><div class="flagman-opt-meta">BC · 8&amp;6 · On Elworthy until Jun 14</div></label><div class="avail-dot dot-red"></div></div>
+        <div class="flagman-opt" style="opacity:.5;"><input type="radio" name="modal-assign-f" id="maf7" disabled><label for="maf7" style="flex:1;"><div class="flagman-opt-name">Williams, Ryan</div><div class="flagman-opt-meta">Alberta · 8&amp;6 · On Amrize until Jun 10</div></label><div class="avail-dot dot-red"></div></div>
+      </div>
+
+      <!-- Step 3: Cycle breakdown (shown when flagman selected) -->
+      <div id="cycle-breakdown" style="display:none;background:#fff;border:2px solid var(--cn-blue);border-radius:8px;padding:16px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--cn-blue);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Step 3 — Work Cycle Breakdown for <span id="cycle-flagman-name">—</span></div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Job spans <strong id="cycle-total-days">—</strong> calendar days (<strong id="cycle-start-label">—</strong> to <strong id="cycle-end-label">—</strong>). Based on the <strong id="cycle-type-label">—</strong> cycle, the flagman has <strong id="cycle-on-days">—</strong> on-cycle days and <span style="color:var(--cn-red);font-weight:700;" id="cycle-off-days">—</span> off-cycle days during this period.</div>
+
+        <!-- Day-by-day calendar strip -->
+        <div id="cycle-calendar" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;"></div>
+
+        <!-- Off-day alert and options -->
+        <div id="off-day-alert" style="display:none;">
+          <div class="alert alert-warning" style="margin-bottom:10px;">⚠️ <strong id="off-day-count">—</strong> off-cycle days fall within this job period. How would you like to handle coverage on those days?</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px;">Off-Day Coverage Options — Choose One:</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fafafa;">
+              <input type="radio" name="offday-option" value="secondary" style="margin-top:2px;" onchange="showSecondaryAssign(true)"> 
+              <div><div style="font-size:12px;font-weight:700;">Option A — Assign a second flagman for off-cycle days</div><div style="font-size:11px;color:var(--text-muted);">A different flagman covers the <span class="off-day-count-inline">—</span> off-cycle days. Best for long jobs where continuity matters.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fafafa;">
+              <input type="radio" name="offday-option" value="ot" style="margin-top:2px;" onchange="showSecondaryAssign(false)">
+              <div><div style="font-size:12px;font-weight:700;">Option B — Request overtime from primary flagman</div><div style="font-size:11px;color:var(--text-muted);">Primary flagman works their off days as OT. Requires flagman agreement. Suitable for short off-day gaps.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fafafa;">
+              <input type="radio" name="offday-option" value="pause" style="margin-top:2px;" onchange="showSecondaryAssign(false)">
+              <div><div style="font-size:12px;font-weight:700;">Option C — Job pauses on off-cycle days</div><div style="font-size:11px;color:var(--text-muted);">Work stops on the flagman's off days. Requester must be informed. Suitable only if work can be interrupted.</div></div>
+            </label>
+          </div>
+
+          <!-- Secondary flagman selector (Option A) -->
+          <div id="secondary-assign-section" style="display:none;margin-top:12px;background:var(--cn-light-blue);border-radius:6px;padding:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">Select Off-Day Coverage Flagman</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">This flagman will cover only the <span class="off-day-count-inline">—</span> off-cycle days. They do not need to match the primary flagman's cycle.</div>
+            <div class="flagman-opt" style="background:#fff;"><input type="radio" name="secondary-assign-f" id="saf1"><label for="saf1" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Roy, Kolton</div><div class="flagman-opt-meta">BC · 8&amp;6 · Unassigned · Available for off-day coverage</div></label><div class="avail-dot dot-green"></div></div>
+            <div class="flagman-opt" style="background:#fff;"><input type="radio" name="secondary-assign-f" id="saf2"><label for="saf2" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Bozor, Nicolson</div><div class="flagman-opt-meta">BC · 9&amp;5 · Contracted · Available for off-day coverage</div></label><div class="avail-dot dot-yellow"></div></div>
+            <div class="flagman-opt" style="background:#fff;"><input type="radio" name="secondary-assign-f" id="saf3"><label for="saf3" style="flex:1;cursor:pointer;"><div class="flagman-opt-name">Singh, Arsh</div><div class="flagman-opt-meta">BC · 9&amp;5 · Contracted · Available for off-day coverage</div></label><div class="avail-dot dot-yellow"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accommodation -->
+      <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:6px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--cn-blue);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Step 4 — Accommodation</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="form-group"><label>Accommodation Required?</label><div class="radio-group" style="padding-top:6px;"><label class="radio-label"><input type="radio" name="modal-assign-accom"> Yes</label><label class="radio-label"><input type="radio" name="modal-assign-accom" checked> No</label></div></div>
+          <div class="form-group"><label>Hotel / Accommodation Details</label><input type="text" class="form-control" placeholder="e.g. Sandman Inn — Hope, BC · 5 nights"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-assign')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-assign');toast('Flagman assigned successfully ✓','success')">✅ Confirm Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Vacation Modal -->
+<div id="modal-add-vacation" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>+ Add Vacation Entry</h3><button class="modal-close" onclick="closeModal('modal-add-vacation')">×</button></div>
+    <div class="modal-body">
+      <div class="alert alert-info" style="margin-bottom:14px;">ℹ️ Vacation days are counted against the flagman's 25-day annual entitlement. Off-cycle days within a vacation period do <strong>not</strong> count as vacation days.</div>
+      <div class="form-grid">
+        <div class="form-group full"><label>Flagman <span class="req">*</span></label>
+          <select class="form-control" id="vac-flagman" onchange="updateVacBalance()">
+            <option value="">— Select Flagman —</option>
+            <option value="Brule, Joshua|17">Brule, Joshua (Alberta · 5&amp;2 · 17 days remaining)</option>
+            <option value="Muhammad, Danjuma|20">Muhammad, Danjuma (Alberta · 5&amp;2 · 20 days remaining)</option>
+            <option value="Williams, Ryan|4">Williams, Ryan (Alberta · 8&amp;6 · 4 days remaining ⚠️)</option>
+            <option value="Toft, Mark|5">Toft, Mark (Alberta · 8&amp;6 · 5 days remaining ⚠️)</option>
+            <option value="Ajiboye, Kenny|15">Ajiboye, Kenny (Alberta · 5&amp;2 · 15 days remaining)</option>
+            <option value="Jiawan, Daneel|13">Jiawan, Daneel (BC · 5&amp;2 · 13 days remaining)</option>
+            <option value="O'Hearn, Wade|18">O'Hearn, Wade (BC · 8&amp;6 · 18 days remaining)</option>
+            <option value="Anderson, Tyler|10">Anderson, Tyler (BC · 8&amp;6 · 10 days remaining)</option>
+            <option value="Roy, Kolton|22">Roy, Kolton (BC · 8&amp;6 · 22 days remaining)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Vacation Start Date <span class="req">*</span></label><input type="date" class="form-control" id="vac-start" onchange="calcVacDays()"></div>
+        <div class="form-group"><label>Vacation End Date <span class="req">*</span></label><input type="date" class="form-control" id="vac-end" onchange="calcVacDays()"></div>
+        <div class="form-group"><label>Vacation Type</label><select class="form-control"><option>Annual Vacation</option><option>PLD (Personal Leave Day)</option><option>Lieu Day</option></select></div>
+        <div class="form-group"><label>Days to Deduct</label><input type="number" class="form-control" id="vac-days-calc" placeholder="Auto-calculated" readonly style="background:#f8f9fa;"></div>
+        <div class="form-group full" id="vac-balance-display" style="display:none;">
+          <div style="background:var(--cn-light-blue);border-radius:6px;padding:10px 14px;font-size:12px;">
+            <strong id="vac-balance-name">—</strong> — After this entry: <strong id="vac-balance-after">—</strong> days remaining of 25
+            <div id="vac-balance-warning" style="color:var(--cn-red);font-weight:700;margin-top:4px;display:none;">⚠️ This entry would exceed the 25-day limit. Please reduce the number of days.</div>
+          </div>
+        </div>
+        <div class="form-group full"><label>Notes</label><textarea class="form-control" placeholder="Optional — e.g. pre-approved by supervisor, family leave, etc."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-vacation')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveVacation()">💾 Save Vacation Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vacation Detail Modal -->
+<div id="modal-vacation-detail" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-vac-title">Vacation History</h3><button class="modal-close" onclick="closeModal('modal-vacation-detail')">×</button></div>
+    <div class="modal-body" id="modal-vac-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-vacation-detail')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-vacation-detail');openAddVacation(currentVacFlagman)">+ Add Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Job Detail Modal -->
+<div id="modal-job-detail" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-job-title">Job Detail</h3><button class="modal-close" onclick="closeModal('modal-job-detail')">×</button></div>
+    <div class="modal-body" id="modal-job-body"></div>
+    <div class="modal-footer" id="modal-job-footer"></div>
+  </div>
+</div>
+
+<!-- Add Flagman Modal -->
+<div id="modal-add-flagman" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>+ Add Flagman to Roster</h3><button class="modal-close" onclick="closeModal('modal-add-flagman')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Last Name <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. Smith"></div>
+        <div class="form-group"><label>First Name <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. John"></div>
+        <div class="form-group"><label>Type <span class="req">*</span></label><div class="radio-group" style="padding-top:6px;"><label class="radio-label"><input type="radio" name="ftype" checked> CN Employee</label><label class="radio-label"><input type="radio" name="ftype"> Contracted</label></div></div>
+        <div class="form-group"><label>Region <span class="req">*</span></label><select class="form-control"><option>BC</option><option>Alberta</option></select></div>
+        <div class="form-group"><label>Work Cycle <span class="req">*</span></label><select class="form-control"><option>5&amp;2</option><option>8&amp;6</option><option>9&amp;5</option><option>Other</option></select></div>
+        <div class="form-group"><label>Seniority #</label><input type="number" class="form-control" placeholder="e.g. 19"></div>
+        <div class="form-group"><label>Phone <span class="req">*</span></label><input type="text" class="form-control" placeholder="e.g. 604-555-0123"></div>
+        <div class="form-group"><label>Email <span class="req">*</span></label><input type="text" class="form-control" placeholder="name@cn.ca"></div>
+        <div class="form-group"><label>Hire Date</label><input type="date" class="form-control"></div>
+        <div class="form-group"><label>Certifications</label><input type="text" class="form-control" placeholder="e.g. CN Flagging, CROR"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-flagman')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-add-flagman');toast('Flagman added to roster ✓','success')">Add Flagman</button>
+    </div>
+  </div>
+</div>
+
+<!-- Flagman Profile Modal -->
+<div id="modal-flagman-profile" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-profile-title">Flagman Profile</h3><button class="modal-close" onclick="closeModal('modal-flagman-profile')">×</button></div>
+    <div class="modal-body" id="modal-profile-body">
+      <div class="detail-grid">
+        <div class="dg-item"><div class="dg-label">Type</div><div class="dg-value"><span class="badge badge-cn">CN Employee</span></div></div>
+        <div class="dg-item"><div class="dg-label">Region</div><div class="dg-value">BC</div></div>
+        <div class="dg-item"><div class="dg-label">Work Cycle</div><div class="dg-value">8&amp;6</div></div>
+        <div class="dg-item"><div class="dg-label">Seniority</div><div class="dg-value">#12</div></div>
+        <div class="dg-item"><div class="dg-label">Phone</div><div class="dg-value" style="color:var(--cn-blue);">604-555-0202</div></div>
+        <div class="dg-item"><div class="dg-label">Email</div><div class="dg-value">w.ohearn@cn.ca</div></div>
+        <div class="dg-item"><div class="dg-label">Current Job</div><div class="dg-value">Elworthy — Yale FRB</div></div>
+        <div class="dg-item"><div class="dg-label">Shift</div><div class="dg-value"><span class="badge badge-night">Night</span></div></div>
+        <div class="dg-item"><div class="dg-label">Jobs This Year</div><div class="dg-value">6</div></div>
+        <div class="dg-item"><div class="dg-label">OT Days (YTD)</div><div class="dg-value">4</div></div>
+      </div>
+      <div style="margin-top:14px;"><div class="dg-label" style="margin-bottom:6px;">Recent Job History</div>
+        <table class="tbl"><thead><tr><th>Company</th><th>Subdivision</th><th>Shift</th><th>Dates</th></tr></thead>
+        <tbody>
+          <tr><td>Elworthy</td><td>Yale FRB</td><td><span class="badge badge-night">Night</span></td><td>Jun 1 – Jun 14</td></tr>
+          <tr><td>BC Hydro</td><td>Lillooet</td><td><span class="badge badge-night">Night</span></td><td>Apr 28 – May 4</td></tr>
+          <tr><td>Elworthy</td><td>Yale</td><td><span class="badge badge-morning">Morning</span></td><td>Mar 18 – Mar 28</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-flagman-profile')">Close</button>
+      <button class="btn btn-blue" onclick="closeModal('modal-flagman-profile');openAssignModal('Selected Flagman','Next Available')">Assign to Job</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-flagman-profile');toast('Editing flagman profile...','')">✏️ Edit Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ── Navigation ──────────────────────────────────────────────────────────────
+const pageConfig = {
+  dashboard: { title: 'Dashboard — Week of June 2, 2026', sub: 'Western Region · Alberta & BC Flagmen', actions: '<button class="btn btn-secondary" onclick="showModal(\'modal-add-job\')">+ Add Job</button><button class="btn btn-primary" onclick="toast(\'Weekly schedule sent to all flagmen ✓\',\'success\')">📤 Send Weekly Schedule</button>' },
+  jobs:      { title: 'Active Jobs', sub: '8 active jobs this week', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-job\')">+ New Job</button>' },
+  completed: { title: 'Completed Jobs', sub: '47 jobs completed YTD 2026', actions: '<button class="btn btn-secondary" onclick="toast(\'Exporting completed jobs...\',\'success\')">📤 Export All</button>' },
+  schedule:  { title: 'Working Schedule — June 2026', sub: 'All flagmen · 3-shift view', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-job\')">+ Add Assignment</button>' },
+  weekly:    { title: 'Weekly Schedule', sub: 'Send and export weekly schedules to flagmen', actions: '<button class="btn btn-primary" onclick="toast(\'Weekly schedule sent ✓\',\'success\')">📤 Send to All Flagmen</button>' },
+  roster:    { title: 'Flagman Roster', sub: '11 flagmen · 9 CN Employees · 2 Contracted', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-flagman\')">+ Add Flagman</button>' },
+  vacation:  { title: 'Vacation Management', sub: 'All flagmen · 2026 vacation year · Max 25 days per flagman', actions: '<button class="btn btn-primary" onclick="showModal(\'modal-add-vacation\')">+ Add Vacation Entry</button>' },
+  incoming:  { title: 'Incoming Requests', sub: '3 new requests awaiting review', actions: '' },
+  submit:    { title: 'Submit a Flagging Request', sub: 'For internal CN departments and external companies requiring flagging coverage on CN track', actions: '' },
+  export:    { title: 'Export Schedules', sub: 'Download weekly schedules as PDF, Excel, or CSV', actions: '' },
+  reports:   { title: 'Reports', sub: 'Utilization, overtime, and scheduling analytics', actions: '' },
+  settings:  { title: 'Settings', sub: 'Notification preferences and system configuration', actions: '' },
+};
+
+function navigate(target) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.toggle('active', i.dataset.target === target));
+  document.querySelectorAll('.page-section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + target));
+  const cfg = pageConfig[target] || { title: target, sub: '', actions: '' };
+  document.getElementById('pageTitle').textContent = cfg.title;
+  document.getElementById('pageSubtitle').innerHTML = cfg.sub;
+  document.getElementById('pageActions').innerHTML = cfg.actions;
+  document.querySelector('.main').scrollTop = 0;
+}
+document.querySelectorAll('.nav-item[data-target]').forEach(item => {
+  item.addEventListener('click', () => navigate(item.dataset.target));
+});
+
+// ── Modals ───────────────────────────────────────────────────────────────────
+function showModal(id, param) {
+  if (id === 'modal-flagman-profile' && param) {
+    document.getElementById('modal-profile-title').textContent = param + ' — Profile';
+  }
+  document.getElementById(id).classList.remove('hidden');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.add('hidden'); });
+});
+
+// ── Assign Modal ─────────────────────────────────────────────────────────────
+function openAssignModal(jobName, location) {
+  document.getElementById('modal-assign-title').textContent = 'Assign Flagman — ' + jobName + (location ? ' · ' + location : '');
+  showModal('modal-assign');
+}
+
+// ── Job Detail Modal ─────────────────────────────────────────────────────────
+const jobData = {
+  elworthy: {
+    title: 'Elworthy — Yale FRB',
+    status: 'In Progress',
+    fields: [
+      ['Project #','CG594003'],['Subdivision','Yale'],['Mileage','118'],
+      ['Work Location','Fraser River Bridge, North Side'],['Shift','Night (22:00–06:00)'],
+      ['Start Date','Jun 1, 2026'],['End Date','Jun 14, 2026'],['Duration','14 Days'],
+      ['Flagman','O\'Hearn, Wade'],['Type','CN Employee'],
+      ['Field Contact','Rob Romaniuk — 604-671-3427'],['Hours/Day','11 hrs'],
+      ['Excavation','No'],['Machinery','No'],['Distance to Track','On Track'],
+      ['Accommodation','Sandman Inn — Hope, BC · Jun 1–14']
+    ],
+    notes: 'Electrical improvements at Fraser River Bridge. Night flagging required during active train windows. Flagman to meet at B&S Building, North Side FRB at 21:45.'
+  },
+  calgary: {
+    title: 'City of Calgary — Drumheller',
+    status: 'In Progress',
+    fields: [
+      ['Project #','721363'],['Subdivision','Drumheller'],['Mileage','01S'],
+      ['Work Location','Drumheller Yard — East End'],['Shift','Morning (06:00–14:00)'],
+      ['Start Date','Jun 2, 2026'],['End Date','Jun 20, 2026'],['Duration','18 Days'],
+      ['Flagman','Muhammad, Danjuma'],['Type','CN Employee'],
+      ['Field Contact','Karen Lau — 403-555-0142'],['Hours/Day','8 hrs'],
+      ['Excavation','Yes'],['Machinery','Yes — Excavator'],['Distance to Track','Within 3m'],
+      ['Accommodation','N/A — Local job']
+    ],
+    notes: 'Road crossing upgrade at Drumheller Yard. Excavation required within 3m of track. Flagman must be on site before any excavation begins.'
+  },
+  amrize: {
+    title: 'Amrize — Sangudo',
+    status: 'In Progress',
+    fields: [
+      ['Project #','718527'],['Subdivision','Sangudo'],['Mileage','6.7'],
+      ['Work Location','Sangudo Siding — MP 6.7'],['Shift','Morning (06:00–14:00)'],
+      ['Start Date','May 28, 2026'],['End Date','Jun 10, 2026'],['Duration','12 Days'],
+      ['Flagman','Williams, Ryan'],['Type','CN Employee'],
+      ['Field Contact','Dave Kowalski — 780-555-0188'],['Hours/Day','8 hrs'],
+      ['Excavation','No'],['Machinery','Yes — Crane'],['Distance to Track','On Track'],
+      ['Accommodation','N/A — Local job']
+    ],
+    notes: 'Concrete plant operations adjacent to CN track. Crane utilized for loading. Flagman required during all crane operations.'
+  },
+  embridge: {
+    title: 'Embridge — Prince George',
+    status: 'In Progress',
+    fields: [
+      ['Project #','FR#720312'],['Subdivision','Prince George'],['Mileage','425.92'],
+      ['Work Location','PG Subdivision — MP 425.92'],['Shift','Afternoon (14:00–22:00)'],
+      ['Start Date','Jun 1, 2026'],['End Date','Jun 15, 2026'],['Duration','14 Days'],
+      ['Flagman','Anderson, Tyler'],['Type','CN Employee'],
+      ['Field Contact','Mike Tremblay — 250-555-0177'],['Hours/Day','8 hrs'],
+      ['Excavation','Yes'],['Machinery','Yes — Backhoe'],['Distance to Track','Within 3m'],
+      ['Accommodation','Sandman Inn — Prince George · Jun 1–15']
+    ],
+    notes: 'Pipeline installation crossing CN right-of-way. Afternoon shift to avoid peak train traffic. Flagman to coordinate with CN dispatcher before each work window.'
+  },
+  wastewater: {
+    title: 'Waste Water — McClain',
+    status: 'In Progress',
+    fields: [
+      ['Project #','—'],['Subdivision','McClain'],['Mileage','—'],
+      ['Work Location','McClain Yard'],['Shift','Night (22:00–06:00)'],
+      ['Start Date','Jun 1, 2026'],['End Date','Jun 14, 2026'],['Duration','14 Days'],
+      ['Flagman','Bozor, Nicolson'],['Type','Contracted'],
+      ['Field Contact','Tom Bauer — 604-555-0155'],['Hours/Day','8 hrs'],
+      ['Excavation','No'],['Machinery','No'],['Distance to Track','On Track'],
+      ['Accommodation','Sandman Inn — Terrace, BC · Jun 1–14']
+    ],
+    notes: 'Waste water infrastructure maintenance at McClain Yard. Night shift to minimize operational impact. Contracted flagman assigned per supervisor decision.'
+  },
+  dreger: {
+    title: 'Dreger — Sangudo',
+    status: 'In Progress',
+    fields: [
+      ['Project #','718530'],['Subdivision','Sangudo'],['Mileage','8.2'],
+      ['Work Location','Sangudo — MP 8.2'],['Shift','Morning (06:00–14:00)'],
+      ['Start Date','Jun 1, 2026'],['End Date','Jun 12, 2026'],['Duration','12 Days'],
+      ['Flagman','Toft, Mark'],['Type','CN Employee'],
+      ['Field Contact','Paul Dreger — 780-555-0199'],['Hours/Day','8 hrs'],
+      ['Excavation','No'],['Machinery','Yes — Loader'],['Distance to Track','3m–7.5m'],
+      ['Accommodation','N/A — Local job']
+    ],
+    notes: 'Gravel loading operations near CN track. Loader operating within 7.5m of track. Flagman to monitor and halt operations during train passes.'
+  },
+  bchydro: {
+    title: 'BC Hydro — Lillooet',
+    status: 'Unknown Dates',
+    fields: [
+      ['Project #','FR-722006'],['Subdivision','Lillooet'],['Mileage','200.81'],
+      ['Work Location','Lillooet — MP 200.81'],['Shift','Morning (07:00–17:00)'],
+      ['Proposed Dates','Jun 9 – Jun 13'],['Duration','5 Days'],
+      ['Flagman','Unassigned'],['Type','TBD — Supervisor Decision'],
+      ['Field Contact','Dave Holt — 778-555-0198'],['Hours/Day','10 hrs'],
+      ['Excavation','No'],['Machinery','Yes — Crane'],['Distance to Track','On Track'],
+      ['Accommodation','Required — 5 nights near Lillooet']
+    ],
+    notes: 'Transmission line maintenance adjacent to CN track. Crane will be used within 3m of track. Flagging required for full duration of crane operations. Dates pending final permit approval.'
+  },
+  simpcw: {
+    title: 'SIMPCW First Nation — Clearwater',
+    status: 'Unknown Dates',
+    fields: [
+      ['Project #','718157'],['Subdivision','Clearwater'],['Mileage','25.15'],
+      ['Work Location','Clearwater — MP 25.15'],['Shift','TBD'],
+      ['Proposed Dates','TBD'],['Duration','TBD'],
+      ['Flagman','Unassigned'],['Type','TBD — Supervisor Decision'],
+      ['Field Contact','Chief Dan Wilson — 250-555-0133'],['Hours/Day','TBD'],
+      ['Excavation','TBD'],['Machinery','TBD'],['Distance to Track','On Track'],
+      ['Accommodation','TBD']
+    ],
+    notes: 'Cultural land stewardship project adjacent to CN track in Clearwater territory. Dates and scope to be confirmed. 2 flagmen may be required depending on final scope.'
+  }
+};
+
+function openJobDetail(key) {
+  const job = jobData[key];
+  if (!job) return;
+  document.getElementById('modal-job-title').textContent = job.title;
+  let html = '<div class="detail-grid">';
+  job.fields.forEach(([label, value]) => {
+    html += `<div class="dg-item"><div class="dg-label">${label}</div><div class="dg-value">${value}</div></div>`;
+  });
+  html += '</div>';
+  if (job.notes) html += `<div class="dg-label" style="margin:10px 0 4px;">Notes / Instructions</div><div class="notes-box">${job.notes}</div>`;
+  document.getElementById('modal-job-body').innerHTML = html;
+  const isUnassigned = job.fields.some(f => f[1] === 'Unassigned');
+  document.getElementById('modal-job-footer').innerHTML = `
+    <button class="btn btn-secondary" onclick="closeModal('modal-job-detail')">Close</button>
+    ${isUnassigned ? `<button class="btn btn-primary" onclick="closeModal('modal-job-detail');openAssignModal('${job.title.split('—')[0].trim()}','')">Assign Flagman</button>` : `<button class="btn btn-blue" onclick="closeModal('modal-job-detail');openAssignModal('${job.title.split('—')[0].trim()}','')">Reassign</button>`}
+    <button class="btn btn-secondary" onclick="closeModal('modal-job-detail');toast('Sending site info to flagman ✓','success')">📤 Send Site Info</button>
+    <button class="btn btn-secondary" onclick="closeModal('modal-job-detail');toast('Job marked as complete ✓','success')">✅ Mark Complete</button>
+  `;
+  showModal('modal-job-detail');
+}
+
+// ── Request Actions ──────────────────────────────────────────────────────────
+function approveRequest(ref, company) {
+  closeModal('modal-assign');
+  toast(`${ref} — ${company} approved and flagman assigned ✓`, 'success');
+  const badge = document.getElementById('badge-incoming');
+  if (badge) { let n = parseInt(badge.textContent); if (n > 0) badge.textContent = n - 1; }
+}
+function rejectRequest(ref) {
+  toast(`${ref} rejected. Requester will be notified.`, 'error');
+}
+function openRequestDetail(key) {
+  // Already shown in panel — just scroll to it
+  toast('Request detail loaded in right panel', '');
+}
+function submitRequest() {
+  toast('Request submitted successfully! Reference number REQ-042 assigned. Supervisor will review within 1 business day ✓', 'success');
+}
+
+// ── Jobs Filter ──────────────────────────────────────────────────────────────
+function filterJobs() {
+  const search = (document.getElementById('jobs-search').value || '').toLowerCase();
+  const status = document.getElementById('jobs-status-filter').value;
+  const shift  = document.getElementById('jobs-shift-filter').value;
+  const region = document.getElementById('jobs-region-filter').value;
+  const rows = document.querySelectorAll('#jobs-tbody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const rowStatus = row.dataset.status || '';
+    const rowShift  = row.dataset.shift  || '';
+    const rowRegion = row.dataset.region || '';
+    const match =
+      (!search || text.includes(search)) &&
+      (!status || rowStatus === status) &&
+      (!shift  || rowShift  === shift)  &&
+      (!region || rowRegion === region);
+    row.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  const countEl = document.getElementById('jobs-count');
+  if (countEl) countEl.textContent = visible + ' job' + (visible !== 1 ? 's' : '');
+}
+
+// ── Cycle-Aware Assignment ──────────────────────────────────────────────────
+let selectedFlagmanCycle = null;
+let selectedFlagmanName = null;
+
+function selectFlagman(el, name, cycle, region) {
+  // Mark selected
+  document.querySelectorAll('.flagman-opt').forEach(o => o.style.borderColor = '');
+  el.style.borderColor = 'var(--cn-blue)';
+  el.querySelector('input[type=radio]').checked = true;
+  selectedFlagmanName = name;
+  selectedFlagmanCycle = cycle.replace(/&amp;/g,'&');
+  updateCyclePreview();
+}
+
+function updateCyclePreview() {
+  if (!selectedFlagmanCycle) return;
+  const startVal = document.getElementById('assign-start').value;
+  const endVal   = document.getElementById('assign-end').value;
+  if (!startVal || !endVal) return;
+
+  const start = new Date(startVal + 'T00:00:00');
+  const end   = new Date(endVal   + 'T00:00:00');
+  if (end < start) return;
+
+  // Parse cycle e.g. '5&2' => onDays=5, offDays=2
+  const parts = selectedFlagmanCycle.split('&');
+  const onDays  = parseInt(parts[0]);
+  const offDays = parseInt(parts[1]);
+  const cycleLen = onDays + offDays;
+
+  // Build day array
+  const days = [];
+  let d = new Date(start);
+  let cyclePos = 0; // position within cycle (0-indexed)
+  while (d <= end) {
+    const isOn = cyclePos < onDays;
+    days.push({ date: new Date(d), isOn });
+    d.setDate(d.getDate() + 1);
+    cyclePos = (cyclePos + 1) % cycleLen;
+  }
+
+  const totalDays = days.length;
+  const onCount  = days.filter(x => x.isOn).length;
+  const offCount = days.filter(x => !x.isOn).length;
+
+  // Update summary text
+  document.getElementById('cycle-breakdown').style.display = 'block';
+  document.getElementById('cycle-flagman-name').textContent = selectedFlagmanName;
+  document.getElementById('cycle-total-days').textContent = totalDays;
+  document.getElementById('cycle-start-label').textContent = start.toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+  document.getElementById('cycle-end-label').textContent   = end.toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+  document.getElementById('cycle-type-label').textContent  = selectedFlagmanCycle;
+  document.getElementById('cycle-on-days').textContent  = onCount + ' on-cycle';
+  document.getElementById('cycle-off-days').textContent = offCount + ' off-cycle';
+
+  // Build calendar strip
+  const cal = document.getElementById('cycle-calendar');
+  cal.innerHTML = '';
+  const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  days.forEach(day => {
+    const cell = document.createElement('div');
+    cell.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1px;min-width:34px;';
+    const dateLabel = document.createElement('div');
+    dateLabel.style.cssText = 'font-size:9px;color:#888;';
+    dateLabel.textContent = months[day.date.getMonth()] + ' ' + day.date.getDate();
+    const dayBox = document.createElement('div');
+    dayBox.style.cssText = 'width:32px;height:32px;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:700;';
+    if (day.isOn) {
+      dayBox.style.background = '#FFB6C1'; dayBox.style.color = '#7a0020';
+      dayBox.innerHTML = dayNames[day.date.getDay()] + '<br><span style="font-size:8px;font-weight:500;">ON</span>';
+    } else {
+      dayBox.style.background = '#e9ecef'; dayBox.style.color = '#B5091D'; dayBox.style.border = '1px solid #f5c6cb';
+      dayBox.innerHTML = dayNames[day.date.getDay()] + '<br><span style="font-size:8px;font-weight:500;">OFF</span>';
+    }
+    cell.appendChild(dateLabel);
+    cell.appendChild(dayBox);
+    cal.appendChild(cell);
+  });
+
+  // Show/hide off-day alert
+  const alertEl = document.getElementById('off-day-alert');
+  if (offCount > 0) {
+    alertEl.style.display = 'block';
+    document.getElementById('off-day-count').textContent = offCount;
+    document.querySelectorAll('.off-day-count-inline').forEach(el => el.textContent = offCount);
+  } else {
+    alertEl.style.display = 'none';
+  }
+}
+
+function showSecondaryAssign(show) {
+  document.getElementById('secondary-assign-section').style.display = show ? 'block' : 'none';
+}
+
+// ── Vacation Management ───────────────────────────────────────────────────────
+let currentVacFlagman = '';
+
+const vacationData = {
+  'Brule, Joshua':      { used: 8,  remaining: 17, entries: [{type:'Annual',start:'Mar 10',end:'Mar 14',days:5},{type:'PLD',start:'Apr 7',end:'Apr 7',days:1},{type:'Annual',start:'May 19',end:'May 20',days:2},{type:'Annual',start:'Jun 23',end:'Jun 27',days:5,'planned':true}] },
+  'Muhammad, Danjuma':  { used: 5,  remaining: 20, entries: [{type:'Annual',start:'Feb 16',end:'Feb 20',days:5},{type:'Annual',start:'Jul 14',end:'Jul 18',days:5,'planned':true}] },
+  'Williams, Ryan':     { used: 21, remaining: 4,  entries: [{type:'Annual',start:'Jan 5',end:'Jan 9',days:5},{type:'Annual',start:'Feb 2',end:'Feb 6',days:5},{type:'Annual',start:'Mar 2',end:'Mar 6',days:5},{type:'Annual',start:'Apr 6',end:'Apr 10',days:5},{type:'PLD',start:'May 5',end:'May 5',days:1},{type:'Annual',start:'Aug 4',end:'Aug 7',days:4,'planned':true}] },
+  'Toft, Mark':         { used: 20, remaining: 5,  entries: [{type:'Annual',start:'Jan 12',end:'Jan 16',days:5},{type:'Annual',start:'Feb 9',end:'Feb 13',days:5},{type:'Annual',start:'Mar 9',end:'Mar 13',days:5},{type:'Annual',start:'Apr 13',end:'Apr 17',days:5},{type:'Annual',start:'Jul 28',end:'Aug 1',days:5,'planned':true}] },
+  'Ajiboye, Kenny':     { used: 10, remaining: 15, entries: [{type:'Annual',start:'Jan 26',end:'Jan 30',days:5},{type:'Annual',start:'Mar 23',end:'Mar 27',days:5}] },
+  'Jiawan, Daneel':     { used: 12, remaining: 13, entries: [{type:'Annual',start:'Feb 23',end:'Feb 27',days:5},{type:'Annual',start:'Apr 20',end:'Apr 24',days:5},{type:'Annual',start:'Jun 4',end:'Jun 8',days:5,'active':true}] },
+  "O'Hearn, Wade":      { used: 7,  remaining: 18, entries: [{type:'Annual',start:'Mar 30',end:'Apr 3',days:5},{type:'PLD',start:'May 12',end:'May 12',days:1},{type:'PLD',start:'May 26',end:'May 26',days:1},{type:'Annual',start:'Jul 7',end:'Jul 11',days:5,'planned':true}] },
+  'Anderson, Tyler':    { used: 15, remaining: 10, entries: [{type:'Annual',start:'Jan 19',end:'Jan 23',days:5},{type:'Annual',start:'Feb 16',end:'Feb 20',days:5},{type:'Annual',start:'Apr 27',end:'May 1',days:5},{type:'Annual',start:'Jun 4',end:'Jun 6',days:3,'active':true}] },
+  'Roy, Kolton':        { used: 3,  remaining: 22, entries: [{type:'PLD',start:'Feb 3',end:'Feb 3',days:1},{type:'PLD',start:'Mar 17',end:'Mar 17',days:1},{type:'PLD',start:'Apr 21',end:'Apr 21',days:1}] },
+};
+
+function openVacationDetail(name) {
+  currentVacFlagman = name;
+  document.getElementById('modal-vac-title').textContent = name + ' — Vacation History 2026';
+  const data = vacationData[name];
+  if (!data) { toast('No vacation data for ' + name, ''); return; }
+  let html = `<div style="display:flex;gap:12px;margin-bottom:14px;">
+    <div class="stat-card" style="flex:1;padding:10px;"><div class="stat-label">Entitlement</div><div class="stat-value" style="font-size:20px;">25</div></div>
+    <div class="stat-card" style="flex:1;padding:10px;"><div class="stat-label">Used</div><div class="stat-value" style="font-size:20px;color:${data.used>20?'#d97706':'#1E7E34'}">${data.used}</div></div>
+    <div class="stat-card" style="flex:1;padding:10px;"><div class="stat-label">Remaining</div><div class="stat-value" style="font-size:20px;">${data.remaining}</div></div>
+  </div>`;
+  html += '<div style="background:#e9ecef;border-radius:4px;height:10px;margin-bottom:14px;"><div style="background:' + (data.used>20?'#d97706':'#1E7E34') + ';border-radius:4px;height:10px;width:' + Math.round(data.used/25*100) + '%;"></div></div>';
+  html += '<table class="tbl"><thead><tr><th>Type</th><th>Start</th><th>End</th><th>Days</th><th>Status</th><th></th></tr></thead><tbody>';
+  data.entries.forEach(e => {
+    const status = e.active ? '<span class="badge badge-inprogress">Active</span>' : e.planned ? '<span class="badge badge-scheduled">Planned</span>' : '<span class="badge badge-complete">Completed</span>';
+    html += `<tr><td>${e.type}</td><td>${e.start}</td><td>${e.end}</td><td>${e.days}</td><td>${status}</td><td><button class="btn-reject btn-xs" onclick="toast('Vacation entry removed','success')">Remove</button></td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('modal-vac-body').innerHTML = html;
+  showModal('modal-vacation-detail');
+}
+
+function openAddVacation(name) {
+  currentVacFlagman = name;
+  const sel = document.getElementById('vac-flagman');
+  if (sel) {
+    for (let i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value.startsWith(name)) { sel.selectedIndex = i; break; }
+    }
+    updateVacBalance();
+  }
+  showModal('modal-add-vacation');
+}
+
+function updateVacBalance() {
+  const sel = document.getElementById('vac-flagman');
+  const val = sel.value;
+  const display = document.getElementById('vac-balance-display');
+  if (!val) { display.style.display = 'none'; return; }
+  const parts = val.split('|');
+  const name = parts[0];
+  const remaining = parseInt(parts[1]);
+  document.getElementById('vac-balance-name').textContent = name;
+  display.style.display = 'block';
+  calcVacDays();
+}
+
+function calcVacDays() {
+  const startVal = document.getElementById('vac-start').value;
+  const endVal   = document.getElementById('vac-end').value;
+  const sel = document.getElementById('vac-flagman');
+  const val = sel ? sel.value : '';
+  if (!startVal || !endVal || !val) return;
+  const start = new Date(startVal + 'T00:00:00');
+  const end   = new Date(endVal   + 'T00:00:00');
+  if (end < start) return;
+  // Count weekdays only (Mon-Fri) as vacation days
+  let count = 0;
+  let d = new Date(start);
+  while (d <= end) {
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) count++;
+    d.setDate(d.getDate() + 1);
+  }
+  document.getElementById('vac-days-calc').value = count;
+  const remaining = parseInt(val.split('|')[1]);
+  const after = remaining - count;
+  document.getElementById('vac-balance-after').textContent = after;
+  const warn = document.getElementById('vac-balance-warning');
+  warn.style.display = after < 0 ? 'block' : 'none';
+}
+
+function saveVacation() {
+  const sel = document.getElementById('vac-flagman');
+  const val = sel ? sel.value : '';
+  if (!val) { toast('Please select a flagman', 'warning'); return; }
+  const warn = document.getElementById('vac-balance-warning');
+  if (warn && warn.style.display !== 'none') { toast('Cannot exceed 25-day limit. Reduce the number of days.', 'error'); return; }
+  const name = val.split('|')[0];
+  closeModal('modal-add-vacation');
+  toast('Vacation entry saved for ' + name + ' ✓', 'success');
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+function toast(msg, type) {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.innerHTML = (type === 'success' ? '✅ ' : type === 'error' ? '❌ ' : type === 'warning' ? '⚠️ ' : 'ℹ️ ') + msg;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(() => el.remove(), 400); }, 3500);
+}
+</script>
+</body>
+</html>
