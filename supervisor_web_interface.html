@@ -237,7 +237,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Jobs</div>
-    <div class="nav-item" data-section="sec-jobs"><span class="icon">🔧</span> Active Jobs <span class="nav-badge" id="badge-jobs">4</span></div>
+    <div class="nav-item" data-section="sec-jobs"><span class="icon">🔧</span> Active Jobs <span class="nav-badge" id="badge-jobs">6</span></div>
     <div class="nav-item" data-section="sec-completed"><span class="icon">✅</span> Completed Jobs</div>
     <div class="nav-item" data-section="sec-dfr"><span class="icon">🕐</span> Daily Flagging Record</div>
   </div>
@@ -261,7 +261,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Requests</div>
-    <div class="nav-item" data-section="sec-requests"><span class="icon">📥</span> Incoming Requests <span class="nav-badge" id="badge-req">3</span></div>
+    <div class="nav-item" data-section="sec-requests"><span class="icon">📥</span> Incoming Requests <span class="nav-badge" id="badge-req">5</span></div>
     <div class="nav-item" data-section="sec-submit"><span class="icon">📝</span> Submit a Request</div>
   </div>
   <div class="sidebar-divider"></div>
@@ -285,7 +285,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div class="alert alert-danger">⚠️ <strong>3 jobs pending review</strong> — new flagging requests require your attention. <a href="#" onclick="showPage('sec-requests');return false;">Review now →</a></div>
     <div class="alert alert-warning">⏰ <strong>OT availability window closes Friday Jun 6 at 5 PM.</strong> 5 of 13 flagmen have responded. <a href="#" onclick="showPage('sec-overtime');return false;">View responses →</a></div>
     <div class="stats-row">
-      <div class="stat-card blue" onclick="showPage('sec-jobs')"><div class="stat-label">Active Jobs</div><div class="stat-value">11</div><div class="stat-sub">4 need assignment</div></div>
+      <div class="stat-card blue" onclick="showPage('sec-jobs')"><div class="stat-label">Active Jobs</div><div class="stat-value">15</div><div class="stat-sub">1 needs assignment</div></div>
       <div class="stat-card red" onclick="showPage('sec-requests')"><div class="stat-label">Pending Review</div><div class="stat-value">3</div><div class="stat-sub">Awaiting approval</div></div>
       <div class="stat-card green" onclick="showPage('sec-flagmen')"><div class="stat-label">Flagmen Available</div><div class="stat-value">8</div><div class="stat-sub">3 on vacation</div></div>
       <div class="stat-card orange" onclick="showPage('sec-overtime')"><div class="stat-label">OT Responses</div><div class="stat-value">5</div><div class="stat-sub">8 pending</div></div>
@@ -489,7 +489,67 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
             <tr><td>PRJ-718900</td><td>Prairie Municipal Works</td><td>Wainwright</td><td>120.0–121.0</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Mar 8</td><td>Mar 13</td><td>6</td><td>Dubois, Remi</td><td><span class="badge badge-contracted">Contracted</span></td><td><span class="aa-code-badge">0210</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Summary opened','success')">Summary</button></td></tr>
             <tr><td>PRJ-718800</td><td>Meridian Rail Services</td><td>Cascade</td><td>29.0–30.5</td><td><span class="badge badge-morning">Morning</span></td><td>Feb 28</td><td>Mar 6</td><td>7</td><td>Beaumont, Claude</td><td><span class="badge badge-cn">CN</span></td><td><span class="aa-code-badge">0100</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Summary opened','success')">Summary</button></td></tr>
             <tr><td>PRJ-718700</td><td>Northgate Utilities</td><td>Coquitlam</td><td>40.0–41.5</td><td><span class="badge badge-morning">Morning</span></td><td>Feb 18</td><td>Feb 25</td><td>8</td><td>Kowalski, Piotr</td><td><span class="badge badge-cn">CN</span></td><td><span class="aa-code-badge">0100</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Summary opened','success')">Summary</button></td></tr>
-          </tbody>
+                        <tr>
+                <td><strong>PRJ-719800</strong></td>
+                <td>Apex Energy Corp</td>
+                <td>Jasper</td>
+                <td>220.0–221.5</td>
+                <td><span class="badge badge-morning">Morning</span></td>
+                <td>Apr 10–May 2</td>
+                <td>2</td>
+                <td>Petrov, D. · Yamamoto, D.</td>
+                <td><span class="badge badge-complete">Completed</span></td>
+                <td><button class="btn btn-xs btn-review" onclick="toast('Job report opened','success')">Report</button></td>
+              </tr>
+              <tr>
+                <td><strong>PRJ-719650</strong></td>
+                <td>Prairie Municipal Works</td>
+                <td>Biggar</td>
+                <td>125.0–126.5</td>
+                <td><span class="badge badge-morning">Morning</span></td>
+                <td>May 1–28</td>
+                <td>1</td>
+                <td>Kowalski, P.</td>
+                <td><span class="badge badge-complete">Completed</span></td>
+                <td><button class="btn btn-xs btn-review" onclick="toast('Job report opened','success')">Report</button></td>
+              </tr>
+              <tr>
+                <td><strong>PRJ-719500</strong></td>
+                <td>CN Track Renewal</td>
+                <td>Wainwright</td>
+                <td>108.0–109.0</td>
+                <td><span class="badge badge-afternoon">Afternoon</span></td>
+                <td>Apr 20–May 15</td>
+                <td>1</td>
+                <td>Okafor, J.</td>
+                <td><span class="badge badge-complete">Completed</span></td>
+                <td><button class="btn btn-xs btn-review" onclick="toast('Job report opened','success')">Report</button></td>
+              </tr>
+              <tr>
+                <td><strong>PRJ-719300</strong></td>
+                <td>Westfield Pipeline</td>
+                <td>Edson</td>
+                <td>215.0–216.0</td>
+                <td><span class="badge badge-night">Night</span></td>
+                <td>Mar 15–Apr 18</td>
+                <td>2</td>
+                <td>Dubois, R. · Nakamura, Y.</td>
+                <td><span class="badge badge-complete">Completed</span></td>
+                <td><button class="btn btn-xs btn-review" onclick="toast('Job report opened','success')">Report</button></td>
+              </tr>
+              <tr>
+                <td><strong>PRJ-719100</strong></td>
+                <td>Meridian Rail Services</td>
+                <td>Hope</td>
+                <td>31.0–32.0</td>
+                <td><span class="badge badge-morning">Morning</span></td>
+                <td>Feb 28–Mar 20</td>
+                <td>1</td>
+                <td>Larsson, E.</td>
+                <td><span class="badge badge-complete">Completed</span></td>
+                <td><button class="btn btn-xs btn-review" onclick="toast('Job report opened','success')">Report</button></td>
+              </tr>
+            </tbody>
         </table>
       </div>
       <div class="pagination">
@@ -648,12 +708,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
               <td>Full regular shift</td>
               <td>—</td>
             </tr>
-          </tbody>
+                        <!-- Additional regular rows -->
+              <tr>
+                <td>CN-1002</td><td>Larsson, Erik</td><td>PRJ-721400</td><td>Wainwright</td><td>Morning</td><td>06:00</td><td>16:00</td><td>10h</td><td>0h</td><td><span class="badge badge-approved">Verified</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CN-1003</td><td>Okafor, James</td><td>PRJ-721400</td><td>Wainwright</td><td>Afternoon</td><td>14:00</td><td>00:00</td><td>10h</td><td>0h</td><td><span class="badge badge-approved">Verified</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CT-2002</td><td>Dubois, Remi</td><td>PRJ-721400</td><td>Wainwright</td><td>Night</td><td>22:00</td><td>08:00</td><td>10h</td><td>0h</td><td><span class="badge badge-approved">Verified</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CN-1009</td><td>Petrov, Daniel</td><td>PRJ-720890</td><td>Edson</td><td>Night</td><td>22:00</td><td>08:30</td><td>10h</td><td>0.5h</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr style="background:#f5f3ff;">
+                <td>CN-1009</td><td>Petrov, Daniel</td><td>PRJ-720890</td><td>Edson</td><td>Night OT</td><td>08:00</td><td>08:30</td><td>0.5h</td><td>0.5h</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CN-1004</td><td>Kowalski, Piotr</td><td>PRJ-721250</td><td>Coquitlam</td><td>Morning</td><td>06:00</td><td>16:00</td><td>10h</td><td>0h</td><td><span class="badge badge-approved">Verified</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CN-1011</td><td>Beaumont, Claude</td><td>PRJ-721250</td><td>Coquitlam</td><td>Morning</td><td>06:00</td><td>16:30</td><td>10h</td><td>0.5h</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CN-1010</td><td>Nguyen, Kevin</td><td>PRJ-722050</td><td>Jasper</td><td>Morning</td><td>07:00</td><td>17:00</td><td>10h</td><td>0h</td><td><span class="badge badge-approved">Verified</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>CT-2003</td><td>Nakamura, Yuki</td><td>PRJ-722100</td><td>Edson</td><td>Morning</td><td>06:30</td><td>16:30</td><td>10h</td><td>0h</td><td><span class="badge badge-approved">Verified</span></td><td><button class="btn btn-xs btn-edit" onclick="toast('Record opened','success')">Edit</button></td>
+              </tr>
+            </tbody>
         </table>
       </div>
       <div class="pagination">
         <button class="pg-btn active">1</button>
-        <span class="pg-info" style="margin-left:8px;">11 records for Jun 4 · Regular: 8 · OT: 1 · Overlap: 2</span>
+        <span class="pg-info" style="margin-left:8px;">20 records for Jun 4 · Regular: 15 · OT: 3 · Overlap: 2</span>
       </div>
     </div>
   </div>
@@ -665,7 +753,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div><h1>Schedule</h1><div class="sub" id="sched-sub">Jun 1–14, 2026 · All Regions</div></div>
     <div class="hdr-actions">
       <select class="form-control" style="width:auto;font-size:12px;" onchange="toast('Region filter applied','success')"><option>All Regions</option><option>BC</option><option>Alberta</option></select>
-      <button class="btn btn-secondary btn-sm" onclick="toast('Schedule exported','success')">📤 Export</button>
+      <button class="btn btn-secondary btn-sm" onclick="toast('Schedule exported to CSV','success')">📤 Export</button>
     </div>
   </div>
   <div class="content">
@@ -717,7 +805,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <button onclick="shiftSchedWeek(1)">Next Week ▶</button>
         </div>
         <select onchange="toast('Region filter applied','success')"><option>All Regions</option><option>BC</option><option>Alberta</option></select>
-        <button class="btn btn-sm btn-secondary" onclick="toast('Weekly schedule sent','success')">📧 Send Schedule</button>
+        <button class="btn btn-sm btn-secondary" onclick="toast('Weekly schedule emailed to all flagmen','success')">📧 Send Schedule</button>
       </div>
       <div class="card">
         <div class="tbl-scroll">
@@ -975,7 +1063,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2026</span></td>
                 <td>Flagging · Working Limits</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Tremblay, Luc')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Tremblay, Luc')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Callahan, Brett</strong></td><td>CN-1055</td><td>BC</td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>#11</td>
@@ -985,7 +1073,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging · Foul Protection</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Callahan, Brett')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Callahan, Brett')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Hartley, Marcus</strong></td><td>CN-1038</td><td>Alberta</td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>#5</td>
@@ -995,7 +1083,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2027</span></td>
                 <td>Flagging · Working Limits · Form B</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Hartley, Marcus')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Hartley, Marcus')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Petrov, Daniel</strong></td><td>CN-1047</td><td>Alberta</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#3</td>
@@ -1005,7 +1093,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2028</span></td>
                 <td>Flagging · Working Limits · Foul · Form B</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Petrov, Daniel')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Petrov, Daniel')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Ferreira, Marco</strong></td><td>CN-1053</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>#9</td>
@@ -1015,7 +1103,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Ferreira, Marco')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Ferreira, Marco')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Nguyen, Kevin</strong></td><td>CN-1044</td><td>Alberta</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#6</td>
@@ -1025,7 +1113,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging · Foul Protection</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Nguyen, Kevin')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Nguyen, Kevin')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Yamamoto, Dean</strong></td><td>CN-1058</td><td>Alberta</td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>#12</td>
@@ -1035,7 +1123,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Yamamoto, Dean')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Yamamoto, Dean')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Larsson, Erik</strong></td><td>CN-1052</td><td>Alberta</td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>#7</td>
@@ -1045,7 +1133,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2027</span></td>
                 <td>Flagging · Working Limits · Form B</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Larsson, Erik')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Larsson, Erik')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Okafor, James</strong></td><td>CN-1049</td><td>Alberta</td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>#10</td>
@@ -1055,7 +1143,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging · Foul Protection</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Okafor, James')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Okafor, James')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Beaumont, Claude</strong></td><td>CN-1061</td><td>BC</td><td>9&5</td><td><span class="cycle-badge-a">A</span></td><td>#4</td>
@@ -1065,7 +1153,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2028</span></td>
                 <td>Flagging · Working Limits · Foul · Form B</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Beaumont, Claude')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Beaumont, Claude')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Marchetti, Giulio</strong></td><td>CN-1063</td><td>BC</td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>#13</td>
@@ -1075,7 +1163,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Marchetti, Giulio')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Marchetti, Giulio')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Kowalski, Piotr</strong></td><td>CN-1065</td><td>BC</td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>#2</td>
@@ -1085,7 +1173,37 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2029</span></td>
                 <td>Flagging · Working Limits · Foul · Form B</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Kowalski, Piotr')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Flagman deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Kowalski, Piotr')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
+              </tr>
+              <tr>
+                <td><strong>Tremblay, Luc</strong></td><td>CN-1005</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#8</td>
+                <td><span class="qual-chip qual-valid">TIGS</span></td>
+                <td><span class="qual-chip qual-valid">CROR</span></td>
+                <td><span class="qual-chip qual-valid">eRail</span></td>
+                <td><span class="qual-chip qual-valid">Form B</span></td>
+                <td>Flagging · Working Limits · Foul · Form B</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Tremblay, Luc')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate?')){toast('Deactivated','warning')}">Deactivate</button></td>
+              </tr>
+              <tr>
+                <td><strong>Callahan, Brett</strong></td><td>CN-1006</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>#11</td>
+                <td><span class="qual-chip qual-valid">TIGS</span></td>
+                <td><span class="qual-chip qual-valid">CROR</span></td>
+                <td><span class="qual-chip qual-expiring">eRail ⚠</span></td>
+                <td><span class="qual-chip qual-valid">Form B</span></td>
+                <td>Flagging · Working Limits · Foul · Form B</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Callahan, Brett')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate?')){toast('Deactivated','warning')}">Deactivate</button></td>
+              </tr>
+              <tr>
+                <td><strong>Yamamoto, Dean</strong></td><td>CN-1008</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#14</td>
+                <td><span class="qual-chip qual-valid">TIGS</span></td>
+                <td><span class="qual-chip qual-valid">CROR</span></td>
+                <td><span class="qual-chip qual-valid">eRail</span></td>
+                <td><span class="qual-chip qual-valid">Form B</span></td>
+                <td>Flagging · Working Limits · Foul · Form B</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Yamamoto, Dean')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate?')){toast('Deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Reyes, Carlos</strong></td><td>CN-1068</td><td>Alberta</td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>#1</td>
@@ -1095,7 +1213,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ 2030</span></td>
                 <td>Flagging · Working Limits · Foul · Form B</td>
                 <td><span class="badge badge-inactive">Inactive</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Reyes, Carlos')">Edit</button> <button class="btn btn-xs btn-approve" onclick="toast('Flagman reactivated','success')">Reactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Reyes, Carlos')">Edit</button> <button class="btn btn-xs btn-approve" onclick="if(confirm('Reactivate this flagman?')){toast('Flagman reactivated','success')}">Reactivate</button></td>
               </tr>
             </tbody>
           </table>
@@ -1124,7 +1242,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ ER-5501</span></td>
                 <td>Flagging · Foul Protection</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Varga, Stefan')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Contractor deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Varga, Stefan')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this contractor?')){toast('Contractor deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Dubois, Remi</strong></td><td>CTR-2008</td><td>Ironwood Track Services</td><td>BC</td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>#4</td>
@@ -1133,7 +1251,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ ER-5508</span></td>
                 <td>Flagging</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Dubois, Remi')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Contractor deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Dubois, Remi')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this contractor?')){toast('Contractor deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Nakamura, Yuki</strong></td><td>CTR-2011</td><td>Ridgecrest Flagging Ltd.</td><td>Alberta</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#1</td>
@@ -1142,7 +1260,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-valid">✓ ER-5515</span></td>
                 <td>Flagging · Working Limits</td>
                 <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Nakamura, Yuki')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="toast('Contractor deactivated','warning')">Deactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Nakamura, Yuki')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this contractor?')){toast('Contractor deactivated','warning')}">Deactivate</button></td>
               </tr>
               <tr>
                 <td><strong>Sousa, Filipe</strong></td><td>CTR-2014</td><td>Ridgecrest Flagging Ltd.</td><td>Alberta</td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>#2</td>
@@ -1151,7 +1269,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="qual-chip qual-none">—</span></td>
                 <td>Flagging</td>
                 <td><span class="badge badge-inactive">Inactive</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Sousa, Filipe')">Edit</button> <button class="btn btn-xs btn-approve" onclick="toast('Contractor reactivated','success')">Reactivate</button></td>
+                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Sousa, Filipe')">Edit</button> <button class="btn btn-xs btn-approve" onclick="if(confirm('Reactivate this contractor?')){toast('Contractor reactivated','success')}">Reactivate</button></td>
               </tr>
             </tbody>
           </table>
@@ -1178,7 +1296,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <div style="font-size:12px;color:var(--text-muted);">info@ironwoodtrack.ca · BC Region</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:8px;">
-          <button class="btn btn-xs btn-edit" onclick="toast('Edit company opened','success')">Edit</button>
+          <button class="btn btn-xs btn-edit" onclick="openEditCompanyModal(this.closest('.company-card').querySelector('.company-card-header div:nth-child(2) div:first-child').textContent)">Edit</button>
           <button class="btn btn-xs btn-primary" onclick="openAddFlagmanModal('contracted')">+ Add Contractor</button>
         </div>
       </div>
@@ -1198,7 +1316,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <div style="font-size:12px;color:var(--text-muted);">dispatch@ridgecrestflagging.ca · Alberta Region</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:8px;">
-          <button class="btn btn-xs btn-edit" onclick="toast('Edit company opened','success')">Edit</button>
+          <button class="btn btn-xs btn-edit" onclick="openEditCompanyModal(this.closest('.company-card').querySelector('.company-card-header div:nth-child(2) div:first-child').textContent)">Edit</button>
           <button class="btn btn-xs btn-primary" onclick="openAddFlagmanModal('contracted')">+ Add Contractor</button>
         </div>
       </div>
@@ -1272,12 +1390,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <table class="tbl">
             <thead><tr><th>Flagman</th><th>Type</th><th>Entitlement</th><th>Used</th><th>Remaining</th><th>Usage</th><th>Next Vacation</th><th>Actions</th></tr></thead>
             <tbody>
-              <tr><td><strong>Tremblay, Luc</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>10</td><td>15</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--success);height:8px;border-radius:4px;width:40%;"></div></div></td><td>Sep 7–11</td><td><button class="btn btn-xs btn-review" onclick="toast('Vacation history opened','success')">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
-              <tr><td><strong>Hartley, Marcus</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>21</td><td>4</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--cn-red);height:8px;border-radius:4px;width:84%;"></div></div></td><td>—</td><td><button class="btn btn-xs btn-review" onclick="toast('Vacation history opened','success')">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
-              <tr><td><strong>Petrov, Daniel</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>8</td><td>17</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--success);height:8px;border-radius:4px;width:32%;"></div></div></td><td>Jul 20–24</td><td><button class="btn btn-xs btn-review" onclick="toast('Vacation history opened','success')">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
-              <tr><td><strong>Ferreira, Marco</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>12</td><td>13</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:#d97706;height:8px;border-radius:4px;width:48%;"></div></div></td><td><strong>Jun 4–8 (Active)</strong></td><td><button class="btn btn-xs btn-review" onclick="toast('Vacation history opened','success')">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
-              <tr><td><strong>Kowalski, Piotr</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>20</td><td>5</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--cn-red);height:8px;border-radius:4px;width:80%;"></div></div></td><td>—</td><td><button class="btn btn-xs btn-review" onclick="toast('Vacation history opened','success')">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
-              <tr><td><strong>Marchetti, Giulio</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>7</td><td>18</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--success);height:8px;border-radius:4px;width:28%;"></div></div></td><td><strong>Jun 4–6 (Active)</strong></td><td><button class="btn btn-xs btn-review" onclick="toast('Vacation history opened','success')">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
+              <tr><td><strong>Tremblay, Luc</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>10</td><td>15</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--success);height:8px;border-radius:4px;width:40%;"></div></div></td><td>Sep 7–11</td><td><button class="btn btn-xs btn-review" onclick="openVacHistory(this.closest('tr').querySelector('strong').textContent)">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
+              <tr><td><strong>Hartley, Marcus</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>21</td><td>4</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--cn-red);height:8px;border-radius:4px;width:84%;"></div></div></td><td>—</td><td><button class="btn btn-xs btn-review" onclick="openVacHistory(this.closest('tr').querySelector('strong').textContent)">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
+              <tr><td><strong>Petrov, Daniel</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>8</td><td>17</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--success);height:8px;border-radius:4px;width:32%;"></div></div></td><td>Jul 20–24</td><td><button class="btn btn-xs btn-review" onclick="openVacHistory(this.closest('tr').querySelector('strong').textContent)">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
+              <tr><td><strong>Ferreira, Marco</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>12</td><td>13</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:#d97706;height:8px;border-radius:4px;width:48%;"></div></div></td><td><strong>Jun 4–8 (Active)</strong></td><td><button class="btn btn-xs btn-review" onclick="openVacHistory(this.closest('tr').querySelector('strong').textContent)">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
+              <tr><td><strong>Kowalski, Piotr</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>20</td><td>5</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--cn-red);height:8px;border-radius:4px;width:80%;"></div></div></td><td>—</td><td><button class="btn btn-xs btn-review" onclick="openVacHistory(this.closest('tr').querySelector('strong').textContent)">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
+              <tr><td><strong>Marchetti, Giulio</strong></td><td><span class="badge badge-cn">CN</span></td><td>25</td><td>7</td><td>18</td><td><div style="background:#e9ecef;border-radius:4px;height:8px;width:100px;"><div style="background:var(--success);height:8px;border-radius:4px;width:28%;"></div></div></td><td><strong>Jun 4–6 (Active)</strong></td><td><button class="btn btn-xs btn-review" onclick="openVacHistory(this.closest('tr').querySelector('strong').textContent)">View</button> <button class="btn btn-xs btn-primary" onclick="openModal('modal-add-vacation')">+ Add</button></td></tr>
               <tr><td><strong>Varga, Stefan</strong></td><td><span class="badge badge-contracted">CTR</span></td><td colspan="6" style="color:var(--text-muted);font-style:italic;">Self-managed vacation — not tracked in system</td><td>—</td></tr>
               <tr><td><strong>Dubois, Remi</strong></td><td><span class="badge badge-contracted">CTR</span></td><td colspan="6" style="color:var(--text-muted);font-style:italic;">Self-managed vacation — not tracked in system</td><td>—</td></tr>
             </tbody>
@@ -1301,7 +1419,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <!-- ══════════════════════════════════════════════════════════ INCOMING REQUESTS -->
 <div class="page-section" id="sec-requests">
   <div class="page-header">
-    <div><h1>Incoming Requests</h1><div class="sub">6 requests · 2 new</div></div>
+    <div><h1>Incoming Requests</h1><div class="sub">9 requests · 2 new</div></div>
   </div>
   <div class="content" style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;">
     <!-- Request queue -->
@@ -1321,6 +1439,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
               <tr class="req-row" onclick="loadRequest('REQ-038')"><td>REQ-038</td><td>Apex Energy Corp <span class="badge badge-external">Ext</span></td><td>Jasper</td><td>Jun 20–Jul 4</td><td>3</td><td><span class="badge badge-approved">Approved</span></td><td><button class="btn btn-xs btn-review" onclick="loadRequest('REQ-038')">Review</button></td></tr>
               <tr class="req-row" onclick="loadRequest('REQ-037')"><td>REQ-037</td><td>Meridian Rail Services <span class="badge badge-external">Ext</span></td><td>Hope</td><td>Jun 8–12</td><td>2</td><td><span class="badge badge-approved">Approved</span></td><td><button class="btn btn-xs btn-review" onclick="loadRequest('REQ-037')">Review</button></td></tr>
               <tr class="req-row" onclick="loadRequest('REQ-036')"><td>REQ-036</td><td>Prairie Municipal Works <span class="badge badge-external">Ext</span></td><td>Biggar</td><td>May 28–Jun 3</td><td>1</td><td><span class="badge badge-rejected">Rejected</span></td><td><button class="btn btn-xs btn-review" onclick="loadRequest('REQ-036')">Review</button></td></tr>
+              <tr class="req-row" onclick="loadRequest('REQ-042')"><td>REQ-042</td><td>Metro Water Authority <span class="badge badge-external">Ext</span></td><td>Coquitlam</td><td>Jun 12–18</td><td>1</td><td><span class="badge badge-pending">New</span></td><td><button class="btn btn-xs btn-review" onclick="loadRequest('REQ-042')">Review</button></td></tr>
+              <tr class="req-row" onclick="loadRequest('REQ-035')"><td>REQ-035</td><td>CN Track Renewal <span class="badge badge-internal">Int</span></td><td>Jasper</td><td>May 15–Jun 2</td><td>1</td><td><span class="badge badge-approved">Approved</span></td><td><button class="btn btn-xs btn-review" onclick="loadRequest('REQ-035')">Review</button></td></tr>
+              <tr class="req-row" onclick="loadRequest('REQ-034')"><td>REQ-034</td><td>Westfield Pipeline <span class="badge badge-external">Ext</span></td><td>Edson</td><td>Mar 15–Apr 18</td><td>2</td><td><span class="badge badge-complete">Completed</span></td><td><button class="btn btn-xs btn-review" onclick="loadRequest('REQ-034')">Review</button></td></tr>
             </tbody>
           </table>
         </div>
@@ -1775,6 +1896,7 @@ function showPage(sectionId) {
   }
   // Trigger calendar renders
   if (sectionId === 'sec-schedule') renderSchedCal();
+  if (sectionId === 'sec-overtime') { setTimeout(renderOvertimeTable, 50); }
   if (sectionId === 'sec-vacation') renderVacCal();
   // Show overlap notification on schedule
   if (sectionId === 'sec-schedule') {
@@ -1858,6 +1980,49 @@ function shiftSchedWeek(dir) {
 // ═══════════════════════════════════════════════════════════ SCHEDULE CALENDAR
 let schedMonthOffset = 0;
 function shiftSchedMonth(dir) { schedMonthOffset += dir; renderSchedCal(); }
+// ── SCHEDULE DATA (shared between weekly, list, and calendar views) ──────────
+const SCHED_FLAGMEN = [
+  { name:'Hartley, Marcus',   id:'CN-1001', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'AM',    job:'PRJ-720415', color:'#FFB6C1' },
+  { name:'Larsson, Erik',     id:'CN-1002', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'AM',    job:'PRJ-721400', color:'#FFB6C1' },
+  { name:'Okafor, James',     id:'CN-1003', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'PM',    job:'PRJ-721400', color:'#FF69B4' },
+  { name:'Kowalski, Piotr',   id:'CN-1004', type:'CN',         cycle:'5&2', group:'',  region:'BC',      shift:'AM',    job:'PRJ-721250', color:'#FFB6C1' },
+  { name:'Tremblay, Luc',     id:'CN-1005', type:'CN',         cycle:'8&6', group:'A', region:'BC',      shift:'AM',    job:'PRJ-720312', color:'#FFB6C1' },
+  { name:'Callahan, Brett',   id:'CN-1006', type:'CN',         cycle:'8&6', group:'B', region:'BC',      shift:'AM',    job:'PRJ-720312', color:'#FFB6C1' },
+  { name:'Ferreira, Marco',   id:'CN-1007', type:'CN',         cycle:'8&6', group:'B', region:'BC',      shift:'Night', job:'PRJ-721900', color:'#FF69B4' },
+  { name:'Yamamoto, Dean',    id:'CN-1008', type:'CN',         cycle:'8&6', group:'A', region:'BC',      shift:'PM',    job:'PRJ-721100', color:'#FF69B4' },
+  { name:'Petrov, Daniel',    id:'CN-1009', type:'CN',         cycle:'8&6', group:'A', region:'Alberta', shift:'Night', job:'PRJ-720890', color:'#FF69B4' },
+  { name:'Nguyen, Kevin',     id:'CN-1010', type:'CN',         cycle:'8&6', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-722050', color:'#FFB6C1' },
+  { name:'Beaumont, Claude',  id:'CN-1011', type:'CN',         cycle:'9&5', group:'A', region:'BC',      shift:'AM',    job:'PRJ-721250', color:'#FFB6C1' },
+  { name:'Marchetti, Giulio', id:'CN-1012', type:'CN',         cycle:'9&5', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-721900', color:'#FFB6C1' },
+  { name:'Varga, Stefan',     id:'CT-2001', type:'Contracted', cycle:'9&5', group:'A', region:'BC',      shift:'AM OT', job:'Available',  color:'#ADD8E6' },
+  { name:'Dubois, Remi',      id:'CT-2002', type:'Contracted', cycle:'9&5', group:'B', region:'BC',      shift:'Night', job:'PRJ-721400', color:'#FF69B4' },
+  { name:'Nakamura, Yuki',    id:'CT-2003', type:'Contracted', cycle:'8&6', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-722100', color:'#FFB6C1' },
+];
+const CYCLE_REF = new Date('2026-01-05'); // Monday reference
+const CYCLE_OFFSETS = {
+  'Hartley, Marcus':0,'Larsson, Erik':0,'Okafor, James':0,'Kowalski, Piotr':0,'Okonkwo, Tunde':0,
+  'Tremblay, Luc':0,'Yamamoto, Dean':0,'Nguyen, Kevin':0,
+  'Ferreira, Marco':8,'Petrov, Daniel':8,'Nakamura, Yuki':8,
+  'Beaumont, Claude':0,'Varga, Stefan':0,
+  'Callahan, Brett':14,'Kowalski, Piotr':0,
+  'Marchetti, Giulio':9,'Dubois, Remi':9,
+};
+function isOnCycle(fm, date) {
+  const diff = Math.floor((date - CYCLE_REF) / 86400000);
+  if (fm.cycle === '5&2') { const dow = date.getDay(); return dow >= 1 && dow <= 5; }
+  const [on, off] = fm.cycle.split('&').map(Number);
+  const period = on + off;
+  const offset = CYCLE_OFFSETS[fm.name] || 0;
+  const pos = ((diff - offset) % period + period) % period;
+  if (fm.group === 'A') return pos < on;
+  if (fm.group === 'B') return pos >= on;
+  return pos < on;
+}
+function getFlagmenOnDate(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00');
+  return SCHED_FLAGMEN.filter(fm => isOnCycle(fm, date));
+}
+
 function renderSchedCal() {
   const base = new Date(2026, 5 + schedMonthOffset, 1);
   const label = base.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
@@ -1865,23 +2030,41 @@ function renderSchedCal() {
   const grid = document.getElementById('sched-cal-grid'); if(!grid) return;
   const daysInMonth = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
   const firstDay = base.getDay();
-  const events = {
-    '2026-06-04': [{name:'Tremblay',color:'#FFB6C1'},{name:'Callahan ↔',color:'#e9d5ff'}],
-    '2026-06-07': [{name:'Ferreira',color:'#d1fae5'}],
-    '2026-06-09': [{name:'Varga',color:'#ADD8E6'}],
-  };
   let html = '';
-  for (let i = 0; i < firstDay; i++) html += `<div style="min-height:60px;"></div>`;
+  for (let i = 0; i < firstDay; i++) html += '<div style="min-height:80px;"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dateStr = base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     const isToday = dateStr === '2026-06-04';
-    const evs = events[dateStr] || [];
-    html += `<div style="min-height:60px;border:1px solid #e9ecef;border-radius:4px;padding:4px;${isToday?'background:#fef9c3;':''}">
-      <div style="font-size:11px;font-weight:${isToday?'700':'400'};color:${isToday?'var(--cn-red)':'#374151'};">${d}${isToday?' ●':''}</div>
-      ${evs.map(e=>`<div style="background:${e.color};border-radius:3px;font-size:9px;padding:1px 4px;margin-top:2px;">${e.name}</div>`).join('')}
-    </div>`;
+    const workers = getFlagmenOnDate(dateStr);
+    const shown = workers.slice(0, 3);
+    const extra = workers.length - shown.length;
+    const bgStyle = isToday ? 'background:#fef9c3;border-color:var(--cn-red);' : '';
+    html += `<div onclick="openDayModal('${dateStr}')" style="min-height:80px;border:1px solid #e9ecef;border-radius:6px;padding:5px;cursor:pointer;transition:box-shadow .15s;${bgStyle}" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='none'">`
+      + `<div style="font-size:12px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--cn-red)':'#374151'};">${d}${isToday?' ●':''}</div>`
+      + shown.map(fm => `<div style="background:${fm.color};border-radius:3px;font-size:9px;padding:1px 4px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${fm.name.split(',')[0]}</div>`).join('')
+      + (extra > 0 ? `<div style="font-size:9px;color:#6b7280;margin-top:2px;">+${extra} more</div>` : '')
+      + (workers.length === 0 ? '<div style="font-size:9px;color:#d1d5db;margin-top:4px;">No assignments</div>' : '')
+      + '</div>';
   }
   grid.innerHTML = html;
+}
+
+function openDayModal(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00');
+  const label = date.toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const workers = getFlagmenOnDate(dateStr);
+  const modal = document.getElementById('modal-day-detail');
+  if (!modal) return;
+  document.getElementById('day-modal-title').textContent = label;
+  const body = document.getElementById('day-modal-body');
+  if (workers.length === 0) {
+    body.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No flagmen assigned on this date.</p>';
+  } else {
+    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th></tr></thead><tbody>'
+      + workers.map(fm => '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td></tr>').join('')
+      + '</tbody></table>';
+  }
+  modal.classList.add('open');
 }
 
 // ═══════════════════════════════════════════════════════════ VACATION CALENDAR
@@ -2429,13 +2612,10 @@ function activateChip(btn) {
 // ===== SCHEDULE VIEWS =====
 let schedView = 'weekly';
 let schedWeekOffset = 0;
-function switchSchedView(v, btn) {
-  schedView = v;
-  document.querySelectorAll('#schedule-view-tabs .chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  renderSchedule();
-}
+// switchSchedView is defined in the first script block above
 function shiftSchedWeek(d) { schedWeekOffset += d; renderSchedule(); }
+function renderScheduleWeekly() { /* weekly tab pane is static HTML — no re-render needed */ }
+function renderScheduleList() { /* list tab pane is static HTML — no re-render needed */ }
 
 function renderSchedule() {
   const container = document.getElementById('schedule-content');
@@ -3468,11 +3648,27 @@ function renderOvertimeTable() {
   if (table) table.innerHTML = thead + tbody;
 }
 
+
+
+// ===== JOB DETAIL / ASSIGN WIZARD =====
+function openAssignWizard(jobId) {
+  openInterestModal(['Morning','Afternoon','Night']);
+  toast('Assign wizard for '+jobId+' opened','success');
+}
+function openJobDetail(jobId) {
+  toast('Job '+jobId+' details opened','success');
+}
+// ===== COMPANY MODAL =====
+function openEditCompanyModal(name) {
+  const modal = document.getElementById('modal-edit-company');
+  if (!modal) { toast('Edit company: '+name,'success'); return; }
+  document.getElementById('edit-company-name').value = name;
+  modal.classList.add('open');
+}
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   showPage('sec-dashboard');
   renderSchedule();
-  renderOvertimeTable();
   // Show overlap notification after 2 seconds
   setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 2000);
   renderVacCalendar();
@@ -3491,5 +3687,41 @@ document.addEventListener('DOMContentLoaded', () => {
   if (vacEnd) vacEnd.addEventListener('input', calcVacDays);
 });
 </script>
+
+<!-- DAY DETAIL MODAL -->
+<div class="modal-overlay" id="modal-day-detail">
+  <div class="modal" style="max-width:800px;width:95%;">
+    <div class="modal-header">
+      <h3 id="day-modal-title">Flagmen on Date</h3>
+      <button class="modal-close" onclick="closeModal('modal-day-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="day-modal-body" style="max-height:420px;overflow-y:auto;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-day-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT COMPANY MODAL -->
+<div class="modal-overlay" id="modal-edit-company">
+  <div class="modal" style="max-width:480px;width:95%;">
+    <div class="modal-header">
+      <h3>Edit Company</h3>
+      <button class="modal-close" onclick="closeModal('modal-edit-company')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Company Name</label><input class="form-control" id="edit-company-name" type="text"></div>
+      <div class="form-group"><label>Type</label><select class="form-control"><option>External</option><option>Internal</option></select></div>
+      <div class="form-group"><label>Primary Subdivision</label><select class="form-control"><option>Coquitlam</option><option>Wainwright</option><option>Edson</option><option>Jasper</option><option>Biggar</option><option>Hope</option><option>Cascade</option></select></div>
+      <div class="form-group"><label>Contact Name</label><input class="form-control" type="text" placeholder="Primary contact"></div>
+      <div class="form-group"><label>Contact Email</label><input class="form-control" type="email" placeholder="email@company.com"></div>
+      <div class="form-group"><label>Status</label><select class="form-control"><option>Active</option><option>Inactive</option><option>Under Review</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="toast('Company saved','success');closeModal('modal-edit-company')">💾 Save Changes</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-company')">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
