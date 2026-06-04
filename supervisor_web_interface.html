@@ -3986,7 +3986,7 @@ function openRuleEditor(ruleId) {
       // If the code changed, update the row id and the Edit button
       if (newCode !== oldCode) {
         row.id = 'rule-row-' + newCode;
-        if (cells[6]) cells[6].innerHTML = '<button class="btn btn-xs btn-edit" onclick="openRuleEditor('' + newCode + '')">Edit</button>';
+        if (cells[6]) cells[6].innerHTML = '<button class="btn btn-xs btn-edit" onclick="openRuleEditor(\'' + newCode + '\')">Edit</button>';
       }
     }
 
