@@ -644,33 +644,35 @@ function mToast(msg) {
 }
 
 // ── JOBS TAB ──
+// shifts: array of shift keys e.g. ['morning'] or ['morning','afternoon','night']
+// pendingType: tracks if user clicked Regular/OT but hasn't picked shift yet
 const jobWeeks = [
   { label:'Week of May 25, 2026', jobs:[
-    { id:'jw0a', company:'Summit Rail Services', sub:'Edson Sub', mp:'MP 110.0–111.2', dates:'May 27–29', days:3, shift:'morning', req:'TIGS', urgent:false, interest:null },
-    { id:'jw0b', company:'Highpoint Infrastructure', sub:'Cascade Sub', mp:'MP 55.0–56.0', dates:'May 26–30', days:5, shift:'night', req:'TIGS · Form B', urgent:false, interest:null },
+    { id:'jw0a', company:'Summit Rail Services', sub:'Edson Sub', mp:'MP 110.0–111.2', dates:'May 27–29', days:3, shifts:['morning'], req:'TIGS', urgent:false, interest:null, pendingType:null },
+    { id:'jw0b', company:'Highpoint Infrastructure', sub:'Cascade Sub', mp:'MP 55.0–56.0', dates:'May 26–30', days:5, shifts:['morning','afternoon','night'], req:'TIGS · Form B', urgent:false, interest:null, pendingType:null },
   ]},
   { label:'Week of Jun 1, 2026', jobs:[
-    { id:'jw1a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 88.5–89.0', dates:'Jun 9–13', days:5, shift:'morning', req:'TIGS', urgent:true, interest:null },
-    { id:'jw1b', company:'Ironwood Track Services', sub:'Bulkley Sub', mp:'MP 88.0–89.5', dates:'Jun 16–25', days:10, shift:'afternoon', req:'TIGS · CROR', urgent:false, interest:null },
-    { id:'jw1c', company:'Clearwater Land Authority', sub:'Clearwater Sub', mp:'MP 25.1–26.0', dates:'TBD', days:7, shift:'night', req:'TIGS · Form B', urgent:false, interest:null },
+    { id:'jw1a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 88.5–89.0', dates:'Jun 9–13', days:5, shifts:['morning','afternoon'], req:'TIGS', urgent:true, interest:null, pendingType:null },
+    { id:'jw1b', company:'Ironwood Track Services', sub:'Bulkley Sub', mp:'MP 88.0–89.5', dates:'Jun 16–25', days:10, shifts:['afternoon'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
+    { id:'jw1c', company:'Clearwater Land Authority', sub:'Clearwater Sub', mp:'MP 25.1–26.0', dates:'TBD', days:7, shifts:['morning','afternoon','night'], req:'TIGS · Form B', urgent:false, interest:null, pendingType:null },
   ]},
   { label:'Week of Jun 8, 2026', jobs:[
-    { id:'jw2a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 44.0–45.5', dates:'Jun 16–20', days:5, shift:'morning', req:'TIGS · CROR', urgent:false, interest:null },
-    { id:'jw2b', company:'Apex Energy Corp', sub:'Wainwright Sub', mp:'MP 100.0–101.0', dates:'Jun 17–21', days:5, shift:'afternoon', req:'TIGS', urgent:false, interest:null },
+    { id:'jw2a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 44.0–45.5', dates:'Jun 16–20', days:5, shifts:['morning','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
+    { id:'jw2b', company:'Apex Energy Corp', sub:'Wainwright Sub', mp:'MP 100.0–101.0', dates:'Jun 17–21', days:5, shifts:['afternoon'], req:'TIGS', urgent:false, interest:null, pendingType:null },
   ]},
   { label:'Week of Jun 15, 2026', jobs:[
-    { id:'jw3a', company:'Meridian Rail Services', sub:'Lillooet Sub', mp:'MP 200.8–202.0', dates:'Jun 23–27', days:5, shift:'morning', req:'TIGS · CROR', urgent:false, interest:null },
-    { id:'jw3b', company:'Stonebridge Excavation', sub:'Yale Sub', mp:'MP 120.0–121.0', dates:'Jun 23–30', days:8, shift:'night', req:'TIGS · Form B', urgent:true, interest:null },
+    { id:'jw3a', company:'Meridian Rail Services', sub:'Lillooet Sub', mp:'MP 200.8–202.0', dates:'Jun 23–27', days:5, shifts:['morning','afternoon','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
+    { id:'jw3b', company:'Stonebridge Excavation', sub:'Yale Sub', mp:'MP 120.0–121.0', dates:'Jun 23–30', days:8, shifts:['night'], req:'TIGS · Form B', urgent:true, interest:null, pendingType:null },
   ]},
   { label:'Week of Jun 22, 2026', jobs:[
-    { id:'jw4a', company:'Ridgeline Construction', sub:'Bulkley Sub', mp:'MP 90.0–91.5', dates:'Jun 29–Jul 3', days:5, shift:'morning', req:'TIGS', urgent:false, interest:null },
+    { id:'jw4a', company:'Ridgeline Construction', sub:'Bulkley Sub', mp:'MP 90.0–91.5', dates:'Jun 29–Jul 3', days:5, shifts:['morning','afternoon'], req:'TIGS', urgent:false, interest:null, pendingType:null },
   ]},
   { label:'Week of Jun 29, 2026', jobs:[
-    { id:'jw5a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 92.0–93.0', dates:'Jul 7–11', days:5, shift:'afternoon', req:'TIGS · CROR', urgent:false, interest:null },
-    { id:'jw5b', company:'CN Track Renewal', sub:'Wainwright Sub', mp:'MP 44.0–45.5', dates:'Jul 7–11', days:5, shift:'morning', req:'TIGS', urgent:false, interest:null },
+    { id:'jw5a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 92.0–93.0', dates:'Jul 7–11', days:5, shifts:['afternoon','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
+    { id:'jw5b', company:'CN Track Renewal', sub:'Wainwright Sub', mp:'MP 44.0–45.5', dates:'Jul 7–11', days:5, shifts:['morning'], req:'TIGS', urgent:false, interest:null, pendingType:null },
   ]},
   { label:'Week of Jul 6, 2026', jobs:[
-    { id:'jw6a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 112.0–113.0', dates:'Jul 13–17', days:5, shift:'morning', req:'TIGS · CROR', urgent:false, interest:null },
+    { id:'jw6a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 112.0–113.0', dates:'Jul 13–17', days:5, shifts:['morning','afternoon','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
   ]},
 ];
 let jobWeekIdx = 1;
@@ -690,6 +692,7 @@ function renderOpenJobs() {
   } else {
     week.jobs.forEach(j => {
       const expressed = j.interest !== null;
+      const multiShift = j.shifts.length > 1;
       html += '<div class="interest-card' + (expressed ? ' expressed' : '') + '" id="' + j.id + '">';
       html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">';
       html += '<div class="interest-company">' + j.company + '</div>';
@@ -699,12 +702,29 @@ function renderOpenJobs() {
       html += '<div class="interest-meta">' + j.sub + ' · ' + j.mp + ' · ' + j.dates + ' · ' + j.days + ' days</div>';
       html += '<div class="interest-tags">';
       html += '<span class="tag tag-sub">' + j.sub.split(' ')[0] + '</span>';
-      html += '<span class="tag" style="background:' + shiftColors[j.shift] + ';color:' + shiftText[j.shift] + ';">' + shiftLabel[j.shift] + '</span>';
+      // show all available shifts as chips
+      j.shifts.forEach(sh => {
+        html += '<span class="tag" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';">' + shiftLabel[sh] + '</span>';
+      });
       html += '<span class="tag" style="background:#D4EDDA;color:#1E7E34;">' + j.days + ' days</span>';
       html += '</div>';
       html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: ' + j.req + '</div>';
       if (expressed) {
-        html += '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="withdrawInterest(\'' + j.id + '\',\'' + jobWeekIdx + '\')">✓ Interested (' + j.interest + ') — Tap to Withdraw</button>';
+        // Show confirmed interest with shift
+        const interestShift = j.interest.shift ? ' · ' + shiftLabel[j.interest.shift] + ' shift' : '';
+        html += '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="withdrawInterest(\'' + j.id + '\')">✓ Interested (' + j.interest.type + interestShift + ') — Tap to Withdraw</button>';
+      } else if (j.pendingType) {
+        // Shift selection step — shown after clicking Regular/OT on a multi-shift job
+        html += '<div style="background:#f0f7ff;border-radius:10px;padding:12px;border:1px solid var(--cn-light-blue);">';
+        html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">Select your preferred shift for ' + j.pendingType + ':</div>';
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">';
+        j.shifts.forEach(sh => {
+          html += '<div class="shift-opt" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';border:none;" onclick="confirmJobInterest(\'' + j.id + '\',\'' + sh + '\')">'
+            + shiftLabel[sh] + '</div>';
+        });
+        html += '</div>';
+        html += '<button style="width:100%;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--text-muted);" onclick="cancelPending(\'' + j.id + '\')">← Back</button>';
+        html += '</div>';
       } else {
         html += '<div class="interest-actions">';
         html += '<button class="btn-interest btn-regular" onclick="expressJobInterest(\'' + j.id + '\',\'Regular Hours\')">👋 Regular Hours</button>';
@@ -720,20 +740,44 @@ function renderOpenJobs() {
   jobWeeks.forEach((_, i) => { pgHtml += '<div class="pg-dot' + (i === jobWeekIdx ? ' active' : '') + '"></div>'; });
   document.getElementById('open-jobs-pg').innerHTML = pgHtml;
 }
-function expressJobInterest(jobId, type) {
-  // find the job across all weeks
+function findJob(jobId) {
   for (let w of jobWeeks) {
     const j = w.jobs.find(x => x.id === jobId);
-    if (j) { j.interest = type; break; }
+    if (j) return j;
+  }
+  return null;
+}
+function expressJobInterest(jobId, type) {
+  const j = findJob(jobId);
+  if (!j) return;
+  if (j.shifts.length === 1) {
+    // single shift — confirm immediately
+    j.interest = { type: type, shift: j.shifts[0] };
+    j.pendingType = null;
+    mToast('Interest expressed: ' + type + ' · ' + j.shifts[0] + ' ✓');
+  } else {
+    // multi-shift — show shift picker
+    j.pendingType = type;
   }
   renderOpenJobs();
-  mToast('Interest expressed: ' + type + ' ✓');
+}
+function confirmJobInterest(jobId, shift) {
+  const j = findJob(jobId);
+  if (!j) return;
+  j.interest = { type: j.pendingType, shift: shift };
+  j.pendingType = null;
+  renderOpenJobs();
+  const shiftLabel = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
+  mToast('Interest: ' + j.interest.type + ' · ' + shiftLabel[shift] + ' ✓');
+}
+function cancelPending(jobId) {
+  const j = findJob(jobId);
+  if (j) { j.pendingType = null; }
+  renderOpenJobs();
 }
 function withdrawInterest(jobId) {
-  for (let w of jobWeeks) {
-    const j = w.jobs.find(x => x.id === jobId);
-    if (j) { j.interest = null; break; }
-  }
+  const j = findJob(jobId);
+  if (j) { j.interest = null; j.pendingType = null; }
   renderOpenJobs();
   mToast('Interest withdrawn');
 }
