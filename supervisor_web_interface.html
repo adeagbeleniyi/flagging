@@ -1214,47 +1214,38 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ OVERTIME -->
+<!-- ══════════════════════════════════════════════════════════ OVERTIME AVAILABILITY -->
 <div class="page-section" id="sec-overtime">
   <div class="page-header">
-    <div><h1>Overtime Availability</h1><div class="sub">Collection window: Jun 6, 2026 · 5 PM deadline</div></div>
+    <div><h1>Overtime Availability</h1><div class="sub" id="ot-sub">Collection window: Jun 6, 2026 · 5 PM deadline</div></div>
     <div class="hdr-actions">
-      <button class="btn btn-secondary btn-sm" onclick="toast('Reminder sent to 8 non-responders','success')">📧 Send Reminder</button>
+      <button class="btn btn-secondary btn-sm" onclick="toast('Reminder sent to non-responders','success')">📧 Send Reminder</button>
     </div>
   </div>
   <div class="content">
-    <div class="alert alert-warning">⏰ OT window closes <strong>Friday Jun 6 at 5 PM</strong>. 5 of 13 flagmen have responded. 8 non-responders highlighted below.</div>
+    <div class="alert alert-warning" id="ot-alert">⏰ OT window closes <strong>Friday Jun 6 at 5 PM</strong>. 5 of 13 flagmen have responded. 8 non-responders highlighted below.</div>
     <div class="filter-bar">
       <div class="date-nav">
-        <button onclick="toast('Previous OT week','success')">◀ Prev Week</button>
-        <span class="date-label">Jun 7–8, 2026 (Off-Cycle Weekend)</span>
-        <button onclick="toast('Next OT week','success')">Next Week ▶</button>
+        <button onclick="shiftOTWeek(-1)">◀ Prev Period</button>
+        <span class="date-label" id="ot-period-label">Jun 7–13, 2026 (Off-Cycle Period)</span>
+        <button onclick="shiftOTWeek(1)">Next Period ▶</button>
       </div>
-      <select><option>All Responses</option><option>Responded</option><option>Not Responded</option></select>
+      <select id="ot-filter" onchange="renderOvertimeTable()">
+        <option value="all">All Responses</option>
+        <option value="responded">Responded</option>
+        <option value="not">Not Responded</option>
+      </select>
     </div>
     <div class="card">
-      <div class="card-body" style="padding:0;">
-        <table class="tbl">
-          <thead><tr><th>Flagman</th><th>Cycle</th><th>A/B</th><th>Sat Jun 7</th><th>Sun Jun 8</th><th>Preferred Shift</th><th>Responded</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Hartley, Marcus</strong></td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td><span class="badge badge-inprogress">Available</span></td><td><span class="badge badge-complete">Unavailable</span></td><td>Morning</td><td><span class="badge badge-approved">✓ Responded</span></td></tr>
-            <tr><td><strong>Larsson, Erik</strong></td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td><span class="badge badge-inprogress">Available</span></td><td><span class="badge badge-inprogress">Available</span></td><td>Any</td><td><span class="badge badge-approved">✓ Responded</span></td></tr>
-            <tr><td><strong>Okafor, James</strong></td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td><span class="badge badge-complete">Unavailable</span></td><td><span class="badge badge-inprogress">Available</span></td><td>Afternoon</td><td><span class="badge badge-approved">✓ Responded</span></td></tr>
-            <tr><td><strong>Kowalski, Piotr</strong></td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td><span class="badge badge-inprogress">Available</span></td><td><span class="badge badge-inprogress">Available</span></td><td>Morning</td><td><span class="badge badge-approved">✓ Responded</span></td></tr>
-            <tr><td><strong>Varga, Stefan</strong></td><td>9&5</td><td><span class="cycle-badge-a">A</span></td><td><span class="badge badge-inprogress">Available</span></td><td><span class="badge badge-complete">Unavailable</span></td><td>Any</td><td><span class="badge badge-approved">✓ Responded</span></td></tr>
-            <tr style="opacity:.55;"><td><strong>Petrov, Daniel</strong></td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td colspan="3" style="color:var(--text-muted);font-style:italic;">On cycle — not eligible this week</td><td><span class="badge badge-complete">N/A</span></td></tr>
-            <tr style="opacity:.55;"><td><strong>Tremblay, Luc</strong></td><td>9&5</td><td><span class="cycle-badge-a">A</span></td><td colspan="3" style="color:var(--text-muted);font-style:italic;">On cycle — not eligible this week</td><td><span class="badge badge-complete">N/A</span></td></tr>
-            <tr style="background:#fff8f8;"><td><strong>Ferreira, Marco</strong></td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-pending">No Response</span></td></tr>
-            <tr style="background:#fff8f8;"><td><strong>Callahan, Brett</strong></td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-pending">No Response</span></td></tr>
-            <tr style="background:#fff8f8;"><td><strong>Yamamoto, Dean</strong></td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-pending">No Response</span></td></tr>
-            <tr style="background:#fff8f8;"><td><strong>Beaumont, Claude</strong></td><td>9&5</td><td><span class="cycle-badge-a">A</span></td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-pending">No Response</span></td></tr>
-            <tr style="background:#fff8f8;"><td><strong>Marchetti, Giulio</strong></td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-pending">No Response</span></td></tr>
-            <tr style="background:#fff8f8;"><td><strong>Dubois, Remi</strong></td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-pending">No Response</span></td></tr>
-          </tbody>
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table class="tbl" id="ot-table">
+          <!-- rendered by renderOvertimeTable() -->
         </table>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- ══════════════════════════════════════════════════════════ VACATION -->
 <div class="page-section" id="sec-vacation">
@@ -3299,10 +3290,189 @@ function filterTimesheet() {
   showToast('Filter applied', 'info');
 }
 
+
+// ===== OVERTIME TABLE =====
+// Off-cycle periods: each entry has a label and a list of {date, label} days
+const otPeriods = [
+  {
+    label: 'Jun 7–13, 2026 (Off-Cycle Period)',
+    days: [
+      { date: 'Jun 7',  label: 'Sat Jun 7'  },
+      { date: 'Jun 8',  label: 'Sun Jun 8'  },
+      { date: 'Jun 9',  label: 'Mon Jun 9'  },
+      { date: 'Jun 10', label: 'Tue Jun 10' },
+      { date: 'Jun 11', label: 'Wed Jun 11' },
+      { date: 'Jun 12', label: 'Thu Jun 12' },
+      { date: 'Jun 13', label: 'Fri Jun 13' },
+    ]
+  },
+  {
+    label: 'Jun 14–15, 2026 (Off-Cycle Weekend)',
+    days: [
+      { date: 'Jun 14', label: 'Sat Jun 14' },
+      { date: 'Jun 15', label: 'Sun Jun 15' },
+    ]
+  }
+];
+let otPeriodIdx = 0;
+
+// Each flagman response: availability and preferred shift per off-cycle date
+// availability: 'available' | 'unavailable' | null (no response)
+// shift: 'Morning' | 'Afternoon' | 'Night' | null
+const otResponses = [
+  {
+    name: 'Hartley, Marcus', cycle: '5&2', ab: 'Fixed', badgeClass: 'cycle-badge-52', eligible: true,
+    days: {
+      'Jun 7':  { avail: 'available',   shift: 'Morning'   },
+      'Jun 8':  { avail: 'unavailable', shift: null        },
+      'Jun 9':  { avail: 'available',   shift: 'Morning'   },
+      'Jun 10': { avail: 'available',   shift: 'Morning'   },
+      'Jun 11': { avail: 'unavailable', shift: null        },
+      'Jun 12': { avail: 'available',   shift: 'Afternoon' },
+      'Jun 13': { avail: 'unavailable', shift: null        },
+    }
+  },
+  {
+    name: 'Larsson, Erik', cycle: '5&2', ab: 'Fixed', badgeClass: 'cycle-badge-52', eligible: true,
+    days: {
+      'Jun 7':  { avail: 'available', shift: 'Morning'   },
+      'Jun 8':  { avail: 'available', shift: 'Morning'   },
+      'Jun 9':  { avail: 'available', shift: 'Afternoon' },
+      'Jun 10': { avail: 'available', shift: 'Morning'   },
+      'Jun 11': { avail: 'available', shift: 'Morning'   },
+      'Jun 12': { avail: 'available', shift: 'Night'     },
+      'Jun 13': { avail: 'available', shift: 'Morning'   },
+    }
+  },
+  {
+    name: 'Okafor, James', cycle: '5&2', ab: 'Fixed', badgeClass: 'cycle-badge-52', eligible: true,
+    days: {
+      'Jun 7':  { avail: 'unavailable', shift: null        },
+      'Jun 8':  { avail: 'available',   shift: 'Afternoon' },
+      'Jun 9':  { avail: 'available',   shift: 'Afternoon' },
+      'Jun 10': { avail: 'unavailable', shift: null        },
+      'Jun 11': { avail: 'available',   shift: 'Afternoon' },
+      'Jun 12': { avail: 'available',   shift: 'Afternoon' },
+      'Jun 13': { avail: 'unavailable', shift: null        },
+    }
+  },
+  {
+    name: 'Kowalski, Piotr', cycle: '5&2', ab: 'Fixed', badgeClass: 'cycle-badge-52', eligible: true,
+    days: {
+      'Jun 7':  { avail: 'available', shift: 'Morning' },
+      'Jun 8':  { avail: 'available', shift: 'Morning' },
+      'Jun 9':  { avail: 'available', shift: 'Morning' },
+      'Jun 10': { avail: 'available', shift: 'Morning' },
+      'Jun 11': { avail: 'available', shift: 'Morning' },
+      'Jun 12': { avail: 'available', shift: 'Morning' },
+      'Jun 13': { avail: 'available', shift: 'Morning' },
+    }
+  },
+  {
+    name: 'Varga, Stefan', cycle: '9&5', ab: 'A', badgeClass: 'cycle-badge-a', eligible: true,
+    days: {
+      'Jun 7':  { avail: 'available',   shift: 'Night'   },
+      'Jun 8':  { avail: 'unavailable', shift: null      },
+      'Jun 9':  { avail: 'available',   shift: 'Night'   },
+      'Jun 10': { avail: 'available',   shift: 'Night'   },
+      'Jun 11': { avail: 'unavailable', shift: null      },
+      'Jun 12': { avail: 'available',   shift: 'Morning' },
+      'Jun 13': { avail: 'available',   shift: 'Night'   },
+    }
+  },
+  { name: 'Petrov, Daniel',   cycle: '8&6', ab: 'A', badgeClass: 'cycle-badge-a', eligible: false, days: {} },
+  { name: 'Tremblay, Luc',   cycle: '9&5', ab: 'A', badgeClass: 'cycle-badge-a', eligible: false, days: {} },
+  { name: 'Ferreira, Marco', cycle: '8&6', ab: 'B', badgeClass: 'cycle-badge-b', eligible: true,  days: null },
+  { name: 'Callahan, Brett', cycle: '9&5', ab: 'B', badgeClass: 'cycle-badge-b', eligible: true,  days: null },
+  { name: 'Yamamoto, Dean',  cycle: '8&6', ab: 'B', badgeClass: 'cycle-badge-b', eligible: true,  days: null },
+  { name: 'Beaumont, Claude',cycle: '9&5', ab: 'A', badgeClass: 'cycle-badge-a', eligible: true,  days: null },
+  { name: 'Marchetti, Giulio',cycle:'9&5', ab: 'B', badgeClass: 'cycle-badge-b', eligible: true,  days: null },
+  { name: 'Dubois, Remi',    cycle: '9&5', ab: 'B', badgeClass: 'cycle-badge-b', eligible: true,  days: null },
+];
+
+function shiftOTWeek(dir) {
+  otPeriodIdx = Math.max(0, Math.min(otPeriods.length - 1, otPeriodIdx + dir));
+  document.getElementById('ot-period-label').textContent = otPeriods[otPeriodIdx].label;
+  renderOvertimeTable();
+}
+
+function renderOvertimeTable() {
+  const period = otPeriods[otPeriodIdx];
+  const days = period.days;
+  const filter = document.getElementById('ot-filter') ? document.getElementById('ot-filter').value : 'all';
+
+  // Shift colour pills
+  const shiftPill = {
+    'Morning':   '<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#dbeafe;color:#1e40af;">Morning</span>',
+    'Afternoon': '<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#fef9c3;color:#854d0e;">Afternoon</span>',
+    'Night':     '<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#ede9fe;color:#5b21b6;">Night</span>',
+  };
+
+  // Build header
+  let thead = '<thead><tr><th>Flagman</th><th>Cycle</th><th>A/B</th>';
+  days.forEach(d => { thead += `<th style="min-width:90px;">${d.label}</th>`; });
+  thead += '<th>Status</th></tr></thead>';
+
+  // Build body
+  let tbody = '<tbody>';
+  otResponses.forEach(f => {
+    // Apply filter
+    const responded = f.eligible && f.days !== null;
+    const notEligible = !f.eligible;
+    if (filter === 'responded' && !responded) return;
+    if (filter === 'not' && (responded || notEligible)) return;
+
+    let rowStyle = '';
+    let statusCell = '';
+    let dayCells = '';
+
+    if (!f.eligible) {
+      // On-cycle — not eligible
+      rowStyle = 'opacity:.5;';
+      dayCells = `<td colspan="${days.length}" style="color:var(--text-muted);font-style:italic;">On cycle — not eligible this period</td>`;
+      statusCell = '<span class="badge badge-complete">N/A</span>';
+    } else if (f.days === null) {
+      // No response yet
+      rowStyle = 'background:#fff8f8;';
+      days.forEach(() => { dayCells += '<td style="color:var(--text-muted);">—</td>'; });
+      statusCell = '<span class="badge badge-pending">No Response</span>';
+    } else {
+      // Has responded — show per-day availability + preferred shift
+      days.forEach(d => {
+        const entry = f.days[d.date];
+        if (!entry) {
+          dayCells += '<td style="color:var(--text-muted);">—</td>';
+          return;
+        }
+        if (entry.avail === 'unavailable') {
+          dayCells += '<td><span class="badge badge-complete">Unavailable</span></td>';
+        } else {
+          const pill = entry.shift ? shiftPill[entry.shift] : '<span style="font-size:10px;color:var(--text-muted);">Any</span>';
+          dayCells += `<td><span class="badge badge-inprogress">Available</span><br>${pill}</td>`;
+        }
+      });
+      statusCell = '<span class="badge badge-approved">✓ Responded</span>';
+    }
+
+    tbody += `<tr style="${rowStyle}">
+      <td><strong>${f.name}</strong></td>
+      <td>${f.cycle}</td>
+      <td><span class="${f.badgeClass}">${f.ab}</span></td>
+      ${dayCells}
+      <td>${statusCell}</td>
+    </tr>`;
+  });
+  tbody += '</tbody>';
+
+  const table = document.getElementById('ot-table');
+  if (table) table.innerHTML = thead + tbody;
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   showPage('sec-dashboard');
   renderSchedule();
+  renderOvertimeTable();
   // Show overlap notification after 2 seconds
   setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 2000);
   renderVacCalendar();
