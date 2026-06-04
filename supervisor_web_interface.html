@@ -2177,7 +2177,7 @@ function loadReqDetail(id, card) {
       <tr><td style="padding:4px;color:#666">Machinery</td><td>${d.machinery ? 'Yes' : 'No'}</td></tr>
       <tr><td style="padding:4px;color:#666">Distance from Track</td><td>${d.distance}</td></tr>
     </table>
-    ${d.excavation ? `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openModal('locate-modal')">📄 View Locate</button><button class="btn btn-secondary btn-sm" onclick="showToast('Locate document downloaded','success')">⬇ Download</button></div>` : ''}
+    ${d.excavation ? `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openModal('modal-locate')">📄 View Locate</button><button class="btn btn-secondary btn-sm" onclick="showToast('Locate document downloaded','success')">⬇ Download</button></div>` : ''}
     <div style="margin-top:10px;background:#f9fafb;border-radius:6px;padding:10px;font-size:13px;color:#555">${d.desc}</div>
     <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
       ${canApprove ? `<button class="btn btn-primary" onclick="openReviewModal('${id}')">✓ Review & Approve</button>` : ''}
@@ -2200,7 +2200,7 @@ function openReviewModal(id) {
       <div><strong>Shifts:</strong> ${d.shifts.map(s=>s.name).join(', ')}</div>
       <div><strong>Excavation:</strong> ${d.excavation ? 'Yes' : 'No'}</div>
     </div>`;
-  openModal('review-modal');
+  openModal('modal-review');
 }
 
 function approveRequest(reqId) {
@@ -2208,7 +2208,7 @@ function approveRequest(reqId) {
   if (currentReviewId && reqData[currentReviewId]) {
     reqData[currentReviewId].status = 'approved';
   }
-  closeModal('review-modal');
+  closeModal('modal-review');
   showToast(`Request approved — Assign a flagman to proceed`, 'success');
   // Refresh detail panel
   const activeCard = document.querySelector('.req-card[style*="outline: 2px"]') || document.querySelector('.req-card[style*="outline:2px"]');
@@ -2216,7 +2216,7 @@ function approveRequest(reqId) {
 }
 
 function rejectRequest() {
-  closeModal('review-modal');
+  closeModal('modal-review');
   showToast('Request rejected — requester will be notified', 'info');
 }
 
@@ -2280,7 +2280,7 @@ function openCheckoutModal(btn, name, id, date, shift, checkin) {
   const defaults = { Morning:'15:00', Afternoon:'23:00', Night:'06:00' };
   document.getElementById('checkout-time').value = defaults[shift] || '15:00';
   calcCheckoutHours();
-  openModal('checkout-modal');
+  openModal('modal-checkout');
 }
 
 function calcCheckoutHours() {
@@ -2307,14 +2307,14 @@ function confirmCheckout() {
     const btn = checkoutRow.querySelector('button');
     if (btn) { btn.textContent = 'Checked Out'; btn.disabled = true; btn.style.opacity = '0.5'; }
   }
-  closeModal('checkout-modal');
+  closeModal('modal-checkout');
   showToast(`Check-out recorded at ${time} ✓`, 'success');
 }
 
 // ===== VACATION =====
 function openAddVacation(name) {
   if (name) document.getElementById('vac-flagman').value = name;
-  openModal('add-vacation-modal');
+  openModal('modal-add-vacation');
   document.getElementById('vac-start').oninput = document.getElementById('vac-end').oninput = calcVacDays;
 }
 
@@ -2337,7 +2337,7 @@ function confirmAddVacation() {
   if (!s || !e) { showToast('Please select start and end dates','error'); return; }
   const days = Math.round((new Date(e) - new Date(s)) / 86400000) + 1;
   if (days > 25) { showToast('Cannot exceed 25 vacation days per year','error'); return; }
-  closeModal('add-vacation-modal');
+  closeModal('modal-add-vacation');
   showToast(`Vacation added for ${name}: ${s} to ${e} (${days} days)`, 'success');
 }
 
@@ -2355,7 +2355,7 @@ function openVacHistory(name) {
       <tr><td>Sep 7–11, 2026</td><td>5</td><td><span class="badge badge-yellow">Upcoming</span></td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Entry removed','info')">Remove</button></td></tr>
       <tr><td>Feb 10–13, 2026</td><td>4</td><td><span class="badge" style="background:#f3f4f6;color:#6b7280">Completed</span></td><td>—</td></tr>
     </tbody></table>`;
-  openModal('vac-history-modal');
+  openModal('modal-vac-history');
 }
 
 // ===== VACATION CALENDAR =====
@@ -2372,7 +2372,7 @@ function toggleCycleAB(val) {
 
 // ===== FLAGMAN SAVE =====
 function saveFlagman() {
-  closeModal('flagman-modal');
+  closeModal('modal-add-flagman');
   showToast('Flagman profile saved successfully', 'success');
 }
 
@@ -3820,5 +3820,41 @@ function shiftDFRDay(dir) {
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL: Vacation History ===== -->
+<div id="modal-vac-history" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-vac-history')">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="vac-history-title">Vacation History</h3>
+      <button class="modal-close" onclick="closeModal('modal-vac-history')">✕</button>
+    </div>
+    <div class="modal-body" id="vac-history-body">
+      <!-- populated by openVacHistory() -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-vac-history')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== MODAL: Request Review ===== -->
+<div id="modal-review" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-review')">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="review-modal-title">Review Request</h3>
+      <button class="modal-close" onclick="closeModal('modal-review')">✕</button>
+    </div>
+    <div class="modal-body" id="review-modal-body">
+      <!-- populated by openReviewModal() -->
+    </div>
+    <div class="modal-footer" id="review-modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-review')">Close</button>
+      <button class="btn btn-danger" id="review-deny-btn" onclick="denyRequest(currentReviewId);closeModal('modal-review')">Deny</button>
+      <button class="btn btn-primary" id="review-approve-btn" onclick="approveRequest(currentReviewId);closeModal('modal-review')">Approve</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
