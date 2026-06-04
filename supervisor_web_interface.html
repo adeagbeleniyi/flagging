@@ -571,9 +571,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   <div class="content">
     <div class="filter-bar">
       <div class="date-nav">
-        <button onclick="toast('Navigated to previous day','success')">◀ Prev</button>
-        <span class="date-label">Jun 4, 2026</span>
-        <button onclick="toast('Navigated to next day','success')">Next ▶</button>
+        <button onclick="shiftDFRDay(-1)">◀ Prev</button>
+        <span id="dfr-date-display" class="date-label">Jun 4, 2026</span>
+        <button onclick="shiftDFRDay(1)">Next ▶</button>
       </div>
       <select><option>All Flagmen</option><option>Tremblay, Luc</option><option>Hartley, Marcus</option><option>Beaumont, Claude</option></select>
       <select><option>All Types</option><option>CN Employee</option><option>Contracted</option></select>
@@ -1175,36 +1175,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><span class="badge badge-active">Active</span></td>
                 <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Kowalski, Piotr')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate this flagman?')){toast('Flagman deactivated','warning')}">Deactivate</button></td>
               </tr>
-              <tr>
-                <td><strong>Tremblay, Luc</strong></td><td>CN-1005</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#8</td>
-                <td><span class="qual-chip qual-valid">TIGS</span></td>
-                <td><span class="qual-chip qual-valid">CROR</span></td>
-                <td><span class="qual-chip qual-valid">eRail</span></td>
-                <td><span class="qual-chip qual-valid">Form B</span></td>
-                <td>Flagging · Working Limits · Foul · Form B</td>
-                <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Tremblay, Luc')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate?')){toast('Deactivated','warning')}">Deactivate</button></td>
-              </tr>
-              <tr>
-                <td><strong>Callahan, Brett</strong></td><td>CN-1006</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>#11</td>
-                <td><span class="qual-chip qual-valid">TIGS</span></td>
-                <td><span class="qual-chip qual-valid">CROR</span></td>
-                <td><span class="qual-chip qual-expiring">eRail ⚠</span></td>
-                <td><span class="qual-chip qual-valid">Form B</span></td>
-                <td>Flagging · Working Limits · Foul · Form B</td>
-                <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Callahan, Brett')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate?')){toast('Deactivated','warning')}">Deactivate</button></td>
-              </tr>
-              <tr>
-                <td><strong>Yamamoto, Dean</strong></td><td>CN-1008</td><td>BC</td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>#14</td>
-                <td><span class="qual-chip qual-valid">TIGS</span></td>
-                <td><span class="qual-chip qual-valid">CROR</span></td>
-                <td><span class="qual-chip qual-valid">eRail</span></td>
-                <td><span class="qual-chip qual-valid">Form B</span></td>
-                <td>Flagging · Working Limits · Foul · Form B</td>
-                <td><span class="badge badge-active">Active</span></td>
-                <td><button class="btn btn-xs btn-edit" onclick="openEditFlagmanModal('Yamamoto, Dean')">Edit</button> <button class="btn btn-xs btn-deactivate" onclick="if(confirm('Deactivate?')){toast('Deactivated','warning')}">Deactivate</button></td>
-              </tr>
+              
+              
+              
               <tr>
                 <td><strong>Reyes, Carlos</strong></td><td>CN-1068</td><td>Alberta</td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>#1</td>
                 <td><span class="qual-chip qual-valid">✓ 2032</span></td>
@@ -1288,7 +1261,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     </div>
   </div>
   <div class="content">
-    <div class="company-card">
+    <div class="company-card" data-company-name="Ironwood Track Services">
       <div class="company-card-header">
         <div class="company-avatar">IT</div>
         <div>
@@ -1296,7 +1269,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <div style="font-size:12px;color:var(--text-muted);">info@ironwoodtrack.ca · BC Region</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:8px;">
-          <button class="btn btn-xs btn-edit" onclick="openEditCompanyModal(this.closest('.company-card').querySelector('.company-card-header div:nth-child(2) div:first-child').textContent)">Edit</button>
+          <button class="btn btn-xs btn-edit" onclick="openEditCompanyModal(this.closest('.company-card').dataset.companyName)">Edit</button>
           <button class="btn btn-xs btn-primary" onclick="openAddFlagmanModal('contracted')">+ Add Contractor</button>
         </div>
       </div>
@@ -1308,7 +1281,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         </tbody>
       </table>
     </div>
-    <div class="company-card">
+    <div class="company-card" data-company-name="Ridgecrest Flagging Ltd.">
       <div class="company-card-header">
         <div class="company-avatar">RF</div>
         <div>
@@ -1316,7 +1289,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <div style="font-size:12px;color:var(--text-muted);">dispatch@ridgecrestflagging.ca · Alberta Region</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:8px;">
-          <button class="btn btn-xs btn-edit" onclick="openEditCompanyModal(this.closest('.company-card').querySelector('.company-card-header div:nth-child(2) div:first-child').textContent)">Edit</button>
+          <button class="btn btn-xs btn-edit" onclick="openEditCompanyModal(this.closest('.company-card').dataset.companyName)">Edit</button>
           <button class="btn btn-xs btn-primary" onclick="openAddFlagmanModal('contracted')">+ Add Contractor</button>
         </div>
       </div>
@@ -2952,8 +2925,23 @@ function renderOvertimeTable() {
 
 // ===== JOB DETAIL / ASSIGN WIZARD =====
 function openAssignWizard(jobId) {
-  openInterestModal(['Morning','Afternoon','Night']);
-  toast('Assign wizard for '+jobId+' opened','success');
+  // Map job IDs to their allowed shifts
+  const jobShifts = {
+    'PRJ-721100': ['Morning','Afternoon'],
+    'PRJ-720312': ['Morning','Afternoon'],
+    'PRJ-720415': ['Morning'],
+    'PRJ-721400': ['Morning','Afternoon','Night'],
+    'PRJ-721250': ['Morning','Afternoon'],
+    'PRJ-720890': ['Night'],
+    'PRJ-721900': ['Morning','Afternoon'],
+    'PRJ-722050': ['Morning','Afternoon'],
+    'PRJ-722100': ['Morning'],
+    'PRJ-722300': ['Morning','Afternoon'],
+    'PRJ-722500': ['Morning','Afternoon','Night'],
+  };
+  const shifts = jobShifts[jobId] || ['Morning','Afternoon','Night'];
+  wizardData.jobTitle = jobId;
+  openInterestModal(shifts);
 }
 function openJobDetail(jobId) {
   // Job data lookup
@@ -3653,6 +3641,118 @@ function toggleBillingField() {
 // filterMyReqs: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ INIT
+
+// ═══════════════════════════════════════════════════════════ COMPLETED JOBS MODALS
+const completedJobData = {
+  'PRJ-718900': {company:'Pacific Rail Contractors',sub:'Burnaby',mp:'31.4–32.1',dates:'Mar 10–Apr 2, 2026',flagmen:['Hartley, Marcus','Larsson, Erik'],shifts:'Morning',hours:192,notes:'Completed on schedule. No incidents.'},
+  'PRJ-719200': {company:'Ironwood Track Services',sub:'Surrey',mp:'18.2–19.0',dates:'Mar 15–Mar 28, 2026',flagmen:['Petrov, Daniel'],shifts:'Night',hours:96,notes:'Minor delay due to weather on Mar 22.'},
+  'PRJ-719450': {company:'CN Internal',sub:'Coquitlam',mp:'44.1–44.8',dates:'Apr 1–Apr 14, 2026',flagmen:['Callahan, Brett','Ferreira, Marco'],shifts:'Afternoon',hours:168,notes:'Handoff overlap on Apr 7 — documented in DFR.'},
+  'PRJ-719600': {company:'Ridgecrest Flagging Ltd.',sub:'Kamloops',mp:'112.0–113.5',dates:'Apr 5–Apr 20, 2026',flagmen:['Okafor, James'],shifts:'Morning',hours:120,notes:'Completed ahead of schedule.'},
+  'PRJ-719750': {company:'Pacific Rail Contractors',sub:'Abbotsford',mp:'62.3–63.0',dates:'Apr 18–May 1, 2026',flagmen:['Nguyen, Kevin','Yamamoto, Dean'],shifts:'Morning / Night',hours:210,notes:'OT flagging required on Apr 25–27.'},
+  'PRJ-719900': {company:'CN Internal',sub:'New Westminster',mp:'8.5–9.2',dates:'May 2–May 12, 2026',flagmen:['Tremblay, Luc'],shifts:'Morning',hours:80,notes:'Completed. Form B signed off.'},
+  'PRJ-720050': {company:'Ironwood Track Services',sub:'Langley',mp:'27.0–27.8',dates:'May 5–May 18, 2026',flagmen:['Beaumont, Claude','Marchetti, Giulio'],shifts:'Morning',hours:168,notes:'No issues.'},
+  'PRJ-720180': {company:'Ridgecrest Flagging Ltd.',sub:'Chilliwack',mp:'85.4–86.1',dates:'May 10–May 24, 2026',flagmen:['Kowalski, Piotr'],shifts:'Morning',hours:112,notes:'Completed. Seniority dispute resolved prior to assignment.'},
+  'PRJ-720220': {company:'CN Internal',sub:'Port Moody',mp:'5.1–5.9',dates:'May 15–May 27, 2026',flagmen:['Varga, Stefan','Dubois, Remi'],shifts:'Night',hours:144,notes:'Contracted flagmen. No incidents.'},
+};
+function openCompletedJobSummary(jobId) {
+  const j = completedJobData[jobId] || {company:'N/A',sub:'N/A',mp:'N/A',dates:'N/A',flagmen:[],shifts:'N/A',hours:0,notes:'No data.'};
+  const modal = document.getElementById('modal-job-detail');
+  if (!modal) return;
+  document.getElementById('job-detail-title').textContent = jobId + ' — Completed Job Summary';
+  document.getElementById('job-detail-body').innerHTML = `
+    <div class="form-grid-2" style="gap:12px;">
+      <div><label style="font-size:11px;color:var(--text-muted);">Company</label><div style="font-weight:600;">${j.company}</div></div>
+      <div><label style="font-size:11px;color:var(--text-muted);">Subdivision</label><div style="font-weight:600;">${j.sub}</div></div>
+      <div><label style="font-size:11px;color:var(--text-muted);">Mile Post Range</label><div style="font-weight:600;">${j.mp}</div></div>
+      <div><label style="font-size:11px;color:var(--text-muted);">Dates</label><div style="font-weight:600;">${j.dates}</div></div>
+      <div><label style="font-size:11px;color:var(--text-muted);">Shifts</label><div style="font-weight:600;">${j.shifts}</div></div>
+      <div><label style="font-size:11px;color:var(--text-muted);">Total Hours</label><div style="font-weight:600;">${j.hours} hrs</div></div>
+      <div style="grid-column:1/-1;"><label style="font-size:11px;color:var(--text-muted);">Flagmen Assigned</label><div style="font-weight:600;">${j.flagmen.join(', ') || '—'}</div></div>
+      <div style="grid-column:1/-1;"><label style="font-size:11px;color:var(--text-muted);">Completion Notes</label><div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-size:13px;">${j.notes}</div></div>
+    </div>`;
+  openModal('modal-job-detail');
+}
+function openJobReport(jobId) {
+  const j = completedJobData[jobId] || {company:'N/A',sub:'N/A',mp:'N/A',dates:'N/A',flagmen:[],shifts:'N/A',hours:0,notes:'No data.'};
+  const modal = document.getElementById('modal-job-detail');
+  if (!modal) return;
+  document.getElementById('job-detail-title').textContent = jobId + ' — Job Report';
+  document.getElementById('job-detail-body').innerHTML = `
+    <div style="font-size:13px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div><strong>${jobId}</strong> · ${j.company} · ${j.sub}</div>
+        <button class="btn btn-sm btn-primary" onclick="toast('Report exported to PDF','success')">📄 Export PDF</button>
+      </div>
+      <table class="tbl" style="font-size:12px;">
+        <tbody>
+          <tr><td style="width:160px;color:var(--text-muted);">Mile Post Range</td><td><strong>${j.mp}</strong></td></tr>
+          <tr><td style="color:var(--text-muted);">Project Dates</td><td><strong>${j.dates}</strong></td></tr>
+          <tr><td style="color:var(--text-muted);">Shifts Covered</td><td><strong>${j.shifts}</strong></td></tr>
+          <tr><td style="color:var(--text-muted);">Total Hours Billed</td><td><strong>${j.hours} hrs</strong></td></tr>
+          <tr><td style="color:var(--text-muted);">Flagmen</td><td><strong>${j.flagmen.join(', ') || '—'}</strong></td></tr>
+          <tr><td style="color:var(--text-muted);">Notes</td><td>${j.notes}</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  openModal('modal-job-detail');
+}
+
+// ═══════════════════════════════════════════════════════════ DFR EDIT MODAL
+function openDFREdit(rowId) {
+  const modal = document.getElementById('modal-checkout');
+  if (!modal) { toast('DFR record editor — coming soon','info'); return; }
+  toast('DFR record #' + rowId + ' opened for editing','success');
+}
+
+// ═══════════════════════════════════════════════════════════ SETTINGS RULE EDITOR
+const ruleData = [
+  {id:1,name:'OT Threshold',desc:'Flag overtime when flagman exceeds 135 hrs in 14-day window',value:'135 hrs / 14 days'},
+  {id:2,name:'Seniority Bump',desc:'Bump junior flagman when senior flagman requests same shift',value:'Enabled'},
+  {id:3,name:'Overlap Handoff Window',desc:'Minimum overlap hours required for cycle handoff',value:'4 hrs'},
+  {id:4,name:'Expiry Warning Lead',desc:'Days before certification expiry to show warning badge',value:'60 days'},
+  {id:5,name:'Auto-Assign Threshold',desc:'Minimum interest responses before auto-assign is allowed',value:'3 responses'},
+  {id:6,name:'Night Shift Differential',desc:'A/A code applied to night shift flagging hours',value:'0220'},
+];
+function openRuleEditor(ruleId) {
+  const rule = ruleData.find(r=>r.id===ruleId) || {name:'Rule',desc:'',value:''};
+  const modal = document.getElementById('modal-job-detail');
+  if (!modal) { toast('Rule editor — coming soon','info'); return; }
+  document.getElementById('job-detail-title').textContent = 'Edit Rule — ' + rule.name;
+  document.getElementById('job-detail-body').innerHTML = `
+    <div class="form-group"><label>Rule Name</label><input class="form-control" value="${rule.name}" readonly></div>
+    <div class="form-group"><label>Description</label><textarea class="form-control" rows="3">${rule.desc}</textarea></div>
+    <div class="form-group"><label>Current Value</label><input class="form-control" id="rule-value-input" value="${rule.value}"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" onclick="toast('Rule updated','success');closeModal('modal-job-detail')">Save Rule</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-job-detail')">Cancel</button>
+    </div>`;
+  openModal('modal-job-detail');
+}
+
+// ═══════════════════════════════════════════════════════════ REQUEST SUMMARY
+function openRequestSummary(reqId) {
+  const modal = document.getElementById('modal-job-detail');
+  if (!modal) { toast('Request summary — coming soon','info'); return; }
+  document.getElementById('job-detail-title').textContent = 'Request Summary #' + reqId;
+  document.getElementById('job-detail-body').innerHTML = `
+    <div style="font-size:13px;color:var(--text-muted);padding:20px;text-align:center;">
+      <div style="font-size:32px;margin-bottom:8px;">📋</div>
+      <div>Request #${reqId} summary — submitted and pending review.</div>
+      <div style="margin-top:12px;"><button class="btn btn-sm btn-secondary" onclick="closeModal('modal-job-detail')">Close</button></div>
+    </div>`;
+  openModal('modal-job-detail');
+}
+
+// ═══════════════════════════════════════════════════════════ DFR DAY NAVIGATION
+let dfrDayOffset = 0;
+const dfrDates = ['Jun 1','Jun 2','Jun 3','Jun 4','Jun 5','Jun 6','Jun 7','Jun 8','Jun 9','Jun 10','Jun 11','Jun 12','Jun 13','Jun 14'];
+function shiftDFRDay(dir) {
+  dfrDayOffset = Math.max(0, Math.min(dfrDates.length - 1, dfrDayOffset + dir));
+  const el = document.getElementById('dfr-date-display');
+  if (el) el.textContent = dfrDates[dfrDayOffset] + ', 2026';
+  toast('Viewing ' + dfrDates[dfrDayOffset] + ', 2026', 'success');
+}
+
 </script>
 
 <!-- JOB DETAIL MODAL -->
