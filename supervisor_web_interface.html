@@ -1561,17 +1561,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">📊 CYCLE BREAKDOWN</div>
         <div id="cycle-breakdown-content"></div>
       </div>
-      <div id="off-day-coverage" style="display:none;margin-top:12px;padding:12px;background:var(--warning-bg);border-radius:6px;border:1px solid #ffc107;">
-        <div style="font-size:11px;font-weight:700;color:var(--warning);margin-bottom:8px;">⚠️ OFF-CYCLE DAYS DETECTED — Choose Coverage Option</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label class="checkbox-label"><input type="radio" name="offday" value="second" onchange="toggleSecondFlagman(true)"> Option A — Assign a second flagman for off-cycle days</label>
-          <label class="checkbox-label"><input type="radio" name="offday" value="ot" onchange="toggleSecondFlagman(false)"> Option B — Request overtime from primary flagman for off days</label>
-          <label class="checkbox-label"><input type="radio" name="offday" value="pause" onchange="toggleSecondFlagman(false)"> Option C — Job pauses on off-cycle days (requester will be notified)</label>
-        </div>
-        <div id="second-flagman-section" style="display:none;margin-top:10px;">
-          <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;">Select Second Flagman (for off-cycle days)</div>
-          <select class="form-control"><option value="">Select flagman...</option><option>Beaumont, Claude (CN · 8&6 · BC)</option><option>Ferreira, Marco (CN · 8&6 · BC)</option><option>Marchetti, Giulia (Contracted · 8&6 · BC)</option></select>
-        </div>
+      <div id="off-day-coverage" style="display:none;margin-top:12px;padding:14px;background:var(--warning-bg);border-radius:6px;border:1px solid #ffc107;">
+        <div style="font-size:11px;font-weight:700;color:#856404;margin-bottom:4px;">⚠️ OFF-CYCLE DAYS DETECTED</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">The primary flagman has off-cycle days during this job. Each vacant day must be covered. Assign any available flagman (regular hours or overtime) to each day below.</div>
+        <table class="tbl" id="offday-coverage-table" style="font-size:12px;">
+          <thead>
+            <tr>
+              <th>Off-Cycle Date</th>
+              <th>Day</th>
+              <th>Shift</th>
+              <th>Coverage</th>
+              <th>Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="offday-coverage-tbody">
+            <!-- Populated by generateCycleBreakdown() -->
+          </tbody>
+        </table>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:8px;">💡 Flagmen who expressed interest in this job (regular or overtime) are shown first in the assignment selector.</div>
       </div>
       <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin:14px 0 10px;">STEP 4 — ACCOMMODATION</div>
       <div class="form-row">
@@ -1968,8 +1976,9 @@ function renderInterestTable() {
   // sort
   data = [...data].sort((a,b) => {
     if (interestSort === 'seniority') {
-      const sa = a.seniority || 999, sb = b.seniority || 999;
-      return sa - sb;
+      // Higher seniority number = more years = ranks first (descending)
+      const sa = a.seniority || 0, sb = b.seniority || 0;
+      return sb - sa;
     } else if (interestSort === 'proximity') {
       return a.dist - b.dist;
     } else if (interestSort === 'hours') {
@@ -2035,7 +2044,6 @@ function openAssignModal(company, sub) {
   document.getElementById('assign-job-title').textContent = company + ' · ' + sub;
   document.getElementById('cycle-breakdown-section').style.display = 'none';
   document.getElementById('off-day-coverage').style.display = 'none';
-  document.getElementById('second-flagman-section').style.display = 'none';
   updateAACode();
   showModal('modal-assign');
 }
@@ -2054,11 +2062,12 @@ function generateCycleBreakdown(name, cycle) {
   const total = Math.round((end - start) / 86400000) + 1;
   let html = '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">';
   let onCount = 0, offCount = 0;
+  const offDayDates = [];
   for (let i = 0; i < total; i++) {
     const d = new Date(start); d.setDate(d.getDate() + i);
     const pos = i % (cycleOn + cycleOff);
     const isOn = pos < cycleOn;
-    if (isOn) onCount++; else offCount++;
+    if (isOn) onCount++; else { offCount++; offDayDates.push(new Date(d)); }
     const label = d.toLocaleDateString('en-CA', {month:'short', day:'numeric'});
     html += '<div style="padding:4px 6px;border-radius:4px;font-size:9px;font-weight:700;background:' + (isOn ? '#FFB6C1' : '#e9ecef') + ';color:' + (isOn ? '#7a0020' : '#888') + ';">' + label + '<br>' + (isOn ? 'ON' : 'OFF') + '</div>';
   }
@@ -2066,10 +2075,58 @@ function generateCycleBreakdown(name, cycle) {
   html += '<div style="font-size:12px;color:var(--text-secondary);">📊 <strong>' + total + ' day span</strong> · ' + (name || 'Selected flagman') + ' (' + (cycle || '—') + ') · <span style="color:#7a0020;font-weight:700;">' + onCount + ' on-cycle</span> · <span style="color:#888;">' + offCount + ' off-cycle</span></div>';
   document.getElementById('cycle-breakdown-content').innerHTML = html;
   document.getElementById('cycle-breakdown-section').style.display = 'block';
-  document.getElementById('off-day-coverage').style.display = offCount > 0 ? 'block' : 'none';
+  if (offCount > 0) {
+    document.getElementById('off-day-coverage').style.display = 'block';
+    const shiftLabel = document.getElementById('assign-shift').value.split(' ')[0];
+    const interestedFlagmen = [
+      { name: 'Beaumont, Claude', type: 'CN', interest: 'Regular' },
+      { name: 'Ferreira, Marco', type: 'CN', interest: 'OT' },
+      { name: 'Kowalski, Piotr', type: 'CN', interest: 'OT' },
+      { name: 'Marchetti, Giulia', type: 'Contracted', interest: 'Regular' },
+      { name: 'Varga, Stefan', type: 'Contracted', interest: 'OT' },
+    ];
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let tbodyHtml = '';
+    offDayDates.forEach((d, idx) => {
+      const dateStr = monthNames[d.getMonth()] + ' ' + d.getDate();
+      const dayName = dayNames[d.getDay()];
+      const opts = interestedFlagmen.map(f =>
+        '<option value="' + f.name + '" data-interest="' + f.interest + '">' + f.name + ' (' + f.type + ' · ' + f.interest + ')</option>'
+      ).join('');
+      tbodyHtml += '<tr id="offday-row-' + idx + '">';
+      tbodyHtml += '<td><strong>' + dateStr + '</strong></td>';
+      tbodyHtml += '<td>' + dayName + '</td>';
+      tbodyHtml += '<td><span class="badge badge-morning">' + shiftLabel + '</span></td>';
+      tbodyHtml += '<td><select class="form-control" id="offday-cov-' + idx + '" style="font-size:11px;padding:3px 6px;" onchange="updateOffDayType(' + idx + ')"><option value="">— Vacant —</option>' + opts + '</select></td>';
+      tbodyHtml += '<td id="offday-type-' + idx + '" style="font-size:11px;color:var(--text-muted);">—</td>';
+      tbodyHtml += '<td><button class="btn-approve btn-xs" id="offday-btn-' + idx + '" onclick="confirmOffDayCoverage(' + idx + ')">Confirm</button></td>';
+      tbodyHtml += '</tr>';
+    });
+    document.getElementById('offday-coverage-tbody').innerHTML = tbodyHtml || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No off-cycle days in this range.</td></tr>';
+  } else {
+    document.getElementById('off-day-coverage').style.display = 'none';
+  }
 }
-function toggleSecondFlagman(show) {
-  document.getElementById('second-flagman-section').style.display = show ? 'block' : 'none';
+function updateOffDayType(idx) {
+  const sel = document.getElementById('offday-cov-' + idx);
+  const opt = sel.options[sel.selectedIndex];
+  const typeCell = document.getElementById('offday-type-' + idx);
+  if (sel.value) {
+    const interest = opt.dataset.interest;
+    typeCell.innerHTML = '<span style="font-weight:700;color:' + (interest==='OT'?'#283593':'#1E7E34') + ';">' + interest + '</span>';
+  } else {
+    typeCell.innerHTML = '<span style="color:var(--text-muted);">—</span>';
+  }
+}
+function confirmOffDayCoverage(idx) {
+  const sel = document.getElementById('offday-cov-' + idx);
+  const row = document.getElementById('offday-row-' + idx);
+  if (!sel.value) { toast('Please select a flagman first','warning'); return; }
+  row.style.background = '#e8f5e9';
+  document.getElementById('offday-btn-' + idx).textContent = '✓ Confirmed';
+  document.getElementById('offday-btn-' + idx).style.background = '#28a745';
+  toast(sel.value + ' confirmed for this day ✓','success');
 }
 function confirmAssignment() {
   toast('Flagman assigned successfully ✓', 'success');
