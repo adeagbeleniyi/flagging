@@ -1763,7 +1763,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <!-- CHAT THREAD MODAL -->
 <div class="modal-overlay" id="modal-chat" onclick="if(event.target===this)closeModal('modal-chat')">
   <div class="modal-box" style="max-width:560px;height:560px;display:flex;flex-direction:column;">
-    <div class="modal-header"><span id="chat-title">Chat Thread</span><button onclick="closeModal('modal-chat')">✕</button></div>
+    <div class="modal-header"><div><span id="chat-title" style="font-weight:700;font-size:15px;">Chat Thread</span><div id="chat-subtitle" style="font-size:11px;color:#9ca3af;margin-top:2px;"></div></div><button onclick="closeModal('modal-chat')">✕</button></div>
     <div id="chat-thread" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#f8f9fa;"></div>
     <div style="padding:12px;border-top:1px solid #e9ecef;display:flex;gap:8px;">
       <textarea id="chat-input" class="form-control" rows="2" placeholder="Type a message… (Enter to send, Shift+Enter for new line)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg();}"></textarea>
@@ -2267,7 +2267,7 @@ function openChatThread(id) {
   const d = reqData[id];
   document.getElementById('chat-title').textContent = `${id} — ${d ? d.company : 'Request'}`;
   document.getElementById('chat-subtitle').textContent = d ? `Thread with ${d.contact}` : '';
-  const container = document.getElementById('chat-messages');
+  const container = document.getElementById('chat-thread');
   container.innerHTML = msgs.map(m => {
     const isSuper = m.from === 'supervisor';
     return `<div style="display:flex;flex-direction:column;align-items:${isSuper?'flex-end':'flex-start'}">
@@ -2322,7 +2322,7 @@ function calcCheckoutHours() {
   let mins = (oh * 60 + om) - (ih * 60 + im);
   if (mins < 0) mins += 1440;
   const hours = (mins / 60).toFixed(1);
-  document.getElementById('checkout-hours').value = hours + 'h';
+  document.getElementById('checkout-hours-calc').textContent = 'Hours worked: ' + hours + 'h';
 }
 
 function confirmCheckout() {
