@@ -1636,13 +1636,65 @@ textarea.form-control{resize:vertical;min-height:70px;}
         <div class="dg-item"><div class="dg-label">Meeting Point</div><div class="dg-value">CN Yard Gate, Hope BC</div></div>
         <div class="dg-item"><div class="dg-label">Field Contact</div><div class="dg-value">Mike Elworthy · 604-555-7788</div></div>
         <div class="dg-item"><div class="dg-label">Accommodation</div><div class="dg-value">Best Western Hope · Jun 1–14</div></div>
-        <div class="dg-item"><div class="dg-label">Excavation</div><div class="dg-value">No</div></div>
+        <div class="dg-item"><div class="dg-label">Excavation</div><div class="dg-value">No — No locate required</div></div>
         <div class="dg-item" style="grid-column:1/-1;"><div class="dg-label">Work Description</div><div class="dg-value">Utility crossing installation adjacent to main track. Night work required to avoid daytime train traffic.</div></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="hideModal('modal-job-detail')">Close</button>
       <button class="btn btn-warning" onclick="toast('Job marked as complete ✓','success');hideModal('modal-job-detail')">✓ Mark Complete</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOCATE VIEWER MODAL -->
+<div id="modal-locate-viewer" class="modal-overlay hidden">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-header">
+      <h3>📄 Locate Document — <span id="locate-filename"></span></h3>
+      <button class="modal-close" onclick="hideModal('modal-locate-viewer')">×</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <!-- Simulated PDF viewer -->
+      <div style="background:#f4f5f7;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:var(--text-muted);">Page 1 of 2</span>
+        <div style="display:flex;gap:6px;margin-left:auto;">
+          <button class="btn btn-sm btn-secondary" onclick="toast('Zoomed in','');">🔍+</button>
+          <button class="btn btn-sm btn-secondary" onclick="toast('Zoomed out','');">🔍−</button>
+          <button id="locate-download-btn" class="btn btn-sm btn-primary">⬇ Download</button>
+        </div>
+      </div>
+      <div style="background:#fff;padding:32px;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:16px;">
+        <!-- Simulated locate document content -->
+        <div style="width:100%;max-width:560px;border:2px solid var(--cn-dark);border-radius:4px;padding:24px;font-family:monospace;font-size:12px;line-height:1.8;">
+          <div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:16px;border-bottom:2px solid var(--cn-dark);padding-bottom:8px;">BC ONE CALL — LOCATE DOCUMENT</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+            <div><strong>Locate #:</strong> BC-2026-44182</div>
+            <div><strong>Date Issued:</strong> Jun 2, 2026</div>
+            <div><strong>Requester:</strong> BC Hydro</div>
+            <div><strong>Contact:</strong> James Park</div>
+            <div><strong>Work Area:</strong> Lillooet Sub MP 200.8–202.0</div>
+            <div><strong>Expiry:</strong> Jun 30, 2026</div>
+          </div>
+          <div style="margin-bottom:12px;"><strong>Utilities Located:</strong></div>
+          <table style="width:100%;border-collapse:collapse;font-size:11px;">
+            <thead><tr style="background:#f0f0f0;"><th style="padding:6px;border:1px solid #ccc;text-align:left;">Utility</th><th style="padding:6px;border:1px solid #ccc;">Depth</th><th style="padding:6px;border:1px solid #ccc;">Distance from Track</th><th style="padding:6px;border:1px solid #ccc;">Status</th></tr></thead>
+            <tbody>
+              <tr><td style="padding:6px;border:1px solid #ccc;">BC Hydro Transmission Line</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">1.2m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">4.5m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:green;">✓ Located</td></tr>
+              <tr><td style="padding:6px;border:1px solid #ccc;">Telus Fiber Optic</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">0.9m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">6.1m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:green;">✓ Located</td></tr>
+              <tr><td style="padding:6px;border:1px solid #ccc;">CN Signal Cable</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">0.6m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">2.1m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:orange;">⚠ Approximate</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:16px;padding:10px;background:#FFF3CD;border:1px solid #ffc107;border-radius:4px;font-size:11px;">
+            ⚠ <strong>CAUTION:</strong> CN Signal Cable depth is approximate. Hand dig within 1m of marked location. Contact CN Engineering before excavation within 3m of track.
+          </div>
+          <div style="margin-top:16px;font-size:10px;color:#888;text-align:center;">This locate is valid for the work area described above only. Verify all markings on site before excavation.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="hideModal('modal-locate-viewer')">Close</button>
+      <button class="btn btn-primary" id="locate-download-btn-footer" onclick="toast('Downloading locate document ✓','success')">⬇ Download PDF</button>
     </div>
   </div>
 </div>
@@ -1821,6 +1873,13 @@ function updateBillingCode(sel) {
 function toggleShiftBlock(id, cb) {
   document.getElementById(id).style.display = cb.checked ? 'block' : 'none';
 }
+function openLocateViewer(filename) {
+  const modal = document.getElementById('modal-locate-viewer');
+  document.getElementById('locate-filename').textContent = filename;
+  document.getElementById('locate-download-btn').onclick = () => toast('Downloading ' + filename + ' ✓', 'success');
+  modal.classList.remove('hidden');
+}
+
 function toggleLocateUpload(sel) {
   document.getElementById('locate-upload-group').style.display = sel.value === 'yes' ? 'block' : 'none';
 }
@@ -1870,7 +1929,7 @@ const requestData = {
       <div class="dg-item"><div class="dg-label">Proposed Dates</div><div class="dg-value">Jun 9 – Jun 13, 2026</div></div>
       <div class="dg-item"><div class="dg-label">Flagmen Required</div><div class="dg-value">1</div></div>
       <div class="dg-item"><div class="dg-label">Billing</div><div class="dg-value">Project ID: BCH-2026-441</div></div>
-      <div class="dg-item"><div class="dg-label">Excavation</div><div class="dg-value">Yes — Locate uploaded ✅</div></div>
+      <div class="dg-item" style="grid-column:1/-1;"><div class="dg-label">Excavation</div><div class="dg-value" style="display:flex;align-items:center;gap:10px;">Yes — Locate uploaded ✅ <button class="btn btn-sm btn-blue" onclick="openLocateViewer('BCHydro_Locate_REQ041.pdf')">📄 View Locate</button><button class="btn btn-sm btn-secondary" onclick="toast('Downloading BCHydro_Locate_REQ041.pdf ✓','success')">⬇ Download</button></div></div>
       <div class="dg-item" style="grid-column:1/-1;"><div class="dg-label">Work Description</div><div class="dg-value">Transmission line maintenance adjacent to CN main track. Urgent — BC Hydro has a regulatory deadline of Jun 15.</div></div>
       <div class="dg-item" style="grid-column:1/-1;"><div class="dg-label">Urgent Reason</div><div class="dg-value" style="color:var(--cn-red);">BC Hydro regulatory compliance deadline Jun 15, 2026. Work cannot be postponed.</div></div>
     </div>
