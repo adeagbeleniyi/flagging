@@ -1887,20 +1887,14 @@ function showPage(sectionId) {
   if (sec) sec.classList.add('active');
   const navItem = document.querySelector(`.nav-item[data-section="${sectionId}"]`);
   if (navItem) navItem.classList.add('active');
-  // Update header
-  const cfg = Object.values(pageConfig).find(p => p.section === sectionId);
-  if (cfg) {
-    document.getElementById('page-title').textContent = cfg.title;
-    const actEl = document.getElementById('header-actions');
-    if (actEl) actEl.innerHTML = cfg.actions || '';
-  }
+  // Header is self-contained in each section's .page-header
   // Trigger calendar renders
   if (sectionId === 'sec-schedule') renderSchedCal();
   if (sectionId === 'sec-overtime') { setTimeout(renderOvertimeTable, 50); }
   if (sectionId === 'sec-vacation') renderVacCal();
   // Show overlap notification on schedule
   if (sectionId === 'sec-schedule') {
-    setTimeout(() => { document.getElementById('overlap-notification').style.display = 'block'; }, 800);
+    setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 800);
   }
 }
 
@@ -1912,7 +1906,18 @@ document.querySelectorAll('.nav-item').forEach(item => {
 });
 
 // ═══════════════════════════════════════════════════════════ MODAL HELPERS
-// openModal / closeModal defined in second script block (handles both .modal-overlay and display:none modals)
+function openModal(id) { 
+  const m = document.getElementById(id); 
+  if(!m) return;
+  if(m.classList.contains('modal-overlay')) { m.classList.add('open'); }
+  else { m.style.display='flex'; }
+}
+function closeModal(id) { 
+  const m = document.getElementById(id); 
+  if(!m) return;
+  if(m.classList.contains('modal-overlay')) { m.classList.remove('open'); }
+  else { m.style.display='none'; }
+}
 
 // ═══════════════════════════════════════════════════════════ TOAST
 function toast(msg, type='success') {
@@ -2514,19 +2519,7 @@ function showToast(msg, type='info') {
   setTimeout(() => t.remove(), 3500);
 }
 
-// ===== MODAL HELPERS =====
-function openModal(id) { 
-  const m = document.getElementById(id); 
-  if(!m) return;
-  if(m.classList.contains('modal-overlay')) { m.classList.add('open'); }
-  else { m.style.display='flex'; }
-}
-function closeModal(id) { 
-  const m = document.getElementById(id); 
-  if(!m) return;
-  if(m.classList.contains('modal-overlay')) { m.classList.remove('open'); }
-  else { m.style.display='none'; }
-}
+// ===== MODAL HELPERS: defined in first script block =====
 
 // ===== FILTER CHIPS HELPER =====
 function activateChip(btn) {
@@ -3540,10 +3533,6 @@ function openEditCompanyModal(name) {
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   showPage('sec-dashboard');
-  renderSchedule();
-  // Show overlap notification after 2 seconds
-  setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 2000);
-  renderVacCalendar();
   // Locate file input preview
   const locateFile = document.getElementById('locate-file');
   if (locateFile) {
