@@ -2670,10 +2670,18 @@ function wizBack() {
 
 function toggleWizFlagman(id, name, cycle, group) {
   // Support both wizard systems: openInterestModal uses selectedFlagmenIds, openWizard uses wizData
-  if (typeof selectedFlagmenIds !== 'undefined') {
+  if (typeof selectedFlagmenIds !== 'undefined' && wizardStep === 2) {
+    const reqCount = wizardData.requiredFlagmen || 1;
     const idx = selectedFlagmenIds.indexOf(id);
-    if (idx > -1) selectedFlagmenIds.splice(idx, 1);
-    else selectedFlagmenIds.push(id);
+    if (idx > -1) {
+      selectedFlagmenIds.splice(idx, 1);
+    } else {
+      if (selectedFlagmenIds.length >= reqCount) {
+        toast('All ' + reqCount + ' slot(s) are filled. Deselect a flagman first.', 'warning');
+        return;
+      }
+      selectedFlagmenIds.push(id);
+    }
     renderWizardStep();
     return;
   }
@@ -2977,23 +2985,26 @@ function renderOvertimeTable() {
 
 // ===== JOB DETAIL / ASSIGN WIZARD =====
 function openAssignWizard(jobId) {
-  // Map job IDs to their allowed shifts
-  const jobShifts = {
-    'PRJ-721100': ['Morning','Afternoon'],
-    'PRJ-720312': ['Morning','Afternoon'],
-    'PRJ-720415': ['Morning'],
-    'PRJ-721400': ['Morning','Afternoon','Night'],
-    'PRJ-721250': ['Morning','Afternoon'],
-    'PRJ-720890': ['Night'],
-    'PRJ-721900': ['Morning','Afternoon'],
-    'PRJ-722050': ['Morning','Afternoon'],
-    'PRJ-722100': ['Morning'],
-    'PRJ-722300': ['Morning','Afternoon'],
-    'PRJ-722500': ['Morning','Afternoon','Night'],
+  // Map job IDs to their allowed shifts and required flagmen count
+  const jobMeta = {
+    'PRJ-721100': { shifts:['Morning','Afternoon'],          req:1 },
+    'PRJ-720312': { shifts:['Morning','Afternoon'],          req:1 },
+    'PRJ-720415': { shifts:['Morning'],                      req:1 },
+    'PRJ-721400': { shifts:['Morning','Afternoon','Night'],  req:3 },
+    'PRJ-721250': { shifts:['Morning','Afternoon'],          req:2 },
+    'PRJ-720890': { shifts:['Night'],                        req:1 },
+    'PRJ-721600': { shifts:['Morning'],                      req:1 },
+    'PRJ-721750': { shifts:['Night'],                        req:1 },
+    'PRJ-721900': { shifts:['Morning','Afternoon'],          req:2 },
+    'PRJ-722050': { shifts:['Morning','Afternoon'],          req:1 },
+    'PRJ-722100': { shifts:['Morning'],                      req:1 },
+    'PRJ-722300': { shifts:['Afternoon'],                    req:1 },
+    'PRJ-722500': { shifts:['Morning','Afternoon','Night'],  req:2 },
   };
-  const shifts = jobShifts[jobId] || ['Morning','Afternoon','Night'];
+  const meta = jobMeta[jobId] || { shifts:['Morning','Afternoon','Night'], req:1 };
   wizardData.jobTitle = jobId;
-  openInterestModal(shifts);
+  wizardData.requiredFlagmen = meta.req;
+  openInterestModal(meta.shifts, meta.req);
 }
 function openJobDetail(jobId) {
   // Restore any fields hidden by openRuleEditor
@@ -3441,9 +3452,10 @@ const interestData = [
 let interestSort = 'seniority';
 let selectedFlagmenIds = [];
 
-function openInterestModal(allowedShifts) {
+function openInterestModal(allowedShifts, requiredCount) {
   wizardStep = 1;
   wizardData.allowedShifts = allowedShifts || [];
+  wizardData.requiredFlagmen = requiredCount || wizardData.requiredFlagmen || 1;
   selectedFlagmenIds = [];
   openModal('modal-assign-wizard');
   renderWizardStep();
@@ -3491,14 +3503,39 @@ function renderWizardStep() {
         <div class="form-group"><label>Requester End Time</label><input class="form-control" id="wiz-etime" type="time" value="15:00"></div>
       </div>`;
   } else if (wizardStep === 2) {
+    const reqCount = wizardData.requiredFlagmen || 1;
     const sorted = [...interestData].sort((a,b) => {
       if (interestSort === 'seniority') return a.seniority - b.seniority;
       if (interestSort === 'proximity') return a.distance - b.distance;
       if (interestSort === 'hours') return a.hours14 - b.hours14;
       return (a.seniority * 0.4 + a.distance * 0.3 + (a.hours14/135)*100 * 0.3) - (b.seniority * 0.4 + b.distance * 0.3 + (b.hours14/135)*100 * 0.3);
     });
+    // Build slot pills
+    const slotPills = Array.from({length: reqCount}, (_,i) => {
+      const filled = selectedFlagmenIds[i];
+      const fm = filled ? interestData.find(f => f.id === filled) : null;
+      return `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;background:${fm?'#dbeafe':'#f3f4f6'};color:${fm?'#1d4ed8':'#9ca3af'};border:1.5px solid ${fm?'#93c5fd':'#d1d5db'};">
+        ${fm ? '✓ ' + fm.name.split(',')[0] : 'Slot ' + (i+1) + ' — empty'}
+      </span>`;
+    }).join('');
+    // Overlap banner for selected flagmen with conflicts
+    const conflictWarnings = selectedFlagmenIds
+      .map(id => interestData.find(f => f.id === id))
+      .filter(f => f && f.conflict)
+      .map(f => `<strong>${f.name}</strong> has a scheduling conflict on ${f.conflictDays}`)
+      .join('<br>');
+    const overlapBanner = conflictWarnings
+      ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:10px;">⚠ <strong>Overlap Warning:</strong><br>${conflictWarnings}</div>`
+      : '';
     body.innerHTML = `
-      <h3 style="margin:0 0 14px;font-size:15px;">Step 2 — Review Interest & Select Flagman</h3>
+      <h3 style="margin:0 0 10px;font-size:15px;">Step 2 — Review Interest & Select Flagman</h3>
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 14px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:6px;">
+          Flagman Slots — ${selectedFlagmenIds.length} of ${reqCount} filled
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${slotPills}</div>
+      </div>
+      ${overlapBanner}
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
         <span style="font-size:12px;font-weight:700;align-self:center;">Rank by:</span>
         ${['seniority','proximity','hours','combined'].map(s=>`<button class="btn btn-sm ${interestSort===s?'btn-primary':'btn-secondary'}" onclick="interestSort='${s}';renderWizardStep()">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
@@ -3512,7 +3549,8 @@ function renderWizardStep() {
               barColor = pct >= 85 ? '#dc2626' : pct >= 65 ? '#d97706' : '#16a34a';
               const isSelected = selectedFlagmenIds.includes(f.id);
               const overCap = f.hours14 > 115;
-              return `<tr style="${isSelected?'background:#dbeafe;':''}">
+              const atMax = !isSelected && selectedFlagmenIds.length >= reqCount;
+              return `<tr style="${isSelected?'background:#dbeafe;':f.conflict?'background:#fffbeb;':''}">
                 <td>${i+1}</td>
                 <td><strong>${f.name}</strong><br><span style="color:var(--text-muted);">${f.id}</span></td>
                 <td><span class="badge ${f.type==='CN'?'badge-cn':'badge-contracted'}">${f.type}</span></td>
@@ -3525,14 +3563,13 @@ function renderWizardStep() {
                   ${overCap?`<div style="font-size:9px;color:#d97706;">⚠ ~${Math.round((135-f.hours14)/10)} days max</div>`:''}
                 </td>
                 <td><span class="badge ${f.interest==='Regular'?'badge-inprogress':f.interest==='OT'?'badge-approved':'badge-pending'}">${f.interest}</span>${f.interest!=='None'?`<br><span style="font-size:9px;color:var(--text-muted);">${f.shift}</span>`:''}</td>
-                <td>${f.conflict?`<span style="color:#d97706;font-size:10px;" title="Overlap: ${f.conflictDays}">⚠ ${f.conflictDays}</span>`:'—'}</td>
-                <td><button class="btn btn-xs ${isSelected?'btn-approve':'btn-primary'}" onclick="toggleWizFlagman('${f.id}')">${isSelected?'✓ Selected':'Select'}</button></td>
+                <td>${f.conflict?`<span style="color:#d97706;font-size:10px;font-weight:700;" title="Overlap: ${f.conflictDays}">⚠ ${f.conflictDays}</span>`:'<span style="color:#9ca3af;">—</span>'}</td>
+                <td><button class="btn btn-xs ${isSelected?'btn-approve':'btn-primary'}" ${atMax?'disabled style="opacity:.4;cursor:not-allowed;"':''} onclick="${atMax?'':'toggleWizFlagman(\'' + f.id + '\')'}">${isSelected?'✓ Selected':atMax?'Full':'Select'}</button></td>
               </tr>`;
             }).join('')}
           </tbody>
         </table>
-      </div>
-      ${selectedFlagmenIds.length ? `<div class="alert alert-info" style="margin-top:10px;font-size:12px;">✓ Selected: <strong>${selectedFlagmenIds.join(', ')}</strong></div>` : ''}`;
+      </div>`;
   } else if (wizardStep === 3) {
     const primary = interestData.find(f => selectedFlagmenIds.includes(f.id)) || interestData[0];
     start = new Date(2026, 5, 9), end = new Date(2026, 5, 27);
@@ -3593,19 +3630,37 @@ function renderWizardStep() {
         </tbody>
       </table>` : '<div class="alert alert-info" style="font-size:12px;">No off-cycle days during this job span. No additional coverage needed.</div>'}`;
   } else if (wizardStep === 4) {
+    const selectedFmNames = selectedFlagmenIds
+      .map(id => { const f = interestData.find(x => x.id === id); return f ? f.name : id; });
+    const conflictFm = selectedFlagmenIds
+      .map(id => interestData.find(f => f.id === id))
+      .filter(f => f && f.conflict);
+    const overlapNote = conflictFm.length
+      ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px;font-size:11px;color:#92400e;margin-top:10px;">
+          ⚠ <strong>Overlap/Handoff Note:</strong> ${conflictFm.map(f=>f.name+' — conflict on '+f.conflictDays).join('; ')}.<br>
+          Overlap hours will be automatically recorded in the Daily Flagging Record.
+        </div>`
+      : '';
+    const jobTitle = wizardData.jobTitle || 'PRJ-720312';
+    const shiftType = document.getElementById('wiz-type')?.value || 'regular';
+    const shiftName = document.getElementById('wiz-shift')?.value || 'morning';
+    const aaCode = document.getElementById('wiz-aa')?.value || '0100';
+    const aaDesc = aaDescs[aaCode] || '';
+    const startDate = document.getElementById('wiz-start')?.value || '2026-06-09';
+    const endDate = document.getElementById('wiz-end')?.value || '2026-06-27';
     body.innerHTML = `
       <h3 style="margin:0 0 14px;font-size:15px;">Step 4 — Confirm Assignment</h3>
-      <div class="card" style="background:#f8f9fa;">
-        <div class="card-body" style="font-size:12px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div><strong>Job:</strong> PRJ-720312 — Northgate Utilities</div>
-            <div><strong>Shift:</strong> Morning (Regular)</div>
-            <div><strong>Dates:</strong> Jun 9 – Jun 27, 2026</div>
-            <div><strong>A/A Code:</strong> <span style="background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700;">0100</span> — Regular time</div>
-            <div><strong>Shift Times:</strong> 07:00 – 15:00</div>
-            <div><strong>Flagmen Assigned:</strong> ${selectedFlagmenIds.length ? selectedFlagmenIds.join(', ') : 'None selected'}</div>
-          </div>
-          <div class="alert alert-warning" style="margin-top:12px;font-size:11px;">⚠ Regular hours = 10h/day. Any hours beyond 10h will be automatically recorded as a separate OT entry in the Daily Flagging Record.</div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:20px;">
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <tr><td style="padding:6px 8px;color:#666;width:38%;">Job / Project</td><td><strong>${jobTitle}</strong></td></tr>
+          <tr><td style="padding:6px 8px;color:#666;">Shift</td><td>${shiftName.charAt(0).toUpperCase()+shiftName.slice(1)} (${shiftType.charAt(0).toUpperCase()+shiftType.slice(1)})</td></tr>
+          <tr><td style="padding:6px 8px;color:#666;">Dates</td><td>${startDate} – ${endDate}</td></tr>
+          <tr><td style="padding:6px 8px;color:#666;">A/A Code</td><td><span style="background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700;">${aaCode}</span> — ${aaDesc}</td></tr>
+          <tr><td style="padding:6px 8px;color:#666;">Flagmen Assigned (${selectedFmNames.length})</td><td><strong>${selectedFmNames.join('<br>')}</strong></td></tr>
+        </table>
+        ${overlapNote}
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px;font-size:11px;color:#92400e;margin-top:10px;">
+          ⚠ Regular hours = 10h/day. Any hours beyond 10h will be automatically recorded as a separate OT entry in the Daily Flagging Record.
         </div>
       </div>`;
   }
@@ -3617,8 +3672,14 @@ function updateWizAA() {
   type = document.getElementById('wiz-type')?.value || 'regular';
   shift = document.getElementById('wiz-shift')?.value || 'morning';
   const key = `${type}-${shift}`;
-  const code = aaRules[key] || '0100';
-  const desc = aaDescs[code] || '';
+  // Prefer supervisor-edited overrides, then fall back to defaults
+  let code, desc;
+  if (window._aaOverrides && window._aaOverrides[key]) {
+    [code, desc] = window._aaOverrides[key];
+  } else {
+    code = aaRules[key] || '0100';
+    desc = aaDescs[code] || '';
+  }
   const aaEl = document.getElementById('wiz-aa'); if(aaEl) aaEl.value = code;
   descEl = document.getElementById('wiz-aa-desc'); if(descEl) descEl.textContent = desc;
 }
@@ -3636,7 +3697,22 @@ function updateOffDayType(i) {
 // confirmOffDay: defined in second script block
 
 function wizardNext() {
-  if (wizardStep === 2 && selectedFlagmenIds.length === 0) { toast('Please select at least one flagman','warning'); return; }
+  if (wizardStep === 2) {
+    const reqCount = wizardData.requiredFlagmen || 1;
+    if (selectedFlagmenIds.length === 0) { toast('Please select at least one flagman','warning'); return; }
+    if (selectedFlagmenIds.length < reqCount) {
+      toast(`This job requires ${reqCount} flagmen — ${reqCount - selectedFlagmenIds.length} slot(s) still empty`, 'warning');
+      return;
+    }
+    // Overlap confirmation: if any selected flagman has a conflict, warn but allow proceed
+    const conflicts = selectedFlagmenIds
+      .map(id => interestData.find(f => f.id === id))
+      .filter(f => f && f.conflict);
+    if (conflicts.length > 0) {
+      const names = conflicts.map(f => f.name).join(', ');
+      if (!confirm(`⚠ Overlap Warning: ${names} has a scheduling conflict on some days of this job. Proceed anyway?`)) return;
+    }
+  }
   if (wizardStep === 4) {
     toast('Assignment confirmed ✓','success');
     closeModal('modal-assign-wizard');
@@ -3877,8 +3953,48 @@ function openRuleEditor(ruleId) {
   document.getElementById('re-code').value = rule.code;
   document.getElementById('re-desc').value = rule.desc;
   document.getElementById('re-save-btn').onclick = function() {
-    const newCode = document.getElementById('re-code').value.trim();
-    toast('Rule ' + (newCode || rule.code) + ' updated successfully', 'success');
+    const newCode  = document.getElementById('re-code').value.trim()  || rule.code;
+    const newDesc  = document.getElementById('re-desc').value.trim()  || rule.desc;
+    const newType  = document.getElementById('re-type').value;
+    const newShift = document.getElementById('re-shift').value;
+    const newStart = document.getElementById('re-start').value;
+    const newEnd   = document.getElementById('re-end').value;
+
+    // 1. Update in-memory aaRules + aaDescs so wizard A/A auto-calc stays live
+    const shiftKey = newShift.toLowerCase();
+    const typeKey  = newType.toLowerCase();
+    const mapKey   = typeKey + '-' + shiftKey;
+    if (typeof aaRules !== 'undefined') {
+      aaRules[mapKey] = newCode;
+      aaDescs[newCode] = newDesc;
+    }
+    // Also update the newer wizard map used by updateAACode()
+    if (typeof window._aaOverrides === 'undefined') window._aaOverrides = {};
+    window._aaOverrides[mapKey] = [newCode, newDesc];
+
+    // 2. Update the Settings table row DOM
+    const oldCode = rule.code;
+    const row = document.getElementById('rule-row-' + oldCode);
+    if (row) {
+      const cells = row.querySelectorAll('td');
+      if (cells[0]) cells[0].textContent = newType;
+      if (cells[1]) cells[1].textContent = newShift;
+      if (cells[2]) cells[2].textContent = newStart;
+      if (cells[3]) cells[3].textContent = newEnd;
+      if (cells[4]) cells[4].innerHTML = '<strong>' + newCode + '</strong>';
+      if (cells[5]) cells[5].textContent = newDesc;
+      // If the code changed, update the row id and the Edit button
+      if (newCode !== oldCode) {
+        row.id = 'rule-row-' + newCode;
+        if (cells[6]) cells[6].innerHTML = '<button class="btn btn-xs btn-edit" onclick="openRuleEditor('' + newCode + '')">Edit</button>';
+      }
+    }
+
+    // 3. Update the badge in the modal header
+    const badge = document.getElementById('re-code-badge');
+    if (badge) badge.textContent = 'Code ' + newCode;
+
+    toast('Rule ' + newCode + ' updated successfully', 'success');
     closeModal('modal-rule-editor');
   };
   openModal('modal-rule-editor');
