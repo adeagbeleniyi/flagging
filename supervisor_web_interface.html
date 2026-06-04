@@ -232,6 +232,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 .company-card{border:1px solid var(--border);border-radius:8px;padding:14px;background:#fff;margin-bottom:12px;}
 .company-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .company-avatar{width:36px;height:36px;background:var(--cn-blue);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;}
+/* WIZARD STEPS */
+.wstep{font-size:11px;font-weight:600;color:rgba(255,255,255,.5);padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.wstep.wstep-active{background:var(--cn-red);color:#fff;}
+.wstep.wstep-done{color:rgba(255,255,255,.8);}
+.wstep-arrow{color:rgba(255,255,255,.3);font-size:14px;padding:0 2px;}
+.wizard-step-title{font-size:11px;font-weight:700;color:var(--cn-blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
 </style>
 </head>
 <body>
@@ -1512,149 +1518,157 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   </div>
 </div>
 
-<!-- ASSIGN FLAGMAN MODAL (CYCLE-AWARE) -->
+<!-- UNIFIED ASSIGNMENT WIZARD MODAL (5 STEPS) -->
 <div id="modal-assign" class="modal-overlay hidden">
-  <div class="modal" style="max-width:700px;">
-    <div class="modal-header"><h3>👷 Assign Flagman — <span id="assign-job-title">Job</span></h3><button class="modal-close" onclick="hideModal('modal-assign')">×</button></div>
-    <div class="modal-body">
-      <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:10px;">STEP 1 — JOB DETAILS</div>
-      <div class="form-row-3">
-        <div class="form-group"><label>Shift <span class="req">*</span></label>
-          <select id="assign-shift" class="form-control" onchange="updateAACode()">
-            <option>Morning (07:00–15:00)</option><option>Afternoon (15:00–23:00)</option><option>Night (23:00–07:00)</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Shift Type</label>
-          <select id="assign-shift-type" class="form-control" onchange="updateAACode()">
-            <option value="regular">Regular</option><option value="overtime">Overtime</option>
-          </select>
-        </div>
-        <div class="form-group"><label>A/A Code</label>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
-            <span id="aa-code-display" class="aa-code-badge">0100</span>
-            <span id="aa-code-desc" style="font-size:10px;color:var(--text-muted);">Regular time</span>
-          </div>
-          <input type="text" id="aa-code-override" class="form-control" style="margin-top:6px;" placeholder="Override A/A code...">
+  <div class="modal" style="max-width:960px;">
+    <div class="modal-header" style="background:var(--cn-dark);">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <h3 style="color:#fff;">👷 Assign Flagman — <span id="assign-job-title">Job</span></h3>
+        <div id="wizard-step-indicator" style="display:flex;gap:0;margin-top:6px;">
+          <span id="wstep-1" class="wstep wstep-active">1 Job Details</span>
+          <span class="wstep-arrow">›</span>
+          <span id="wstep-2" class="wstep">2 Qualifications</span>
+          <span class="wstep-arrow">›</span>
+          <span id="wstep-3" class="wstep">3 Select Flagman</span>
+          <span class="wstep-arrow">›</span>
+          <span id="wstep-4" class="wstep">4 Cycle &amp; Off-Days</span>
+          <span class="wstep-arrow">›</span>
+          <span id="wstep-5" class="wstep">5 Accommodation</span>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label>Start Date <span class="req">*</span></label><input type="date" id="assign-start" class="form-control" value="2026-06-09"></div>
-        <div class="form-group"><label>End Date <span class="req">*</span></label><input type="date" id="assign-end" class="form-control" value="2026-06-27"></div>
-      </div>
-      <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin:14px 0 10px;">STEP 2 — SELECT REQUIRED QUALIFICATIONS</div>
-      <div class="checkbox-group" style="margin-bottom:14px;">
-        <label class="checkbox-label"><input type="checkbox" checked> TIGS</label>
-        <label class="checkbox-label"><input type="checkbox"> CROR</label>
-        <label class="checkbox-label"><input type="checkbox"> eRail Safe</label>
-        <label class="checkbox-label"><input type="checkbox"> Form B</label>
-      </div>
-      <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:10px;">STEP 3 — SELECT PRIMARY FLAGMAN</div>
-      <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;">CN Employees</div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Tremblay, Luc','5&2','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Tremblay, Luc <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · BC · Seniority #2 · TIGS ✓ CROR ✓ eRail ✓ · 45km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 102/135h · 33h remaining</span></div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Callahan, Brett','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Callahan, Brett <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #4 · TIGS ✓ CROR ✓ · 62km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 88/135h · 47h remaining</span></div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Yamamoto, Dean','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-yellow"></div><div style="flex:1;"><div class="flagman-opt-name">Yamamoto, Dean <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #8 · TIGS ✓ · 90km from site · Delayed job in progress</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#ffc107;">14-day: 96/135h · 39h remaining</span></div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Hartley, Marcus','5&2','Alberta')"><input type="radio" name="flagman-select"><div class="avail-dot dot-red"></div><div style="flex:1;"><div class="flagman-opt-name">Hartley, Marcus <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · Alberta · Seniority #1 · TIGS ✓ CROR ✓ eRail ✓ · Currently on another job</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#dc3545;">14-day: 118/135h · 17h remaining ⚠ Can work ~2 more days before cap — supervisor override available</span></div></div></div>
-      <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin:10px 0 6px;">Contracted Flagmen</div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Varga, Stefan','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Varga, Stefan <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Pacific Flag Inc. · TIGS ✓ CROR ✓ · 38km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 72/135h · 63h remaining</span></div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Dubois, Remi','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Dubois, Remi <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Westcoast Safety Group · TIGS ✓ · 110km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 64/135h · 71h remaining</span></div></div></div>
-      <div id="cycle-breakdown-section" style="display:none;margin-top:14px;padding:12px;background:#f8f9fa;border-radius:6px;border:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">📊 CYCLE BREAKDOWN</div>
-        <div id="cycle-breakdown-content"></div>
-      </div>
-      <div id="off-day-coverage" style="display:none;margin-top:12px;padding:14px;background:var(--warning-bg);border-radius:6px;border:1px solid #ffc107;">
-        <div style="font-size:11px;font-weight:700;color:#856404;margin-bottom:4px;">⚠️ OFF-CYCLE DAYS DETECTED</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">The primary flagman has off-cycle days during this job. Each vacant day must be covered. Assign any available flagman (regular hours or overtime) to each day below.</div>
-        <table class="tbl" id="offday-coverage-table" style="font-size:12px;">
-          <thead>
-            <tr>
-              <th>Off-Cycle Date</th>
-              <th>Day</th>
-              <th>Shift</th>
-              <th>Coverage</th>
-              <th>Type</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="offday-coverage-tbody">
-            <!-- Populated by generateCycleBreakdown() -->
-          </tbody>
-        </table>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:8px;">💡 Flagmen who expressed interest in this job (regular or overtime) are shown first in the assignment selector.</div>
-      </div>
-      <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin:14px 0 10px;">STEP 4 — ACCOMMODATION</div>
-      <div class="form-row">
-        <div class="form-group"><label>Accommodation Required?</label><select class="form-control"><option>No</option><option>Yes — hotel required</option></select></div>
-        <div class="form-group"><label>Hotel Name</label><input type="text" class="form-control" placeholder="e.g. Comfort Inn Hope"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Check-In Date</label><input type="date" class="form-control"></div>
-        <div class="form-group"><label>Check-Out Date</label><input type="date" class="form-control"></div>
-      </div>
+      <button class="modal-close" style="color:#fff;" onclick="hideModal('modal-assign')">×</button>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="hideModal('modal-assign')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmAssignment()">✓ Confirm Assignment</button>
-    </div>
-  </div>
-</div>
+    <div class="modal-body" style="padding:0;">
 
-<!-- FLAGMAN ASSIGNMENT RANKING MODAL -->
-<div id="modal-interest" class="modal-overlay hidden">
-  <div class="modal" style="max-width:900px;">
-    <div class="modal-header">
-      <h3>👷 Assign Flagman — <span id="interest-job-title">Northgate Utilities · Cascade Sub</span></h3>
-      <button class="modal-close" onclick="hideModal('modal-interest')">×</button>
-    </div>
-    <div class="modal-body">
-      <!-- Job summary strip -->
-      <div style="background:#f0f7ff;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;gap:20px;flex-wrap:wrap;">
-        <span><strong>Shift:</strong> Morning (07:00–15:00)</span>
-        <span><strong>Dates:</strong> Jun 9–27, 2026 (19 days)</span>
-        <span><strong>Required Quals:</strong> TIGS · CROR</span>
-        <span><strong>Flagmen needed:</strong> 2</span>
+      <!-- STEP 1: JOB DETAILS -->
+      <div id="wizard-step-1" class="wizard-step" style="padding:20px 24px;">
+        <div class="wizard-step-title">STEP 1 — JOB DETAILS &amp; SHIFT</div>
+        <div style="background:#f0f7ff;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;display:flex;gap:20px;flex-wrap:wrap;">
+          <span id="wiz-job-summary"><strong>Job:</strong> —</span>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Shift <span class="req">*</span></label>
+            <select id="assign-shift" class="form-control" onchange="updateAACode()">
+              <option>Morning (07:00–15:00)</option><option>Afternoon (15:00–23:00)</option><option>Night (23:00–07:00)</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Shift Type</label>
+            <select id="assign-shift-type" class="form-control" onchange="updateAACode()">
+              <option value="regular">Regular</option><option value="overtime">Overtime</option>
+            </select>
+          </div>
+          <div class="form-group"><label>A/A Code (auto-calculated)</label>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+              <span id="aa-code-display" class="aa-code-badge">0100</span>
+              <span id="aa-code-desc" style="font-size:10px;color:var(--text-muted);">Regular time</span>
+            </div>
+            <input type="text" id="aa-code-override" class="form-control" style="margin-top:6px;" placeholder="Override A/A code (optional)">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Start Date <span class="req">*</span></label><input type="date" id="assign-start" class="form-control" value="2026-06-09"></div>
+          <div class="form-group"><label>End Date <span class="req">*</span></label><input type="date" id="assign-end" class="form-control" value="2026-06-27"></div>
+        </div>
       </div>
-      <!-- Tab toggle: Interested vs All -->
-      <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:6px;overflow:hidden;width:fit-content;">
-        <button id="itab-interested" class="btn btn-sm btn-blue" style="border-radius:0;border:none;" onclick="switchInterestTab('interested')">Interested (5)</button>
-        <button id="itab-all" class="btn btn-sm btn-secondary" style="border-radius:0;border:none;" onclick="switchInterestTab('all')">All Flagmen (16)</button>
+
+      <!-- STEP 2: QUALIFICATIONS -->
+      <div id="wizard-step-2" class="wizard-step" style="display:none;padding:20px 24px;">
+        <div class="wizard-step-title">STEP 2 — REQUIRED QUALIFICATIONS FOR THIS JOB</div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;">Select the qualifications a flagman must hold to be eligible for this job. Only flagmen with all selected qualifications will be shown as fully eligible in the ranking.</p>
+        <div class="checkbox-group" style="margin-bottom:14px;">
+          <label class="checkbox-label"><input type="checkbox" id="req-tigs" checked> TIGS</label>
+          <label class="checkbox-label"><input type="checkbox" id="req-cror"> CROR</label>
+          <label class="checkbox-label"><input type="checkbox" id="req-erail"> eRail Safe</label>
+          <label class="checkbox-label"><input type="checkbox" id="req-formb"> Form B Protection</label>
+        </div>
+        <div class="alert alert-info" style="font-size:11px;">💡 Flagmen missing required qualifications will still appear in the list but will be flagged with a ✗ indicator. The supervisor can still assign them if needed.</div>
       </div>
-      <!-- Sort controls -->
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
-        <span style="font-size:11px;font-weight:700;color:var(--text-muted);">RANK BY:</span>
-        <button id="sort-seniority" class="btn btn-sm btn-blue" onclick="sortInterestList('seniority')">Seniority</button>
-        <button id="sort-proximity" class="btn btn-sm btn-secondary" onclick="sortInterestList('proximity')">Proximity</button>
-        <button id="sort-hours" class="btn btn-sm btn-secondary" onclick="sortInterestList('hours')">Hours Remaining</button>
-        <button id="sort-all" class="btn btn-sm btn-secondary" onclick="sortInterestList('all')">Combined Score</button>
+
+      <!-- STEP 3: FLAGMAN RANKING & SELECTION -->
+      <div id="wizard-step-3" class="wizard-step" style="display:none;padding:20px 24px;">
+        <div class="wizard-step-title">STEP 3 — REVIEW INTEREST &amp; SELECT FLAGMAN(MEN)</div>
+        <!-- Tab toggle -->
+        <div style="display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:6px;overflow:hidden;width:fit-content;">
+          <button id="itab-interested" class="btn btn-sm btn-blue" style="border-radius:0;border:none;" onclick="switchInterestTab('interested')">Interested (5)</button>
+          <button id="itab-all" class="btn btn-sm btn-secondary" style="border-radius:0;border:none;" onclick="switchInterestTab('all')">All Flagmen (16)</button>
+        </div>
+        <!-- Sort controls -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
+          <span style="font-size:11px;font-weight:700;color:var(--text-muted);">RANK BY:</span>
+          <button id="sort-seniority" class="btn btn-sm btn-blue" onclick="sortInterestList('seniority')">Seniority</button>
+          <button id="sort-proximity" class="btn btn-sm btn-secondary" onclick="sortInterestList('proximity')">Proximity</button>
+          <button id="sort-hours" class="btn btn-sm btn-secondary" onclick="sortInterestList('hours')">Hours Remaining</button>
+          <button id="sort-all" class="btn btn-sm btn-secondary" onclick="sortInterestList('all')">Combined Score</button>
+        </div>
+        <!-- Ranking table -->
+        <div class="tbl-scroll" style="max-height:340px;overflow-y:auto;">
+          <table class="tbl" id="interest-table">
+            <thead>
+              <tr>
+                <th style="width:30px;">#</th>
+                <th>Flagman</th>
+                <th>Type</th>
+                <th>Cycle</th>
+                <th>Seniority</th>
+                <th>Distance</th>
+                <th>14-day Hours</th>
+                <th>Hours Left</th>
+                <th>Qualifications</th>
+                <th>Interest</th>
+                <th>Conflict</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="interest-tbody"></tbody>
+          </table>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">⚠ = Partial conflict — hover for details. Select one or more flagmen then click Next.</div>
+        <div id="wiz-selected-summary" style="margin-top:10px;padding:8px 12px;background:#e8f5e9;border-radius:6px;font-size:12px;font-weight:600;color:#1E7E34;display:none;"></div>
       </div>
-      <!-- Flagman ranking table -->
-      <div class="tbl-scroll" style="max-height:380px;overflow-y:auto;">
-        <table class="tbl" id="interest-table">
-          <thead>
-            <tr>
-              <th style="width:36px;">#</th>
-              <th>Flagman</th>
-              <th>Type</th>
-              <th>Cycle</th>
-              <th>Seniority</th>
-              <th>Distance</th>
-              <th>14-day Hours</th>
-              <th>Hours Left</th>
-              <th>Qualifications</th>
-              <th>Interest</th>
-              <th>Conflict</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="interest-tbody"></tbody>
-        </table>
+
+      <!-- STEP 4: CYCLE BREAKDOWN & OFF-DAY COVERAGE -->
+      <div id="wizard-step-4" class="wizard-step" style="display:none;padding:20px 24px;">
+        <div class="wizard-step-title">STEP 4 — CYCLE BREAKDOWN &amp; OFF-DAY COVERAGE</div>
+        <div id="cycle-breakdown-section" style="padding:12px;background:#f8f9fa;border-radius:6px;border:1px solid var(--border);margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">📊 CYCLE BREAKDOWN</div>
+          <div id="cycle-breakdown-content"><span style="color:var(--text-muted);font-size:12px;">Select a flagman in Step 3 to generate the cycle breakdown.</span></div>
+        </div>
+        <div id="off-day-coverage" style="display:none;padding:14px;background:var(--warning-bg);border-radius:6px;border:1px solid #ffc107;">
+          <div style="font-size:11px;font-weight:700;color:#856404;margin-bottom:4px;">⚠️ OFF-CYCLE DAYS DETECTED</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">The primary flagman has off-cycle days during this job. Assign coverage for each vacant day below — select from flagmen who expressed interest (Regular or OT).</div>
+          <table class="tbl" style="font-size:12px;">
+            <thead><tr><th>Off-Cycle Date</th><th>Day</th><th>Shift</th><th>Coverage Flagman</th><th>Type</th><th>Action</th></tr></thead>
+            <tbody id="offday-coverage-tbody"></tbody>
+          </table>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:8px;">💡 Interested flagmen are listed first in each dropdown.</div>
+        </div>
+        <div id="no-offdays-msg" style="display:none;padding:12px;background:var(--success-bg);border-radius:6px;border:1px solid #c3e6cb;font-size:12px;color:var(--success);">✓ No off-cycle days detected — this flagman is on-cycle for the full job span.</div>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
-        ⚠ = Partial conflict (flagman has an assigned job on one or more days of this job span). Hover for details.
+
+      <!-- STEP 5: ACCOMMODATION -->
+      <div id="wizard-step-5" class="wizard-step" style="display:none;padding:20px 24px;">
+        <div class="wizard-step-title">STEP 5 — ACCOMMODATION</div>
+        <div class="form-row">
+          <div class="form-group"><label>Accommodation Required?</label><select id="accom-required" class="form-control" onchange="toggleAccomFields(this)"><option value="no">No</option><option value="yes">Yes — hotel required</option></select></div>
+          <div class="form-group"><label>Hotel Name</label><input type="text" id="hotel-name" class="form-control" placeholder="e.g. Comfort Inn Hope"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Check-In Date</label><input type="date" id="hotel-checkin" class="form-control"></div>
+          <div class="form-group"><label>Check-Out Date</label><input type="date" id="hotel-checkout" class="form-control"></div>
+        </div>
+        <div style="margin-top:16px;padding:14px;background:#f8f9fa;border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:10px;">📋 ASSIGNMENT SUMMARY</div>
+          <div id="assignment-summary-content" style="font-size:12px;color:var(--text-secondary);"></div>
+        </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="hideModal('modal-interest')">Close</button>
-      <button class="btn btn-primary" onclick="proceedToAssignModal()">Proceed to Assign →</button>
+
+    </div><!-- end modal-body -->
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn btn-secondary" id="wiz-back-btn" onclick="wizardBack()" style="display:none;">← Back</button>
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn btn-secondary" onclick="hideModal('modal-assign')">Cancel</button>
+        <button class="btn btn-primary" id="wiz-next-btn" onclick="wizardNext()">Next →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2032,57 +2046,130 @@ function renderInterestTable() {
   });
   document.getElementById('interest-tbody').innerHTML = html || '<tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px;">No flagmen found.</td></tr>';
 }
+// ── UNIFIED ASSIGNMENT WIZARD ──
+let wizardCurrentStep = 1;
+const WIZARD_TOTAL_STEPS = 5;
+
+function openInterestModal(company, sub) {
+  // Opens the unified wizard starting at step 1
+  const jobTitle = (company || 'Northgate Utilities') + ' · ' + (sub || 'Cascade Sub');
+  document.getElementById('assign-job-title').textContent = jobTitle;
+  document.getElementById('wiz-job-summary').innerHTML = '<strong>Job:</strong> ' + jobTitle;
+  selectedFlagmen.clear();
+  wizardGoToStep(1);
+  updateAACode();
+  showModal('modal-assign');
+}
+
+function openAssignModal(company, sub) {
+  openInterestModal(company, sub);
+}
+
+function wizardGoToStep(step) {
+  wizardCurrentStep = step;
+  for (let i = 1; i <= WIZARD_TOTAL_STEPS; i++) {
+    const el = document.getElementById('wizard-step-' + i);
+    if (el) el.style.display = i === step ? 'block' : 'none';
+    const ind = document.getElementById('wstep-' + i);
+    if (ind) {
+      ind.className = 'wstep' + (i === step ? ' wstep-active' : (i < step ? ' wstep-done' : ''));
+    }
+  }
+  const backBtn = document.getElementById('wiz-back-btn');
+  const nextBtn = document.getElementById('wiz-next-btn');
+  if (backBtn) backBtn.style.display = step > 1 ? 'inline-flex' : 'none';
+  if (nextBtn) {
+    if (step === WIZARD_TOTAL_STEPS) {
+      nextBtn.textContent = '✓ Confirm Assignment';
+      nextBtn.className = 'btn btn-success';
+    } else {
+      nextBtn.textContent = 'Next →';
+      nextBtn.className = 'btn btn-primary';
+    }
+  }
+  // Step 3: render the interest table
+  if (step === 3) {
+    renderInterestTable();
+    const summary = document.getElementById('wiz-selected-summary');
+    if (summary) summary.style.display = selectedFlagmen.size > 0 ? 'block' : 'none';
+  }
+  // Step 4: generate cycle breakdown for first selected flagman
+  if (step === 4) {
+    const ids = Array.from(selectedFlagmen);
+    if (ids.length > 0) {
+      const first = allFlagmenData.find(f => f.id === ids[0]);
+      if (first) generateCycleBreakdown(first.name, first.cycle);
+    } else {
+      document.getElementById('cycle-breakdown-content').innerHTML = '<span style="color:var(--text-muted);font-size:12px;">No flagman selected. Go back to Step 3 to select a flagman.</span>';
+      document.getElementById('off-day-coverage').style.display = 'none';
+      const noMsg = document.getElementById('no-offdays-msg');
+      if (noMsg) noMsg.style.display = 'none';
+    }
+  }
+  // Step 5: populate assignment summary
+  if (step === 5) {
+    const ids = Array.from(selectedFlagmen);
+    const names = ids.map(id => { const f = allFlagmenData.find(x => x.id === id); return f ? f.name : id; });
+    const shift = document.getElementById('assign-shift').value;
+    const shiftType = document.getElementById('assign-shift-type').value;
+    const start = document.getElementById('assign-start').value;
+    const end = document.getElementById('assign-end').value;
+    const aaCode = document.getElementById('aa-code-override').value || document.getElementById('aa-code-display').textContent;
+    const summaryEl = document.getElementById('assignment-summary-content');
+    if (summaryEl) {
+      summaryEl.innerHTML = [
+        '<div class="detail-grid">',
+        '<div class="dg-item"><div class="dg-label">Job</div><div class="dg-value">' + document.getElementById('assign-job-title').textContent + '</div></div>',
+        '<div class="dg-item"><div class="dg-label">Flagman(men)</div><div class="dg-value">' + (names.join(', ') || '—') + '</div></div>',
+        '<div class="dg-item"><div class="dg-label">Shift</div><div class="dg-value">' + shift + '</div></div>',
+        '<div class="dg-item"><div class="dg-label">Shift Type</div><div class="dg-value">' + shiftType.charAt(0).toUpperCase() + shiftType.slice(1) + '</div></div>',
+        '<div class="dg-item"><div class="dg-label">Dates</div><div class="dg-value">' + start + ' → ' + end + '</div></div>',
+        '<div class="dg-item"><div class="dg-label">A/A Code</div><div class="dg-value"><span class="aa-code-badge">' + aaCode + '</span></div></div>',
+        '</div>'
+      ].join('');
+    }
+  }
+}
+
+function wizardNext() {
+  if (wizardCurrentStep === WIZARD_TOTAL_STEPS) {
+    confirmAssignment();
+    return;
+  }
+  // Validation per step
+  if (wizardCurrentStep === 3 && selectedFlagmen.size === 0) {
+    toast('Please select at least one flagman before proceeding', 'warning');
+    return;
+  }
+  wizardGoToStep(wizardCurrentStep + 1);
+}
+
+function wizardBack() {
+  if (wizardCurrentStep > 1) wizardGoToStep(wizardCurrentStep - 1);
+}
+
+function proceedToAssignModal() {
+  // Legacy — now just calls wizardNext
+  wizardNext();
+}
+
+function selectFlagman(el, name, cycle, region) {
+  // Legacy — kept for backward compat
+  generateCycleBreakdown(name, cycle);
+}
+
 function toggleSelectFlagman(id) {
   if (selectedFlagmen.has(id)) selectedFlagmen.delete(id);
   else selectedFlagmen.add(id);
   renderInterestTable();
-  toast(selectedFlagmen.size + ' flagman(men) selected', '');
-}
-function proceedToAssignModal() {
-  if (selectedFlagmen.size === 0) { toast('Please select at least one flagman first','warning'); return; }
-  const ids = Array.from(selectedFlagmen);
-  const first = allFlagmenData.find(f => f.id === ids[0]);
-  hideModal('modal-interest');
-  // Pre-fill the assign modal with the selected flagman's details
-  const jobTitle = document.getElementById('interest-job-title').textContent;
-  document.getElementById('assign-job-title').textContent = jobTitle;
-  document.getElementById('cycle-breakdown-section').style.display = 'none';
-  document.getElementById('off-day-coverage').style.display = 'none';
-  updateAACode();
-  showModal('modal-assign');
-  // Auto-trigger cycle breakdown for the first selected flagman
-  if (first) {
-    setTimeout(() => {
-      // Highlight the matching flagman option if present, else just generate breakdown
-      const opts = document.querySelectorAll('.flagman-opt');
-      let matched = false;
-      opts.forEach(opt => {
-        const nameEl = opt.querySelector('.flagman-opt-name');
-        if (nameEl && nameEl.textContent.trim().startsWith(first.name)) {
-          opt.style.borderColor = 'var(--cn-blue)';
-          opt.querySelector('input[type=radio]').checked = true;
-          matched = true;
-        }
-      });
-      generateCycleBreakdown(first.name, first.cycle);
-      if (ids.length > 1) toast(ids.length + ' flagmen selected — configure each shift below', 'success');
-    }, 200);
+  const summary = document.getElementById('wiz-selected-summary');
+  if (summary) {
+    const ids = Array.from(selectedFlagmen);
+    const names = ids.map(i => { const f = allFlagmenData.find(x => x.id === i); return f ? f.name : i; });
+    summary.style.display = ids.length > 0 ? 'block' : 'none';
+    summary.textContent = '✓ Selected: ' + names.join(', ');
   }
-}
-
-// ── ASSIGN MODAL ──
-function openAssignModal(company, sub) {
-  document.getElementById('assign-job-title').textContent = company + ' · ' + sub;
-  document.getElementById('cycle-breakdown-section').style.display = 'none';
-  document.getElementById('off-day-coverage').style.display = 'none';
-  updateAACode();
-  showModal('modal-assign');
-}
-function selectFlagman(el, name, cycle, region) {
-  document.querySelectorAll('.flagman-opt').forEach(o => o.style.borderColor = '');
-  el.style.borderColor = 'var(--cn-blue)';
-  el.querySelector('input[type=radio]').checked = true;
-  generateCycleBreakdown(name, cycle);
+  if (selectedFlagmen.size > 0) toast(selectedFlagmen.size + ' flagman(men) selected', '');
 }
 function generateCycleBreakdown(name, cycle) {
   const start = new Date(document.getElementById('assign-start').value);
