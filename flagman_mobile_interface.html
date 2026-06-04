@@ -716,14 +716,15 @@ function renderOpenJobs() {
     html += '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">No open jobs this week.</div>';
   } else {
     week.jobs.forEach(j => {
-      // 135h cap check: estimated hours for this job vs remaining
+      // 135h cap check: advisory only — do NOT block, just warn
       const wouldBreach = j.hoursEst > hoursLeft;
+      const daysCanWork = hoursLeft > 0 ? Math.floor(hoursLeft / 8) : 0;
       // OT eligibility:
       // - on active cycle day: can do Regular; can do OT only if regularInterest already expressed
       // - off-cycle or vacation: OT only (no Regular)
       const isOffOrVac = (fs.cycleStatus === 'off' || fs.cycleStatus === 'vacation');
-      const canRegular = !isOffOrVac && !wouldBreach;
-      const canOT = (isOffOrVac || j.regularInterest !== null) && !wouldBreach;
+      const canRegular = !isOffOrVac;  // never block, just advise
+      const canOT = (isOffOrVac || j.regularInterest !== null);  // never block, just advise
       const hasRegular = j.regularInterest !== null;
       const hasOT = j.otInterest !== null;
       html += '<div class="interest-card' + (hasRegular || hasOT ? ' expressed' : '') + '" id="' + j.id + '">';
@@ -741,10 +742,11 @@ function renderOpenJobs() {
       html += '<span class="tag" style="background:#D4EDDA;color:#1E7E34;">' + j.days + ' days</span>';
       html += '</div>';
       html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Required: ' + j.req + ' &nbsp;·&nbsp; Est. ' + j.hoursEst + 'h</div>';
-      // 135h breach warning
-      if (wouldBreach) {
-        html += '<div style="background:#F8D7DA;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;color:var(--cn-red);margin-bottom:8px;">🚫 Cannot express interest — this job (' + j.hoursEst + 'h) would exceed your 135h/14-day limit (' + hoursLeft + 'h remaining).</div>';
-      } else if (j.pendingOTShift) {
+      // 135h advisory (soft warning — does not block)
+      if (wouldBreach && !hasRegular && !hasOT) {
+        html += '<div style="background:#FFF3CD;border:1px solid #ffc107;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;color:#856404;margin-bottom:8px;">⚠ This job requires ~' + j.hoursEst + 'h but you have only <strong>' + hoursLeft + 'h</strong> remaining in your 14-day window. You can work approximately <strong>' + daysCanWork + ' day' + (daysCanWork !== 1 ? 's' : '') + '</strong> before reaching the 135h limit. Your supervisor will be notified.</div>';
+      }
+      if (j.pendingOTShift) {
         // OT hours input step
         html += '<div style="background:#f0f7ff;border-radius:10px;padding:12px;border:1px solid var(--cn-light-blue);">';
         html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">How many OT hours for ' + shiftLabel[j.pendingOTShift] + '?</div>';

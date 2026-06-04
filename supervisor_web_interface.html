@@ -1461,7 +1461,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       <div class="flagman-opt" onclick="selectFlagman(this,'Tremblay, Luc','5&2','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Tremblay, Luc <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · BC · Seniority #2 · TIGS ✓ CROR ✓ eRail ✓ · 45km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 102/135h · 33h remaining</span></div></div></div>
       <div class="flagman-opt" onclick="selectFlagman(this,'Callahan, Brett','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Callahan, Brett <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #4 · TIGS ✓ CROR ✓ · 62km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 88/135h · 47h remaining</span></div></div></div>
       <div class="flagman-opt" onclick="selectFlagman(this,'Yamamoto, Dean','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-yellow"></div><div style="flex:1;"><div class="flagman-opt-name">Yamamoto, Dean <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #8 · TIGS ✓ · 90km from site · Delayed job in progress</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#ffc107;">14-day: 96/135h · 39h remaining</span></div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Hartley, Marcus','5&2','Alberta')"><input type="radio" name="flagman-select"><div class="avail-dot dot-red"></div><div style="flex:1;"><div class="flagman-opt-name">Hartley, Marcus <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · Alberta · Seniority #1 · TIGS ✓ CROR ✓ eRail ✓ · Currently on another job</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#dc3545;">14-day: 118/135h · 17h remaining ⚠ Near limit</span></div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Hartley, Marcus','5&2','Alberta')"><input type="radio" name="flagman-select"><div class="avail-dot dot-red"></div><div style="flex:1;"><div class="flagman-opt-name">Hartley, Marcus <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · Alberta · Seniority #1 · TIGS ✓ CROR ✓ eRail ✓ · Currently on another job</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#dc3545;">14-day: 118/135h · 17h remaining ⚠ Can work ~2 more days before cap — supervisor override available</span></div></div></div>
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin:10px 0 6px;">Contracted Flagmen</div>
       <div class="flagman-opt" onclick="selectFlagman(this,'Varga, Stefan','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Varga, Stefan <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Pacific Flag Inc. · TIGS ✓ CROR ✓ · 38km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 72/135h · 63h remaining</span></div></div></div>
       <div class="flagman-opt" onclick="selectFlagman(this,'Dubois, Remi','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Dubois, Remi <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Westcoast Safety Group · TIGS ✓ · 110km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 64/135h · 71h remaining</span></div></div></div>
@@ -1896,7 +1896,8 @@ function renderInterestTable() {
   let html = '';
   data.forEach((f, i) => {
     const hoursLeft = cap - f.hrs14;
-    const hoursBarColor = hoursLeft < 20 ? '#dc3545' : hoursLeft < 40 ? '#ffc107' : '#28a745';
+    const hoursBarColor = hoursLeft < 17 ? '#dc3545' : hoursLeft < 40 ? '#ffc107' : '#28a745';
+    const daysCanWork = hoursLeft > 0 ? Math.floor(hoursLeft / 8) : 0;
     const hoursBarPct = Math.min(100, (f.hrs14 / cap) * 100);
     const qualBadges = f.quals.map(q => '<span class="qual-chip qual-valid" style="font-size:9px;padding:1px 5px;">' + q + '</span>').join(' ');
     const interestBadge = f.interest === 'Regular'
@@ -1920,7 +1921,8 @@ function renderInterestTable() {
     html += '<td>' + senDisplay + '</td>';
     html += '<td>' + f.dist + ' km</td>';
     html += '<td><div style="width:80px;"><div style="height:6px;background:#e9ecef;border-radius:3px;"><div style="height:6px;width:' + hoursBarPct + '%;background:' + hoursBarColor + ';border-radius:3px;"></div></div><div style="font-size:10px;margin-top:2px;">' + f.hrs14 + ' / ' + cap + 'h</div></div></td>';
-    html += '<td><strong style="color:' + hoursBarColor + ';">' + hoursLeft + 'h</strong></td>';
+    const hoursAdvisory = hoursLeft < 40 ? '<br><span style="font-size:9px;color:' + hoursBarColor + ';">~' + daysCanWork + ' day' + (daysCanWork!==1?'s':'') + ' max</span>' : '';
+    html += '<td><strong style="color:' + hoursBarColor + ';">' + hoursLeft + 'h</strong>' + hoursAdvisory + '</td>';
     html += '<td>' + qualBadges + '</td>';
     html += '<td>' + interestBadge + '</td>';
     html += '<td>' + conflictCell + '</td>';
