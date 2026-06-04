@@ -2192,13 +2192,67 @@ function openReviewModal(id) {
   currentReviewId = id;
   const d = reqData[id];
   if (!d) return;
+  const statusColors = {new:'#dc2626',review:'#d97706',approved:'#16a34a',assigned:'#0369a1',rejected:'#6b7280',completed:'#374151'};
+  const statusLabels = {new:'NEW',review:'UNDER REVIEW',approved:'APPROVED',assigned:'ASSIGNED',rejected:'REJECTED',completed:'COMPLETED'};
+  const statusColor = statusColors[d.status] || '#6b7280';
+  const statusLabel = statusLabels[d.status] || d.status.toUpperCase();
+  const shiftBadges = d.shifts.map(s=>`<span style="display:inline-block;background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px;">${s.name} ${s.start}–${s.end}</span>`).join('');
+  const canApprove = d.status === 'new' || d.status === 'review';
   document.getElementById('review-modal-title').textContent = `Review — ${id} · ${d.company}`;
+  // Show/hide approve/deny buttons based on status
+  const approveBtn = document.getElementById('review-approve-btn');
+  const denyBtn = document.getElementById('review-deny-btn');
+  if (approveBtn) approveBtn.style.display = canApprove ? '' : 'none';
+  if (denyBtn) denyBtn.style.display = canApprove ? '' : 'none';
   document.getElementById('review-modal-body').innerHTML = `
-    <div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px">
-      <div><strong>Subdivision:</strong> ${d.sub} · MP ${d.mp}</div>
-      <div><strong>Dates:</strong> ${d.dates} · ${d.flagmen} flagman/men</div>
-      <div><strong>Shifts:</strong> ${d.shifts.map(s=>s.name).join(', ')}</div>
-      <div><strong>Excavation:</strong> ${d.excavation ? 'Yes' : 'No'}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #e5e7eb;">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#111;">${d.company}</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px;">${d.contact} · ${d.phone} · <a href="mailto:${d.email}" style="color:#2563eb;">${d.email}</a></div>
+      </div>
+      <span style="background:${statusColor};color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.5px;">${statusLabel}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin-bottom:16px;">
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Subdivision</div>
+        <div style="font-size:13px;font-weight:600;">${d.sub}</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Milepost Range</div>
+        <div style="font-size:13px;font-weight:600;">MP ${d.mp}</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Proposed Dates</div>
+        <div style="font-size:13px;font-weight:600;">${d.dates}</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Duration / Flagmen</div>
+        <div style="font-size:13px;font-weight:600;">${d.days} days · ${d.flagmen} flagman/men</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Shift(s)</div>
+        <div style="font-size:13px;">${shiftBadges}</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Meeting Point</div>
+        <div style="font-size:13px;font-weight:600;">${d.meeting}</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Excavation Required</div>
+        <div style="font-size:13px;font-weight:600;">${d.excavation ? '<span style="color:#dc2626;">⚠ Yes — Locate uploaded ✅</span>' : 'No'}</div>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Machinery / Distance</div>
+        <div style="font-size:13px;font-weight:600;">${d.machinery ? 'Yes' : 'No'} · ${d.distance || '—'}</div>
+      </div>
+      <div style="padding:10px 14px;grid-column:1/-1;border-right:1px solid #e5e7eb;">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Billing Reference</div>
+        <div style="font-size:13px;font-weight:600;">${d.billing}</div>
+      </div>
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;">
+      <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Work Description / Notes</div>
+      <div style="font-size:13px;color:#374151;line-height:1.6;">${d.desc}</div>
     </div>`;
   openModal('modal-review');
 }
@@ -3604,8 +3658,91 @@ function openAddFlagmanModal(type) {
   openModal('modal-add-flagman');
 }
 function openEditFlagmanModal(name) {
+  // Flagman data dictionary for pre-population
+  const flagmanDB = {
+    'Tremblay, Luc':    {id:'CN-1042',region:'BC',cycle:'9&5',ab:'A',seniority:'8',type:'cn',protection:['Flagging','Working Limits']},
+    'Callahan, Brett':  {id:'CN-1055',region:'BC',cycle:'9&5',ab:'B',seniority:'11',type:'cn',protection:['Flagging','Foul Protection']},
+    'Hartley, Marcus':  {id:'CN-1038',region:'Alberta',cycle:'5&2',ab:'Fixed',seniority:'5',type:'cn',protection:['Flagging','Working Limits','Form B']},
+    'Petrov, Daniel':   {id:'CN-1047',region:'Alberta',cycle:'8&6',ab:'A',seniority:'3',type:'cn',protection:['Flagging','Working Limits','Foul Protection','Form B']},
+    'Ferreira, Marco':  {id:'CN-1053',region:'BC',cycle:'8&6',ab:'B',seniority:'9',type:'cn',protection:['Flagging']},
+    'Nguyen, Kevin':    {id:'CN-1044',region:'Alberta',cycle:'8&6',ab:'A',seniority:'6',type:'cn',protection:['Flagging','Foul Protection']},
+    'Yamamoto, Dean':   {id:'CN-1058',region:'Alberta',cycle:'8&6',ab:'B',seniority:'12',type:'cn',protection:['Flagging']},
+    'Larsson, Erik':    {id:'CN-1052',region:'Alberta',cycle:'5&2',ab:'Fixed',seniority:'7',type:'cn',protection:['Flagging','Working Limits','Form B']},
+    'Okafor, James':    {id:'CN-1061',region:'BC',cycle:'8&6',ab:'A',seniority:'10',type:'cn',protection:['Flagging','Foul Protection']},
+    'Beaumont, Claude': {id:'CN-1033',region:'BC',cycle:'9&5',ab:'A',seniority:'2',type:'cn',protection:['Flagging','Working Limits','Form B']},
+    'Marchetti, Giulio':{id:'CN-1066',region:'Alberta',cycle:'8&6',ab:'B',seniority:'13',type:'cn',protection:['Flagging']},
+    'Kowalski, Piotr':  {id:'CN-1071',region:'BC',cycle:'9&5',ab:'B',seniority:'4',type:'cn',protection:['Flagging','Working Limits']},
+    'Reyes, Carlos':    {id:'CN-1074',region:'Alberta',cycle:'8&6',ab:'A',seniority:'14',type:'cn',protection:['Flagging']},
+    'Varga, Stefan':    {id:'CTR-V001',region:'BC',cycle:'8&6',ab:'A',seniority:'1',type:'contracted',company:'Ironwood Track Services',protection:['Flagging','Foul Protection']},
+    'Dubois, Remi':     {id:'CTR-D002',region:'Alberta',cycle:'9&5',ab:'B',seniority:'2',type:'contracted',company:'Ridgecrest Flagging Ltd.',protection:['Flagging']},
+    'Nakamura, Yuki':   {id:'CTR-N003',region:'BC',cycle:'8&6',ab:'A',seniority:'3',type:'contracted',company:'Ironwood Track Services',protection:['Flagging','Working Limits']},
+    'Sousa, Filipe':    {id:'CTR-S004',region:'Alberta',cycle:'5&2',ab:'Fixed',seniority:'4',type:'contracted',company:'Ridgecrest Flagging Ltd.',protection:['Flagging']},
+  };
+  const f = flagmanDB[name] || {id:'',region:'BC',cycle:'8&6',ab:'A',seniority:'',type:'cn',protection:[]};
+  const nameParts = name.split(', ');
+  const lastName = nameParts[0] || '';
+  const firstName = nameParts[1] || '';
+
   document.getElementById('flagman-modal-title').textContent = `Edit — ${name}`;
-  document.getElementById('company-group').style.display = 'none';
+
+  // Pre-populate personal information fields
+  const modal = document.getElementById('modal-add-flagman');
+  const inputs = modal.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="number"]');
+  // First Name, Last Name, Employee ID, Phone, Email, Address, City
+  if (inputs[0]) inputs[0].value = firstName;
+  if (inputs[1]) inputs[1].value = lastName;
+  if (inputs[2]) inputs[2].value = f.id;
+  // Phone, Email, Address, City left blank (not in table data)
+
+  // Pre-populate selects
+  const selects = modal.querySelectorAll('select');
+  // Province select (index 0 in personal section) — skip, not in data
+  // Region select (index 1 in work section)
+  const regionSel = document.getElementById('modal-add-flagman') ? modal.querySelector('select[id=""]') : null;
+  // Use querySelectorAll for all selects and map by position
+  const allSelects = Array.from(modal.querySelectorAll('select'));
+  // Province (0), Region (1), Work Cycle (2), Cycle Assignment (3), Company (4)
+  if (allSelects[0]) { /* Province — skip */ }
+  if (allSelects[1]) allSelects[1].value = f.region; // Region
+  if (allSelects[2]) { // Work Cycle
+    const cycleMap = {'5&2':'5-2','8&6':'8-6','9&5':'9-5'};
+    allSelects[2].value = cycleMap[f.cycle] || '8-6';
+    // Trigger cycle AB toggle
+    if (typeof toggleCycleAB === 'function') toggleCycleAB();
+  }
+  if (allSelects[3] && f.ab !== 'Fixed') { // Cycle Assignment
+    allSelects[3].value = f.ab === 'A' ? 'A Cycle' : 'B Cycle';
+  }
+
+  // Pre-populate seniority number
+  const seniorityInput = modal.querySelector('input[type="number"]');
+  if (seniorityInput) seniorityInput.value = f.seniority;
+
+  // Show/hide company group
+  const companyGroup = document.getElementById('company-group');
+  if (companyGroup) {
+    companyGroup.style.display = f.type === 'contracted' ? 'block' : 'none';
+    if (f.type === 'contracted' && f.company) {
+      const companySel = companyGroup.querySelector('select');
+      if (companySel) {
+        // Try to select matching option
+        Array.from(companySel.options).forEach((opt,i) => {
+          if (opt.text.includes(f.company.split(' ')[0])) companySel.selectedIndex = i;
+        });
+      }
+    }
+  }
+
+  // Pre-populate protection checkboxes
+  const protectionLabels = modal.querySelectorAll('.form-section-title ~ div label');
+  protectionLabels.forEach(lbl => {
+    const cb = lbl.querySelector('input[type="checkbox"]');
+    if (cb) {
+      const text = lbl.textContent.trim();
+      cb.checked = f.protection.some(p => text.includes(p.split(' ')[0]));
+    }
+  });
+
   openModal('modal-add-flagman');
 }
 // toggleCycleAB: defined in second script block
@@ -3722,40 +3859,28 @@ const ruleData = [
 ];
 function openRuleEditor(ruleId) {
   const ruleData = [
-    {id:'0100', name:'Regular Morning', desc:'Regular time — standard morning shift', shift:'Morning', type:'Regular', start:'07:00', end:'15:00', code:'0100'},
-    {id:'0204', name:'Overtime Morning', desc:'Overtime rate — morning shift', shift:'Morning', type:'Overtime', start:'07:00', end:'15:00', code:'0204'},
-    {id:'0210', name:'Regular Afternoon', desc:'2nd shift differential — afternoon shift', shift:'Afternoon', type:'Regular', start:'15:00', end:'23:00', code:'0210'},
-    {id:'0214', name:'Overtime Afternoon', desc:'Overtime with 2nd shift differential', shift:'Afternoon', type:'Overtime', start:'15:00', end:'23:00', code:'0214'},
-    {id:'0220', name:'Regular Night', desc:'3rd shift differential — night shift', shift:'Night', type:'Regular', start:'23:00', end:'07:00', code:'0220'},
-    {id:'0224', name:'Overtime Night', desc:'Overtime with 3rd shift differential', shift:'Night', type:'Overtime', start:'23:00', end:'07:00', code:'0224'},
+    {id:'0100', desc:'Regular time — standard morning shift', shift:'Morning', type:'Regular', start:'07:00', end:'15:00', code:'0100'},
+    {id:'0204', desc:'Overtime rate — morning shift', shift:'Morning', type:'Overtime', start:'07:00', end:'15:00', code:'0204'},
+    {id:'0210', desc:'2nd shift differential — afternoon shift', shift:'Afternoon', type:'Regular', start:'15:00', end:'23:00', code:'0210'},
+    {id:'0214', desc:'Overtime with 2nd shift differential', shift:'Afternoon', type:'Overtime', start:'15:00', end:'23:00', code:'0214'},
+    {id:'0220', desc:'3rd shift differential — night shift', shift:'Night', type:'Regular', start:'23:00', end:'07:00', code:'0220'},
+    {id:'0224', desc:'Overtime with 3rd shift differential', shift:'Night', type:'Overtime', start:'23:00', end:'07:00', code:'0224'},
   ];
-  const rule = ruleData.find(r=>r.id===ruleId) || {name:'Rule',desc:'',code:ruleId,shift:'',type:'',start:'',end:''};
-  // Reuse modal-job-detail with correct IDs: jd-title, jd-status-badge, jd-notes, jd-assign-btn
-  // Hide job-specific fields and show rule editor in jd-notes area
-  document.getElementById('jd-title').textContent = 'Edit A/A Code Rule';
-  document.getElementById('jd-status-badge').innerHTML = `<span class="badge" style="background:#1d4ed8;color:#fff;font-size:11px;">Code ${rule.code}</span>`;
-  // Hide job detail fields
-  ['jd-job-num','jd-company','jd-subdivision','jd-mp','jd-shifts','jd-dates','jd-days','jd-req','jd-assigned'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.closest('div').style.display='none';
-  });
-  // Use jd-notes to show the rule editor form
-  const notesEl = document.getElementById('jd-notes');
-  notesEl.style.display = 'block';
-  notesEl.style.background = '#f8fafc';
-  notesEl.style.border = '1px solid #e2e8f0';
-  notesEl.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div class="form-group"><label style="font-size:12px;font-weight:600;">Job Type</label><select class="form-control"><option ${rule.type==='Regular'?'selected':''}>Regular</option><option ${rule.type==='Overtime'?'selected':''}>Overtime</option></select></div>
-      <div class="form-group"><label style="font-size:12px;font-weight:600;">Shift</label><select class="form-control"><option ${rule.shift==='Morning'?'selected':''}>Morning</option><option ${rule.shift==='Afternoon'?'selected':''}>Afternoon</option><option ${rule.shift==='Night'?'selected':''}>Night</option></select></div>
-      <div class="form-group"><label style="font-size:12px;font-weight:600;">Start Time</label><input class="form-control" type="time" value="${rule.start}"></div>
-      <div class="form-group"><label style="font-size:12px;font-weight:600;">End Time</label><input class="form-control" type="time" value="${rule.end}"></div>
-      <div class="form-group"><label style="font-size:12px;font-weight:600;">A/A Code</label><input class="form-control" id="rule-value-input" value="${rule.code}" maxlength="4" style="font-weight:700;letter-spacing:2px;font-size:15px;"></div>
-      <div class="form-group"><label style="font-size:12px;font-weight:600;">Description</label><input class="form-control" value="${rule.desc}"></div>
-    </div>`;
-  // Update footer buttons
-  const assignBtn = document.getElementById('jd-assign-btn');
-  if(assignBtn) { assignBtn.textContent = 'Save Rule'; assignBtn.onclick = ()=>{ toast('Rule '+rule.code+' updated','success'); closeModal('modal-job-detail'); }; }
-  openModal('modal-job-detail');
+  const rule = ruleData.find(r=>r.id===ruleId) || {desc:'',code:ruleId,shift:'Morning',type:'Regular',start:'07:00',end:'15:00'};
+  // Populate dedicated rule editor modal
+  document.getElementById('re-code-badge').textContent = 'Code ' + rule.code;
+  document.getElementById('re-type').value = rule.type;
+  document.getElementById('re-shift').value = rule.shift;
+  document.getElementById('re-start').value = rule.start;
+  document.getElementById('re-end').value = rule.end;
+  document.getElementById('re-code').value = rule.code;
+  document.getElementById('re-desc').value = rule.desc;
+  document.getElementById('re-save-btn').onclick = function() {
+    const newCode = document.getElementById('re-code').value.trim();
+    toast('Rule ' + (newCode || rule.code) + ' updated successfully', 'success');
+    closeModal('modal-rule-editor');
+  };
+  openModal('modal-rule-editor');
 }
 
 // ═══════════════════════════════════════════════════════════ REQUEST SUMMARY
@@ -3840,18 +3965,74 @@ function shiftDFRDay(dir) {
 
 <!-- ===== MODAL: Request Review ===== -->
 <div id="modal-review" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-review')">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <h3 id="review-modal-title">Review Request</h3>
-      <button class="modal-close" onclick="closeModal('modal-review')">✕</button>
+  <div class="modal-box" style="max-width:640px;width:95%;display:flex;flex-direction:column;overflow:hidden;max-height:90vh;">
+    <div class="modal-header" style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <h3 id="review-modal-title" style="margin:0;font-size:17px;font-weight:700;flex:1;">Review Request</h3>
+      <button class="modal-close" onclick="closeModal('modal-review')" style="font-size:20px;line-height:1;background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0 4px;">✕</button>
     </div>
-    <div class="modal-body" id="review-modal-body">
+    <div class="modal-body" id="review-modal-body" style="padding:22px;overflow-y:auto;flex:1;min-height:0;">
       <!-- populated by openReviewModal() -->
     </div>
-    <div class="modal-footer" id="review-modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-review')">Close</button>
+    <div class="modal-footer" id="review-modal-footer" style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;">
+      <button class="btn btn-outline" onclick="closeModal('modal-review')">Close</button>
       <button class="btn btn-danger" id="review-deny-btn" onclick="denyRequest(currentReviewId);closeModal('modal-review')">Deny</button>
       <button class="btn btn-primary" id="review-approve-btn" onclick="approveRequest(currentReviewId);closeModal('modal-review')">Approve</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== MODAL: Rule Editor (dedicated) ===== -->
+<div id="modal-rule-editor" class="modal-overlay" onclick="if(event.target===this)closeModal('modal-rule-editor')">
+  <div class="modal-box" style="max-width:540px;width:95%;display:flex;flex-direction:column;overflow:hidden;">
+    <div class="modal-header" style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <div style="flex:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-weight:700;font-size:17px;color:var(--text);">Edit A/A Code Rule</span>
+        <span id="re-code-badge" style="background:#1d4ed8;color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:1px;">Code 0100</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-rule-editor')" style="font-size:20px;line-height:1;background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0 4px;">✕</button>
+    </div>
+    <div class="modal-body" style="padding:22px;overflow-y:auto;flex:1;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Job Type</label>
+          <select id="re-type" class="form-control">
+            <option value="Regular">Regular</option>
+            <option value="Overtime">Overtime</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Shift</label>
+          <select id="re-shift" class="form-control">
+            <option value="Morning">Morning</option>
+            <option value="Afternoon">Afternoon</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Start Time</label>
+          <input id="re-start" class="form-control" type="time" value="07:00">
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">End Time</label>
+          <input id="re-end" class="form-control" type="time" value="15:00">
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">A/A Code</label>
+          <input id="re-code" class="form-control" type="text" maxlength="4" placeholder="e.g. 0100" style="font-weight:700;letter-spacing:3px;font-size:16px;text-align:center;">
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Description</label>
+          <input id="re-desc" class="form-control" type="text" placeholder="Short description">
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:10px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:12px;color:#0369a1;">
+        <strong>Note:</strong> Changes to A/A codes take effect on the next billing cycle. Existing DFR entries are not retroactively updated.
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;">
+      <button class="btn btn-outline" onclick="closeModal('modal-rule-editor')">Cancel</button>
+      <button class="btn btn-primary" id="re-save-btn">Save Rule</button>
     </div>
   </div>
 </div>
