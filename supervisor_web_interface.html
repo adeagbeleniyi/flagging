@@ -1546,12 +1546,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         <table class="tbl">
           <thead><tr><th>Job Type</th><th>Shift</th><th>Start</th><th>End</th><th>A/A Code</th><th>Description</th><th></th></tr></thead>
           <tbody>
-            <tr><td>Regular</td><td>Morning</td><td>07:00</td><td>15:00</td><td><strong>0100</strong></td><td>Regular time</td><td><button class="btn btn-xs btn-edit" onclick="toast('Rule editor opened','success')">Edit</button></td></tr>
-            <tr><td>Overtime</td><td>Morning</td><td>07:00</td><td>15:00</td><td><strong>0204</strong></td><td>Overtime</td><td><button class="btn btn-xs btn-edit" onclick="toast('Rule editor opened','success')">Edit</button></td></tr>
-            <tr><td>Regular</td><td>Afternoon</td><td>15:00</td><td>23:00</td><td><strong>0210</strong></td><td>2nd shift differential</td><td><button class="btn btn-xs btn-edit" onclick="toast('Rule editor opened','success')">Edit</button></td></tr>
-            <tr><td>Overtime</td><td>Afternoon</td><td>15:00</td><td>23:00</td><td><strong>0214</strong></td><td>Overtime w/2nd shift</td><td><button class="btn btn-xs btn-edit" onclick="toast('Rule editor opened','success')">Edit</button></td></tr>
-            <tr><td>Regular</td><td>Night</td><td>23:00</td><td>07:00</td><td><strong>0220</strong></td><td>3rd shift differential</td><td><button class="btn btn-xs btn-edit" onclick="toast('Rule editor opened','success')">Edit</button></td></tr>
-            <tr><td>Overtime</td><td>Night</td><td>23:00</td><td>07:00</td><td><strong>0224</strong></td><td>Overtime w/3rd shift</td><td><button class="btn btn-xs btn-edit" onclick="toast('Rule editor opened','success')">Edit</button></td></tr>
+            <tr id="rule-row-0100"><td>Regular</td><td>Morning</td><td>07:00</td><td>15:00</td><td><strong>0100</strong></td><td>Regular time</td><td><button class="btn btn-xs btn-edit" onclick="openRuleEditor('0100')">Edit</button></td></tr>
+            <tr id="rule-row-0204"><td>Overtime</td><td>Morning</td><td>07:00</td><td>15:00</td><td><strong>0204</strong></td><td>Overtime</td><td><button class="btn btn-xs btn-edit" onclick="openRuleEditor('0204')">Edit</button></td></tr>
+            <tr id="rule-row-0210"><td>Regular</td><td>Afternoon</td><td>15:00</td><td>23:00</td><td><strong>0210</strong></td><td>2nd shift differential</td><td><button class="btn btn-xs btn-edit" onclick="openRuleEditor('0210')">Edit</button></td></tr>
+            <tr id="rule-row-0214"><td>Overtime</td><td>Afternoon</td><td>15:00</td><td>23:00</td><td><strong>0214</strong></td><td>Overtime w/2nd shift</td><td><button class="btn btn-xs btn-edit" onclick="openRuleEditor('0214')">Edit</button></td></tr>
+            <tr id="rule-row-0220"><td>Regular</td><td>Night</td><td>23:00</td><td>07:00</td><td><strong>0220</strong></td><td>3rd shift differential</td><td><button class="btn btn-xs btn-edit" onclick="openRuleEditor('0220')">Edit</button></td></tr>
+            <tr id="rule-row-0224"><td>Overtime</td><td>Night</td><td>23:00</td><td>07:00</td><td><strong>0224</strong></td><td>Overtime w/3rd shift</td><td><button class="btn btn-xs btn-edit" onclick="openRuleEditor('0224')">Edit</button></td></tr>
           </tbody>
         </table>
         <button class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="toast('New rule added','success')">+ Add Rule</button>
@@ -3686,16 +3686,29 @@ const ruleData = [
   {id:6,name:'Night Shift Differential',desc:'A/A code applied to night shift flagging hours',value:'0220'},
 ];
 function openRuleEditor(ruleId) {
-  const rule = ruleData.find(r=>r.id===ruleId) || {name:'Rule',desc:'',value:''};
+  const ruleData = [
+    {id:'0100', name:'Regular Morning', desc:'Regular time — standard morning shift', shift:'Morning', type:'Regular', start:'07:00', end:'15:00', code:'0100'},
+    {id:'0204', name:'Overtime Morning', desc:'Overtime rate — morning shift', shift:'Morning', type:'Overtime', start:'07:00', end:'15:00', code:'0204'},
+    {id:'0210', name:'Regular Afternoon', desc:'2nd shift differential — afternoon shift', shift:'Afternoon', type:'Regular', start:'15:00', end:'23:00', code:'0210'},
+    {id:'0214', name:'Overtime Afternoon', desc:'Overtime with 2nd shift differential', shift:'Afternoon', type:'Overtime', start:'15:00', end:'23:00', code:'0214'},
+    {id:'0220', name:'Regular Night', desc:'3rd shift differential — night shift', shift:'Night', type:'Regular', start:'23:00', end:'07:00', code:'0220'},
+    {id:'0224', name:'Overtime Night', desc:'Overtime with 3rd shift differential', shift:'Night', type:'Overtime', start:'23:00', end:'07:00', code:'0224'},
+  ];
+  const rule = ruleData.find(r=>r.id===ruleId) || {name:'Rule',desc:'',code:ruleId,shift:'',type:'',start:'',end:''};
   const modal = document.getElementById('modal-job-detail');
   if (!modal) { toast('Rule editor — coming soon','info'); return; }
   document.getElementById('job-detail-title').textContent = 'Edit Rule — ' + rule.name;
   document.getElementById('job-detail-body').innerHTML = `
-    <div class="form-group"><label>Rule Name</label><input class="form-control" value="${rule.name}" readonly></div>
-    <div class="form-group"><label>Description</label><textarea class="form-control" rows="3">${rule.desc}</textarea></div>
-    <div class="form-group"><label>Current Value</label><input class="form-control" id="rule-value-input" value="${rule.value}"></div>
-    <div style="display:flex;gap:8px;margin-top:16px;">
-      <button class="btn btn-primary" onclick="toast('Rule updated','success');closeModal('modal-job-detail')">Save Rule</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div class="form-group"><label>Job Type</label><select class="form-control"><option ${rule.type==='Regular'?'selected':''}>Regular</option><option ${rule.type==='Overtime'?'selected':''}>Overtime</option></select></div>
+      <div class="form-group"><label>Shift</label><select class="form-control"><option ${rule.shift==='Morning'?'selected':''}>Morning</option><option ${rule.shift==='Afternoon'?'selected':''}>Afternoon</option><option ${rule.shift==='Night'?'selected':''}>Night</option></select></div>
+      <div class="form-group"><label>Start Time</label><input class="form-control" type="time" value="${rule.start}"></div>
+      <div class="form-group"><label>End Time</label><input class="form-control" type="time" value="${rule.end}"></div>
+      <div class="form-group"><label>A/A Code</label><input class="form-control" id="rule-value-input" value="${rule.code}" maxlength="4" style="font-weight:700;letter-spacing:2px;"></div>
+      <div class="form-group"><label>Description</label><input class="form-control" value="${rule.desc}"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-primary" onclick="toast('Rule ${rule.code} updated','success');closeModal('modal-job-detail')">Save Rule</button>
       <button class="btn btn-secondary" onclick="closeModal('modal-job-detail')">Cancel</button>
     </div>`;
   openModal('modal-job-detail');
