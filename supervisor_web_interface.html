@@ -468,7 +468,7 @@ textarea.form-control{resize:vertical;min-height:70px;}
     <input type="text" placeholder="🔍 Search flagman, employee ID...">
     <select><option value="">All Types</option><option>CN Employee</option><option>Contracted</option></select>
     <select><option value="">All Shifts</option><option>Morning</option><option>Afternoon</option><option>Night</option></select>
-    <select><option value="">All A/A Codes</option><option>A1</option><option>A2</option><option>B1</option><option>C1</option><option>OT1</option></select>
+    <select><option value="">All A/A Codes</option><option>0100 — Regular Morning</option><option>0204 — OT Morning</option><option>0210 — Regular Afternoon</option><option>0214 — OT Afternoon</option><option>0220 — Regular Night</option><option>0224 — OT Night</option></select>
     <select><option value="">All Regions</option><option>BC</option><option>Alberta</option></select>
     <div class="date-nav" style="margin-left:auto;">
       <button onclick="shiftTimesheetWeek(-1)">‹ Prev Week</button>
@@ -482,13 +482,13 @@ textarea.form-control{resize:vertical;min-height:70px;}
       <table class="tbl">
         <thead><tr><th>Date</th><th>Flagman Name</th><th>Employee ID</th><th>Type</th><th>Shift</th><th>Start Time</th><th>End Time</th><th>Total Hours</th><th>A/A Code</th><th>Job / Project #</th><th>Region</th><th>Check-In</th><th>Check-Out</th></tr></thead>
         <tbody>
-          <tr><td>Jun 2 (Mon)</td><td><strong>O'Hearn, Wade</strong></td><td>EMP-0202</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-night">Night</span></td><td>22:00</td><td>06:00</td><td>8.0</td><td><span class="aa-code-badge">A2</span></td><td>CG594003 — Elworthy</td><td>BC</td><td>22:03 ✅</td><td>06:05 ✅</td></tr>
-          <tr><td>Jun 2 (Mon)</td><td><strong>Muhammad, Danjuma</strong></td><td>EMP-0102</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>06:00</td><td>14:00</td><td>8.0</td><td><span class="aa-code-badge">A1</span></td><td>721363 — City of Calgary</td><td>Alberta</td><td>05:58 ✅</td><td>14:02 ✅</td></tr>
-          <tr><td>Jun 2 (Mon)</td><td><strong>Williams, Ryan</strong></td><td>EMP-0103</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>06:00</td><td>14:00</td><td>8.0</td><td><span class="aa-code-badge">A1</span></td><td>718527 — Amrize</td><td>Alberta</td><td>06:01 ✅</td><td>14:00 ✅</td></tr>
-          <tr><td>Jun 2 (Mon)</td><td><strong>Anderson, Tyler</strong></td><td>EMP-0203</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-afternoon">Afternoon</span></td><td>14:00</td><td>22:00</td><td>8.0</td><td><span class="aa-code-badge">A2</span></td><td>FR#720312 — Embridge</td><td>BC</td><td>13:55 ✅</td><td>22:10 ✅</td></tr>
-          <tr><td>Jun 2 (Mon)</td><td><strong>Bozor, Nicolson</strong></td><td>CON-0301</td><td><span class="badge badge-contracted">Contracted</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge">C1</span></td><td>WW-2026-04 — Waste Water</td><td>BC</td><td>07:02 ✅</td><td>15:05 ✅</td></tr>
-          <tr><td>Jun 3 (Tue)</td><td><strong>O'Hearn, Wade</strong></td><td>EMP-0202</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-night">Night</span></td><td>22:00</td><td>06:00</td><td>8.0</td><td><span class="aa-code-badge">A2</span></td><td>CG594003 — Elworthy</td><td>BC</td><td>22:00 ✅</td><td>06:00 ✅</td></tr>
-          <tr style="background:#fff8e1;"><td>Jun 4 (Wed)</td><td><strong>Brule, Joshua</strong></td><td>EMP-0101</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>06:00</td><td>14:00</td><td>8.0</td><td><span class="aa-code-badge">OT1</span></td><td>718527 — Amrize (OT)</td><td>Alberta</td><td>06:00 ✅</td><td>—</td></tr>
+          <tr><td>Jun 2 (Mon)</td><td><strong>O'Hearn, Wade</strong></td><td>EMP-0202</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-night">Night</span></td><td>22:00</td><td>06:00</td><td>8.0</td><td><span class="aa-code-badge" title="3rd shift differential">0220</span></td><td>CG594003 — Elworthy</td><td>BC</td><td>22:03 ✅</td><td>06:05 ✅</td></tr>
+          <tr><td>Jun 2 (Mon)</td><td><strong>Muhammad, Danjuma</strong></td><td>EMP-0102</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>06:00</td><td>14:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>721363 — City of Calgary</td><td>Alberta</td><td>05:58 ✅</td><td>14:02 ✅</td></tr>
+          <tr><td>Jun 2 (Mon)</td><td><strong>Williams, Ryan</strong></td><td>EMP-0103</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>06:00</td><td>14:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>718527 — Amrize</td><td>Alberta</td><td>06:01 ✅</td><td>14:00 ✅</td></tr>
+          <tr><td>Jun 2 (Mon)</td><td><strong>Anderson, Tyler</strong></td><td>EMP-0203</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-afternoon">Afternoon</span></td><td>14:00</td><td>22:00</td><td>8.0</td><td><span class="aa-code-badge" title="2nd shift differential">0210</span></td><td>FR#720312 — Embridge</td><td>BC</td><td>13:55 ✅</td><td>22:10 ✅</td></tr>
+          <tr><td>Jun 2 (Mon)</td><td><strong>Bozor, Nicolson</strong></td><td>CON-0301</td><td><span class="badge badge-contracted">Contracted</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>WW-2026-04 — Waste Water</td><td>BC</td><td>07:02 ✅</td><td>15:05 ✅</td></tr>
+          <tr><td>Jun 3 (Tue)</td><td><strong>O'Hearn, Wade</strong></td><td>EMP-0202</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-night">Night</span></td><td>22:00</td><td>06:00</td><td>8.0</td><td><span class="aa-code-badge" title="3rd shift differential">0220</span></td><td>CG594003 — Elworthy</td><td>BC</td><td>22:00 ✅</td><td>06:00 ✅</td></tr>
+          <tr style="background:#fff8e1;"><td>Jun 4 (Wed)</td><td><strong>Brule, Joshua</strong></td><td>EMP-0101</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>06:00</td><td>14:00</td><td>8.0</td><td><span class="aa-code-badge" title="Overtime">0204</span></td><td>718527 — Amrize (OT)</td><td>Alberta</td><td>06:00 ✅</td><td>—</td></tr>
         </tbody>
       </table>
     </div>
@@ -1283,6 +1283,29 @@ textarea.form-control{resize:vertical;min-height:70px;}
       <button class="btn btn-primary" onclick="toast('Settings saved ✓','success')">Save</button>
     </div></div>
   </div>
+  <!-- A/A CODE RULES TABLE -->
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header">
+      <h2>📊 A/A Code Rules</h2>
+      <div class="card-actions"><button class="btn btn-sm btn-primary" onclick="toast('Add Rule form opened','info')">+ Add Rule</button></div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">These rules automatically assign A/A Type Codes to shifts. The system uses these rules to suggest a code, which supervisors can override during job assignment.</p>
+      <div class="tbl-scroll">
+        <table class="tbl">
+          <thead><tr><th>Job Type</th><th>Shift Name</th><th>Start Time</th><th>End Time</th><th>A/A Type Code</th><th>Description</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-cn">Regular</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td><span class="aa-code-badge">0100</span></td><td>Regular time</td><td><button class="btn-xs btn-edit" onclick="toast('Edit rule 0100','info')">Edit</button></td></tr>
+            <tr><td><span class="badge" style="background:#fff3cd;color:#856404;">Overtime</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td><span class="aa-code-badge">0204</span></td><td>Overtime</td><td><button class="btn-xs btn-edit" onclick="toast('Edit rule 0204','info')">Edit</button></td></tr>
+            <tr><td><span class="badge badge-cn">Regular</span></td><td><span class="badge badge-afternoon">Afternoon</span></td><td>15:00</td><td>23:00</td><td><span class="aa-code-badge">0210</span></td><td>2nd shift differential</td><td><button class="btn-xs btn-edit" onclick="toast('Edit rule 0210','info')">Edit</button></td></tr>
+            <tr><td><span class="badge" style="background:#fff3cd;color:#856404;">Overtime</span></td><td><span class="badge badge-afternoon">Afternoon</span></td><td>15:00</td><td>23:00</td><td><span class="aa-code-badge">0214</span></td><td>Overtime w/2nd shift</td><td><button class="btn-xs btn-edit" onclick="toast('Edit rule 0214','info')">Edit</button></td></tr>
+            <tr><td><span class="badge badge-cn">Regular</span></td><td><span class="badge badge-night">Night</span></td><td>23:00</td><td>07:00</td><td><span class="aa-code-badge">0220</span></td><td>3rd shift differential</td><td><button class="btn-xs btn-edit" onclick="toast('Edit rule 0220','info')">Edit</button></td></tr>
+            <tr><td><span class="badge" style="background:#fff3cd;color:#856404;">Overtime</span></td><td><span class="badge badge-night">Night</span></td><td>23:00</td><td>07:00</td><td><span class="aa-code-badge">0224</span></td><td>Overtime w/3rd shift</td><td><button class="btn-xs btn-edit" onclick="toast('Edit rule 0224','info')">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 </div><!-- end content -->
@@ -1503,8 +1526,9 @@ textarea.form-control{resize:vertical;min-height:70px;}
           <div class="form-group">
             <label>A/A Code</label>
             <div style="display:flex;align-items:center;gap:8px;">
-              <span class="aa-code-badge" id="aa-code-display">A1</span>
-              <input type="text" class="form-control" id="aa-code-override" placeholder="Override..." style="width:100px;" oninput="document.getElementById('aa-code-display').textContent=this.value||'A1'">
+              <span class="aa-code-badge" id="aa-code-display">0100</span>
+              <span id="aa-code-desc" style="font-size:11px;color:var(--text-muted);">Regular time</span>
+              <input type="text" class="form-control" id="aa-code-override" placeholder="Override..." style="width:90px;" oninput="document.getElementById('aa-code-display').textContent=this.value||document.getElementById('aa-code-display').dataset.auto;">
               <span style="font-size:10px;color:var(--text-muted);">Manual override</span>
             </div>
           </div>
@@ -1798,16 +1822,23 @@ function formatDateRange(s, e) {
 }
 
 // ── A/A CODE LOGIC ──
+// A/A Code mapping: shift-type → code
 const aaCodes = {
-  'Morning-regular': 'A1', 'Afternoon-regular': 'A2', 'Night-regular': 'A2',
-  'Morning-overtime': 'OT1', 'Afternoon-overtime': 'OT2', 'Night-overtime': 'OT2'
+  'Morning-regular':   { code: '0100', desc: 'Regular time' },
+  'Morning-overtime':  { code: '0204', desc: 'Overtime' },
+  'Afternoon-regular': { code: '0210', desc: '2nd shift differential' },
+  'Afternoon-overtime':{ code: '0214', desc: 'Overtime w/2nd shift' },
+  'Night-regular':     { code: '0220', desc: '3rd shift differential' },
+  'Night-overtime':    { code: '0224', desc: 'Overtime w/3rd shift' },
 };
 function updateAACode() {
   const shift = document.getElementById('assign-shift').value.split(' ')[0];
   const type = document.getElementById('assign-shift-type').value;
-  const code = aaCodes[shift + '-' + type] || 'A1';
-  document.getElementById('aa-code-display').textContent = code;
-  document.getElementById('aa-code-override').placeholder = code;
+  const entry = aaCodes[shift + '-' + type] || { code: '0100', desc: 'Regular time' };
+  document.getElementById('aa-code-display').textContent = entry.code;
+  document.getElementById('aa-code-override').placeholder = entry.code;
+  const descEl = document.getElementById('aa-code-desc');
+  if (descEl) descEl.textContent = entry.desc;
 }
 
 // ── ASSIGN MODAL ──
