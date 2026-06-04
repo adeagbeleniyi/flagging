@@ -886,7 +886,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div class="company-card-header">
       <div class="company-avatar">PF</div>
       <div><div style="font-size:14px;font-weight:700;">Pacific Flag Inc.</div><div style="font-size:11px;color:var(--text-muted);">info@pacificflag.ca · BC Region · 2 active contractors</div></div>
-      <div style="margin-left:auto;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary" onclick="toast('Editing Pacific Flag Inc.','')">Edit</button><button class="btn-reject btn-xs" onclick="toast('Pacific Flag Inc. removed','warning')">Remove</button></div>
+      <div style="margin-left:auto;display:flex;gap:6px;"><button class="btn btn-sm btn-primary" onclick="openAddContractorForCompany('Pacific Flag Inc.')">+ Add Contractor</button><button class="btn btn-sm btn-secondary" onclick="toast('Editing Pacific Flag Inc.','')">Edit</button><button class="btn-reject btn-xs" onclick="toast('Pacific Flag Inc. removed','warning')">Remove</button></div>
     </div>
     <table class="tbl"><thead><tr><th>Contractor</th><th>ID</th><th>Cycle</th><th>Phone</th><th>Email</th><th>Status</th></tr></thead>
     <tbody>
@@ -898,7 +898,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div class="company-card-header">
       <div class="company-avatar">WS</div>
       <div><div style="font-size:14px;font-weight:700;">Westcoast Safety Group</div><div style="font-size:11px;color:var(--text-muted);">contracts@westcoastsafety.ca · BC Region · 1 active contractor</div></div>
-      <div style="margin-left:auto;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary" onclick="toast('Editing Westcoast Safety Group','')">Edit</button><button class="btn-reject btn-xs" onclick="toast('Westcoast Safety Group removed','warning')">Remove</button></div>
+      <div style="margin-left:auto;display:flex;gap:6px;"><button class="btn btn-sm btn-primary" onclick="openAddContractorForCompany('Westcoast Safety Group')">+ Add Contractor</button><button class="btn btn-sm btn-secondary" onclick="toast('Editing Westcoast Safety Group','')">Edit</button><button class="btn-reject btn-xs" onclick="toast('Westcoast Safety Group removed','warning')">Remove</button></div>
     </div>
     <table class="tbl"><thead><tr><th>Contractor</th><th>ID</th><th>Cycle</th><th>Phone</th><th>Email</th><th>Status</th></tr></thead>
     <tbody>
@@ -909,7 +909,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div class="company-card-header">
       <div class="company-avatar">SR</div>
       <div><div style="font-size:14px;font-weight:700;">Summit Rail Services</div><div style="font-size:11px;color:var(--text-muted);">dispatch@summitrail.ca · Alberta Region · 2 contractors</div></div>
-      <div style="margin-left:auto;display:flex;gap:6px;"><button class="btn btn-sm btn-secondary" onclick="toast('Editing Summit Rail Services','')">Edit</button><button class="btn-reject btn-xs" onclick="toast('Summit Rail Services removed','warning')">Remove</button></div>
+      <div style="margin-left:auto;display:flex;gap:6px;"><button class="btn btn-sm btn-primary" onclick="openAddContractorForCompany('Summit Rail Services')">+ Add Contractor</button><button class="btn btn-sm btn-secondary" onclick="toast('Editing Summit Rail Services','')">Edit</button><button class="btn-reject btn-xs" onclick="toast('Summit Rail Services removed','warning')">Remove</button></div>
     </div>
     <table class="tbl"><thead><tr><th>Contractor</th><th>ID</th><th>Cycle</th><th>Phone</th><th>Email</th><th>Status</th></tr></thead>
     <tbody>
@@ -1621,7 +1621,7 @@ const pageConfig = {
   schedule:  { title:'Working Schedule — June 2026', sub:'All flagmen · 3-shift view · Staggered cycles', actions:'<button class="btn btn-secondary" onclick="toast(\'Schedule exported ✓\',\'success\')">📤 Export</button>' },
   weekly:    { title:'Weekly Schedule', sub:'Send and export weekly schedules', actions:'' },
   flagmen:   { title:'Flagmen', sub:'11 CN Employees · 5 Contracted', actions:'' },
-  companies: { title:'Contracting Companies', sub:'3 companies · 5 contractors', actions:'<button class="btn btn-primary" onclick="showModal(\'modal-add-company\')">+ Add Company</button>' },
+  companies: { title:'Contracting Companies', sub:'3 companies · 5 contractors', actions:'<button class="btn btn-primary" onclick="showModal(\'modal-add-contractor\')">+ Add Contractor</button> <button class="btn btn-secondary" onclick="showModal(\'modal-add-company\')">+ Add Company</button>' },
   overtime:  { title:'Overtime Availability', sub:'Week of June 7, 2026 · Deadline: Friday Jun 6 at 5 PM', actions:'<button class="btn btn-secondary" onclick="toast(\'Reminder sent ✓\',\'success\')">📩 Send Reminder</button>' },
   vacation:  { title:'Vacation Management', sub:'All flagmen · 2026 · Max 25 days/year', actions:'<button class="btn btn-primary" onclick="showModal(\'modal-add-vacation\')">+ Add Vacation Entry</button>' },
   incoming:  { title:'Incoming Requests', sub:'4 new · 2 under review', actions:'' },
@@ -1818,6 +1818,12 @@ function openJobDetail(key) {
 }
 
 // ── VACATION ──
+function openAddContractorForCompany(company) {
+  const sel = document.querySelector('#modal-add-contractor select');
+  if (sel) { for (let o of sel.options) { if (o.value === company || o.text === company) { sel.value = o.value; break; } } }
+  document.querySelector('#modal-add-contractor h3').textContent = 'Add Contracted Flagman — ' + company;
+  showModal('modal-add-contractor');
+}
 function openAddVacation(name) {
   document.getElementById('vac-flagman-select').value = name;
   showModal('modal-add-vacation');
