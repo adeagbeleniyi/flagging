@@ -378,7 +378,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <select id="jobs-shift-filter" onchange="filterTable('jobs-tbody','jobs-search','jobs-status-filter','jobs-shift-filter','jobs-region-filter')"><option value="">All Shifts</option><option>Morning</option><option>Afternoon</option><option>Night</option></select>
     <select id="jobs-region-filter" onchange="filterTable('jobs-tbody','jobs-search','jobs-status-filter','jobs-shift-filter','jobs-region-filter')"><option value="">All Regions</option><option>BC</option><option>Alberta</option></select>
     <span id="jobs-count" class="pg-info" style="margin-left:auto;"></span>
-    <button class="btn btn-sm btn-primary" onclick="showModal('modal-assign')">+ Add Job</button>
+    <button class="btn btn-sm btn-primary" onclick="openInterestModal('New Job','Select Subdivision')">👥 Assign Flagman</button>
   </div>
   <div class="card">
     <div class="tbl-scroll">
@@ -396,6 +396,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <tr data-status="Pending" data-shift="Afternoon" data-region="Alberta"><td>REQ-037</td><td><strong>Apex Energy Corp</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Edson</td><td>13.8–14.5</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Jun 16+</td><td>—</td><td>1</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Apex Energy Corp','Edson Sub')">👥 View Interest &amp; Assign</button></td></tr>
           <tr data-status="Pending" data-shift="" data-region="BC"><td>REQ-039</td><td><strong>Ridgeline Construction</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Clearwater</td><td>25.1–26.0</td><td>TBD</td><td>TBD</td><td>—</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Ridgeline Construction','Clearwater Sub')">👥 View Interest &amp; Assign</button></td></tr>
           <tr data-status="Pending" data-shift="Night" data-region="Alberta"><td>REQ-036</td><td><strong>Westfield Pipeline</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Sangudo</td><td>6.0–8.0</td><td><span class="badge badge-night">Night</span></td><td>Jun 18+</td><td>—</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Westfield Pipeline','Sangudo Sub')">👥 View Interest &amp; Assign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Morning" data-region="BC"><td>PRJ-722100</td><td><strong>Highpoint Infrastructure</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Cascade</td><td>50.0–52.5</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span></td><td>Jun 3–20</td><td>17</td><td>2</td><td>Beaumont, Claude · Kowalski, Piotr</td><td><span class="aa-code-badge">0100</span> <span class="aa-code-badge">0210</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('highpoint')">View</button> <button class="btn-review btn-xs" onclick="openInterestModal('Highpoint Infrastructure','Cascade Sub')">Reassign</button></td></tr>
+          <tr data-status="Scheduled" data-shift="Night" data-region="Alberta"><td>PRJ-722200</td><td><strong>Stonebridge Excavation</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Wainwright</td><td>20.0–22.0</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span> <span class="badge badge-night">Night</span></td><td>Jun 23–Jul 4</td><td>12</td><td>3</td><td>Larsson, Erik · Okafor, James · Dubois, Remi <span class="badge badge-contracted" style="font-size:9px;">C</span></td><td><span class="aa-code-badge">0100</span> <span class="aa-code-badge">0210</span> <span class="aa-code-badge">0220</span></td><td><span class="badge badge-scheduled">Scheduled</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('stonebridge')">View</button> <button class="btn-review btn-xs" onclick="openInterestModal('Stonebridge Excavation','Wainwright Sub')">Reassign</button></td></tr>
+          <tr data-status="Pending" data-shift="Morning" data-region="BC"><td>REQ-042</td><td><strong>Metro Water Authority</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Coquitlam</td><td>15.0–16.5</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-night">Night</span></td><td>Jul 7–18</td><td>12</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Metro Water Authority','Coquitlam Sub')">👥 View Interest &amp; Assign</button></td></tr>
           <tr data-status="Delayed" data-shift="Morning" data-region="BC"><td>PRJ-719800</td><td><strong>Pacific Telecom Infrastructure</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Lillooet</td><td>200.0–201.5</td><td><span class="badge badge-morning">Morning</span></td><td>Jun 5–9 (Delayed)</td><td>5</td><td>1</td><td>Yamamoto, Dean</td><td><span class="aa-code-badge">0100</span></td><td><span class="badge badge-delayed">Delayed</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('pacific')">View</button></td></tr>
         </tbody>
       </table>
@@ -1101,6 +1104,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- ══════════ SUBMIT A REQUEST ══════════ -->
 <div id="sec-submit" class="page-section">
+  <!-- Requester Portal Tabs -->
+  <div style="display:flex;gap:0;margin-bottom:18px;border:1px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content;">
+    <button id="rtab-new" class="btn btn-sm btn-blue" style="border-radius:0;border:none;padding:10px 22px;" onclick="switchReqTab('new')">📝 New Request</button>
+    <button id="rtab-mine" class="btn btn-sm btn-secondary" style="border-radius:0;border:none;padding:10px 22px;" onclick="switchReqTab('mine')">📋 My Requests</button>
+  </div>
+
+  <!-- NEW REQUEST FORM -->
+  <div id="req-tab-new">
   <div class="alert alert-info">ℹ️ This form is for <strong>internal CN departments and external companies</strong> requesting flagging coverage on CN track. Flagman assignment is determined by the supervisor.</div>
   <div class="card">
     <div class="card-header"><h2>📝 New Flagging Coverage Request</h2></div>
@@ -1216,6 +1227,87 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       </div>
     </div>
   </div>
+  </div><!-- end req-tab-new -->
+
+  <!-- MY REQUESTS -->
+  <div id="req-tab-mine" style="display:none;">
+    <!-- Summary chips -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <span style="background:#f0f7ff;border:1px solid var(--cn-blue);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;" onclick="filterMyReqs('all')">All (7)</span>
+      <span style="background:#fff8e1;border:1px solid #ffc107;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;" onclick="filterMyReqs('draft')">📝 Drafts (2)</span>
+      <span style="background:#e8f5e9;border:1px solid #28a745;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;" onclick="filterMyReqs('published')">✅ Published (3)</span>
+      <span style="background:#fce4ec;border:1px solid var(--cn-red);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;" onclick="filterMyReqs('chat')">💬 With Chat (2)</span>
+    </div>
+    <div class="card">
+      <div class="tbl-scroll">
+        <table class="tbl" id="my-reqs-table">
+          <thead><tr><th>Ref #</th><th>Subdivision</th><th>MP Range</th><th>Shift(s)</th><th>Proposed Dates</th><th>Flagmen</th><th>Status</th><th>Chat</th><th>Actions</th></tr></thead>
+          <tbody id="my-reqs-tbody">
+            <tr data-reqstatus="published" data-haschat="true">
+              <td><strong>REQ-041</strong></td><td>Cascade</td><td>44.0–46.2</td>
+              <td><span class="badge badge-morning">Morning</span></td>
+              <td>Jun 9–13</td><td>1</td>
+              <td><span class="badge badge-inprogress">Under Review</span></td>
+              <td><button class="btn-approve btn-xs" onclick="openChatThread('REQ-041','Northgate Utilities','Site Coordinator')">💬 1 new</button></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-041 details','')">View</button></td>
+            </tr>
+            <tr data-reqstatus="published" data-haschat="true">
+              <td><strong>REQ-040</strong></td><td>Bulkley</td><td>88.0–89.5</td>
+              <td><span class="badge badge-morning">Morning</span></td>
+              <td>Jun 16–20</td><td>1</td>
+              <td><span class="badge badge-scheduled">Approved</span></td>
+              <td><button class="btn-approve btn-xs" onclick="openChatThread('REQ-040','Meridian Rail Services','Field Engineer')">💬 View thread</button></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-040 details','')">View</button></td>
+            </tr>
+            <tr data-reqstatus="published" data-haschat="false">
+              <td><strong>REQ-039</strong></td><td>Clearwater</td><td>25.1–26.0</td>
+              <td><span style="font-size:11px;color:var(--text-muted);">TBD</span></td>
+              <td>TBD</td><td>2</td>
+              <td><span class="badge badge-pending">Pending</span></td>
+              <td><span style="font-size:11px;color:var(--text-muted);">—</span></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-039 details','')">View</button></td>
+            </tr>
+            <tr data-reqstatus="draft" data-haschat="false">
+              <td><strong>DRAFT-005</strong></td><td>Yale</td><td>120.0–121.5</td>
+              <td><span class="badge badge-night">Night</span></td>
+              <td>Jul 14–18</td><td>1</td>
+              <td><span style="background:#fff8e1;color:#856404;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;">Draft</span></td>
+              <td><span style="font-size:11px;color:var(--text-muted);">—</span></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Editing DRAFT-005','')">Edit</button> <button class="btn-approve btn-xs" onclick="toast('DRAFT-005 published ✓','success')">Publish</button></td>
+            </tr>
+            <tr data-reqstatus="draft" data-haschat="false">
+              <td><strong>DRAFT-004</strong></td><td>Edson</td><td>10.0–11.0</td>
+              <td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span></td>
+              <td>Aug 3–8</td><td>2</td>
+              <td><span style="background:#fff8e1;color:#856404;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;">Draft</span></td>
+              <td><span style="font-size:11px;color:var(--text-muted);">—</span></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Editing DRAFT-004','')">Edit</button> <button class="btn-approve btn-xs" onclick="toast('DRAFT-004 published ✓','success')">Publish</button></td>
+            </tr>
+            <tr data-reqstatus="completed" data-haschat="false">
+              <td><strong>REQ-033</strong></td><td>Sangudo</td><td>6.0–7.5</td>
+              <td><span class="badge badge-morning">Morning</span></td>
+              <td>May 5–12</td><td>1</td>
+              <td><span class="badge badge-completed">Completed</span></td>
+              <td><span style="font-size:11px;color:var(--text-muted);">—</span></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-033 summary','')">Summary</button></td>
+            </tr>
+            <tr data-reqstatus="completed" data-haschat="false">
+              <td><strong>REQ-028</strong></td><td>Wainwright</td><td>14.0–15.5</td>
+              <td><span class="badge badge-night">Night</span></td>
+              <td>Apr 7–14</td><td>1</td>
+              <td><span class="badge badge-completed">Completed</span></td>
+              <td><span style="font-size:11px;color:var(--text-muted);">—</span></td>
+              <td><button class="btn-edit btn-xs" onclick="toast('Viewing REQ-028 summary','')">Summary</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span class="pg-info">Showing 7 of 7 requests</span>
+        <button class="pg-btn active">1</button>
+      </div>
+    </div>
+  </div><!-- end req-tab-mine -->
 </div>
 
 <!-- ══════════ EXPORT ══════════ -->
@@ -1717,7 +1809,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 // ── PAGE CONFIG ──
 const pageConfig = {
   dashboard: { title:'Dashboard', sub:'CN Flagging System · Western Region · June 2026', actions:'' },
-  jobs:      { title:'Active Jobs', sub:'11 active jobs · 4 awaiting assignment', actions:'<button class="btn btn-primary" onclick="showModal(\'modal-assign\')">+ Add Job</button>' },
+  jobs:      { title:'Active Jobs', sub:'15 active jobs · 5 awaiting assignment', actions:'<button class="btn btn-primary" onclick="openInterestModal(\'New Job\',\'Select Subdivision\')">👥 Assign Flagman</button>' },
   completed: { title:'Completed Jobs', sub:'63 jobs completed YTD 2026', actions:'<button class="btn btn-secondary" onclick="toast(\'Exporting completed jobs...\',\'success\')">📤 Export</button>' },
   timesheet: { title:'Timesheet', sub:'Daily records · All flagmen', actions:'<button class="btn btn-secondary" onclick="toast(\'Exporting timesheet...\',\'success\')">📤 Export</button>' },
   schedule:  { title:'Working Schedule — June 2026', sub:'All flagmen · 3-shift view · Staggered cycles', actions:'<button class="btn btn-secondary" onclick="toast(\'Schedule exported ✓\',\'success\')">📤 Export</button>' },
@@ -2311,6 +2403,29 @@ function filterTable(tbodyId, searchId, statusId, shiftId, regionId) {
   });
   const countEl = document.getElementById(tbodyId.replace('-tbody', '-count'));
   if (countEl) countEl.textContent = count + ' result' + (count !== 1 ? 's' : '');
+}
+
+// ── REQUESTER PORTAL TABS ──
+function switchReqTab(tab) {
+  document.getElementById('req-tab-new').style.display = tab === 'new' ? '' : 'none';
+  document.getElementById('req-tab-mine').style.display = tab === 'mine' ? '' : 'none';
+  document.getElementById('rtab-new').className = 'btn btn-sm ' + (tab === 'new' ? 'btn-blue' : 'btn-secondary');
+  document.getElementById('rtab-mine').className = 'btn btn-sm ' + (tab === 'mine' ? 'btn-blue' : 'btn-secondary');
+  document.getElementById('rtab-new').style.cssText += ';border-radius:0;border:none;padding:10px 22px;';
+  document.getElementById('rtab-mine').style.cssText += ';border-radius:0;border:none;padding:10px 22px;';
+}
+function filterMyReqs(filter) {
+  const rows = document.querySelectorAll('#my-reqs-tbody tr');
+  rows.forEach(r => {
+    const status = r.dataset.reqstatus;
+    const hasChat = r.dataset.haschat === 'true';
+    let show = false;
+    if (filter === 'all') show = true;
+    else if (filter === 'draft') show = status === 'draft';
+    else if (filter === 'published') show = status === 'published';
+    else if (filter === 'chat') show = hasChat;
+    r.style.display = show ? '' : 'none';
+  });
 }
 </script>
 </body>
