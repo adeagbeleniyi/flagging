@@ -402,9 +402,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <tr data-status="Pending" data-shift="Afternoon" data-region="Alberta"><td>REQ-037</td><td><strong>Apex Energy Corp</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Edson</td><td>13.8–14.5</td><td><span class="badge badge-afternoon">Afternoon</span></td><td>Jun 16+</td><td>—</td><td>1</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Apex Energy Corp','Edson Sub')">Assign</button></td></tr>
           <tr data-status="Pending" data-shift="" data-region="BC"><td>REQ-039</td><td><strong>Ridgeline Construction</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Clearwater</td><td>25.1–26.0</td><td>TBD</td><td>TBD</td><td>—</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Ridgeline Construction','Clearwater Sub')">Assign</button></td></tr>
           <tr data-status="Pending" data-shift="Night" data-region="Alberta"><td>REQ-036</td><td><strong>Westfield Pipeline</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Sangudo</td><td>6.0–8.0</td><td><span class="badge badge-night">Night</span></td><td>Jun 18+</td><td>—</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Westfield Pipeline','Sangudo Sub')">Assign</button></td></tr>
-          <tr data-status="In Progress" data-shift="Morning" data-region="BC"><td>PRJ-722100</td><td><strong>Highpoint Infrastructure</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Cascade</td><td>50.0–52.5</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span></td><td>Jun 3–20</td><td>17</td><td>2</td><td>Beaumont, Claude · Kowalski, Piotr</td><td><span class="aa-code-badge">0100</span> <span class="aa-code-badge">0210</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('highpoint')">View</button> <button class="btn-review btn-xs" onclick="openInterestModal('Highpoint Infrastructure','Cascade Sub')">Reassign</button></td></tr>
-          <tr data-status="Scheduled" data-shift="Night" data-region="Alberta"><td>PRJ-722200</td><td><strong>Stonebridge Excavation</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Wainwright</td><td>20.0–22.0</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span> <span class="badge badge-night">Night</span></td><td>Jun 23–Jul 4</td><td>12</td><td>3</td><td>Larsson, Erik · Okafor, James · Dubois, Remi <span class="badge badge-contracted" style="font-size:9px;">C</span></td><td><span class="aa-code-badge">0100</span> <span class="aa-code-badge">0210</span> <span class="aa-code-badge">0220</span></td><td><span class="badge badge-scheduled">Scheduled</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('stonebridge')">View</button> <button class="btn-review btn-xs" onclick="openInterestModal('Stonebridge Excavation','Wainwright Sub')">Reassign</button></td></tr>
-          <tr data-status="Pending" data-shift="Morning" data-region="BC"><td>REQ-042</td><td><strong>Metro Water Authority</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Coquitlam</td><td>15.0–16.5</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-night">Night</span></td><td>Jul 7–18</td><td>12</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Metro Water Authority','Coquitlam Sub')">Assign</button></td></tr>
+          <tr data-status="In Progress" data-shift="Morning" data-region="BC"><td>PRJ-722100</td><td><strong>Highpoint Infrastructure</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Cascade</td><td>50.0–52.5</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span></td><td>Jun 3–20</td><td>17</td><td>2</td><td>Beaumont, Claude · Kowalski, Piotr</td><td><span class="aa-code-badge">0100</span> <span class="aa-code-badge">0210</span></td><td><span class="badge badge-inprogress">In Progress</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('highpoint')">View</button> <button class="btn-review btn-xs" onclick="openInterestModal('Highpoint Infrastructure','Cascade Sub',['Morning','Afternoon'])">Reassign</button></td></tr>
+          <tr data-status="Scheduled" data-shift="Night" data-region="Alberta"><td>PRJ-722200</td><td><strong>Stonebridge Excavation</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Wainwright</td><td>20.0–22.0</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-afternoon">Afternoon</span> <span class="badge badge-night">Night</span></td><td>Jun 23–Jul 4</td><td>12</td><td>3</td><td>Larsson, Erik · Okafor, James · Dubois, Remi <span class="badge badge-contracted" style="font-size:9px;">C</span></td><td><span class="aa-code-badge">0100</span> <span class="aa-code-badge">0210</span> <span class="aa-code-badge">0220</span></td><td><span class="badge badge-scheduled">Scheduled</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('stonebridge')">View</button> <button class="btn-review btn-xs" onclick="openInterestModal('Stonebridge Excavation','Wainwright Sub',['Morning','Afternoon','Night'])">Reassign</button></td></tr>
+          <tr data-status="Pending" data-shift="Morning" data-region="BC"><td>REQ-042</td><td><strong>Metro Water Authority</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Coquitlam</td><td>15.0–16.5</td><td><span class="badge badge-morning">Morning</span> <span class="badge badge-night">Night</span></td><td>Jul 7–18</td><td>12</td><td>2</td><td style="color:var(--cn-red);font-weight:600;">Unassigned</td><td>—</td><td><span class="badge badge-pending">Pending</span></td><td><button class="btn-approve btn-xs" onclick="openInterestModal('Metro Water Authority','Coquitlam Sub',['Morning','Night'])">Assign</button></td></tr>
           <tr data-status="Delayed" data-shift="Morning" data-region="BC"><td>PRJ-719800</td><td><strong>Pacific Telecom Infrastructure</strong></td><td><span style="font-size:9px;color:var(--text-muted);">Ext</span></td><td>Lillooet</td><td>200.0–201.5</td><td><span class="badge badge-morning">Morning</span></td><td>Jun 5–9 (Delayed)</td><td>5</td><td>1</td><td>Yamamoto, Dean</td><td><span class="aa-code-badge">0100</span></td><td><span class="badge badge-delayed">Delayed</span></td><td><button class="btn-edit btn-xs" onclick="openJobDetail('pacific')">View</button></td></tr>
         </tbody>
       </table>
@@ -1173,7 +1173,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         <div class="form-group"><label>Proposed End Date <span class="req">*</span></label><input type="date" class="form-control"></div>
       </div>
       <div class="form-group">
-        <label>Shift(s) Required <span class="req">*</span> <span style="font-size:10px;color:var(--text-muted);">(Select all that apply)</span></label>
+        <label>Shift(s) Required <span style="font-size:10px;color:var(--text-muted);">(Optional — select all that apply, or leave blank to let the supervisor decide)</span></label>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
           <div><label class="checkbox-label"><input type="checkbox" onchange="toggleShiftBlock('shift-morning',this)"> Morning Shift</label>
             <div id="shift-morning" class="shift-block" style="display:none;margin-top:6px;"><div class="form-row"><div class="form-group"><label>Start Time</label><input type="time" class="form-control" value="07:00"></div><div class="form-group"><label>End Time</label><input type="time" class="form-control" value="15:00"></div></div></div>
@@ -1546,11 +1546,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         <div style="background:#f0f7ff;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;display:flex;gap:20px;flex-wrap:wrap;">
           <span id="wiz-job-summary"><strong>Job:</strong> —</span>
         </div>
+        <div id="wiz-shift-restriction-notice" style="display:none;" class="alert alert-warning" style="font-size:11px;margin-bottom:12px;">⚠ This job was requested for specific shifts only. The shift selector below is restricted to those shifts.</div>
         <div class="form-row-3">
           <div class="form-group"><label>Shift <span class="req">*</span></label>
             <select id="assign-shift" class="form-control" onchange="updateAACode()">
-              <option>Morning (07:00–15:00)</option><option>Afternoon (15:00–23:00)</option><option>Night (23:00–07:00)</option>
+              <option value="Morning">Morning (07:00–15:00)</option>
+              <option value="Afternoon">Afternoon (15:00–23:00)</option>
+              <option value="Night">Night (23:00–07:00)</option>
             </select>
+            <div id="assign-shift-note" style="font-size:10px;color:var(--text-muted);margin-top:4px;"></div>
           </div>
           <div class="form-group"><label>Shift Type</label>
             <select id="assign-shift-type" class="form-control" onchange="updateAACode()">
@@ -1963,12 +1967,7 @@ const allFlagmenData = [
 let interestTab = 'interested';
 let interestSort = 'seniority';
 let selectedFlagmen = new Set();
-function openInterestModal(company, sub) {
-  document.getElementById('interest-job-title').textContent = (company||'Northgate Utilities') + ' · ' + (sub||'Cascade Sub');
-  selectedFlagmen.clear();
-  renderInterestTable();
-  showModal('modal-interest');
-}
+
 function switchInterestTab(tab) {
   interestTab = tab;
   document.getElementById('itab-interested').className = 'btn btn-sm ' + (tab==='interested' ? 'btn-blue' : 'btn-secondary');
@@ -2050,19 +2049,42 @@ function renderInterestTable() {
 let wizardCurrentStep = 1;
 const WIZARD_TOTAL_STEPS = 5;
 
-function openInterestModal(company, sub) {
+function openInterestModal(company, sub, allowedShifts) {
   // Opens the unified wizard starting at step 1
+  // allowedShifts: array of allowed shift names e.g. ['Night'] or ['Morning','Afternoon'] or null/[] = all
   const jobTitle = (company || 'Northgate Utilities') + ' · ' + (sub || 'Cascade Sub');
   document.getElementById('assign-job-title').textContent = jobTitle;
   document.getElementById('wiz-job-summary').innerHTML = '<strong>Job:</strong> ' + jobTitle;
   selectedFlagmen.clear();
+  // Apply shift restriction
+  const shiftSelect = document.getElementById('assign-shift');
+  const shiftNote = document.getElementById('assign-shift-note');
+  const shiftNotice = document.getElementById('wiz-shift-restriction-notice');
+  const allShiftOptions = ['Morning','Afternoon','Night'];
+  const restricted = allowedShifts && allowedShifts.length > 0;
+  shiftSelect.innerHTML = '';
+  const shiftsToShow = restricted ? allowedShifts : allShiftOptions;
+  const shiftLabels = { Morning: 'Morning (07:00–15:00)', Afternoon: 'Afternoon (15:00–23:00)', Night: 'Night (23:00–07:00)' };
+  shiftsToShow.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = shiftLabels[s] || s;
+    shiftSelect.appendChild(opt);
+  });
+  if (restricted) {
+    shiftNotice.style.display = 'block';
+    shiftNote.textContent = 'Restricted to: ' + allowedShifts.join(', ') + ' (as specified in the job request)';
+  } else {
+    shiftNotice.style.display = 'none';
+    shiftNote.textContent = 'No shift specified in request — all shifts available';
+  }
   wizardGoToStep(1);
   updateAACode();
   showModal('modal-assign');
 }
 
-function openAssignModal(company, sub) {
-  openInterestModal(company, sub);
+function openAssignModal(company, sub, allowedShifts) {
+  openInterestModal(company, sub, allowedShifts);
 }
 
 function wizardGoToStep(step) {
