@@ -149,7 +149,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .checkbox-group{display:flex;flex-wrap:wrap;gap:10px;}
 .checkbox-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;cursor:pointer;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}.modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:10px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
 .modal-lg{max-width:860px;}
 .modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -232,44 +232,44 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <aside class="sidebar">
   <div class="sidebar-section">
     <div class="sidebar-label">Overview</div>
-    <div class="nav-item active" data-target="dashboard"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-item active" data-section="sec-dashboard"><span class="icon">📊</span> Dashboard</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Jobs</div>
-    <div class="nav-item" data-target="jobs"><span class="icon">🔧</span> Active Jobs <span class="nav-badge" id="badge-jobs">4</span></div>
-    <div class="nav-item" data-target="completed"><span class="icon">✅</span> Completed Jobs</div>
-    <div class="nav-item" data-target="dfr"><span class="icon">🕐</span> Daily Flagging Record</div>
+    <div class="nav-item" data-section="sec-jobs"><span class="icon">🔧</span> Active Jobs <span class="nav-badge" id="badge-jobs">4</span></div>
+    <div class="nav-item" data-section="sec-completed"><span class="icon">✅</span> Completed Jobs</div>
+    <div class="nav-item" data-section="sec-dfr"><span class="icon">🕐</span> Daily Flagging Record</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Schedule</div>
-    <div class="nav-item" data-target="schedule"><span class="icon">📅</span> Schedule</div>
+    <div class="nav-item" data-section="sec-schedule"><span class="icon">📅</span> Schedule</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">People</div>
-    <div class="nav-item" data-target="flagmen"><span class="icon">👷</span> Flagmen</div>
-    <div class="nav-item" data-target="companies"><span class="icon">🏢</span> Contracting Companies</div>
+    <div class="nav-item" data-section="sec-flagmen"><span class="icon">👷</span> Flagmen</div>
+    <div class="nav-item" data-section="sec-companies"><span class="icon">🏢</span> Contracting Companies</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Workforce</div>
-    <div class="nav-item" data-target="overtime"><span class="icon">⏰</span> Overtime Availability <span class="nav-badge" id="badge-ot">5</span></div>
-    <div class="nav-item" data-target="vacation"><span class="icon">🏖️</span> Vacation Management</div>
+    <div class="nav-item" data-section="sec-overtime"><span class="icon">⏰</span> Overtime Availability <span class="nav-badge" id="badge-ot">5</span></div>
+    <div class="nav-item" data-section="sec-vacation"><span class="icon">🏖️</span> Vacation Management</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Requests</div>
-    <div class="nav-item" data-target="requests"><span class="icon">📥</span> Incoming Requests <span class="nav-badge" id="badge-req">3</span></div>
-    <div class="nav-item" data-target="submit"><span class="icon">📝</span> Submit a Request</div>
+    <div class="nav-item" data-section="sec-requests"><span class="icon">📥</span> Incoming Requests <span class="nav-badge" id="badge-req">3</span></div>
+    <div class="nav-item" data-section="sec-submit"><span class="icon">📝</span> Submit a Request</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
     <div class="sidebar-label">Tools</div>
-    <div class="nav-item" data-target="export"><span class="icon">📤</span> Export Schedules</div>
-    <div class="nav-item" data-target="reports"><span class="icon">📊</span> Reports</div>
-    <div class="nav-item" data-target="settings"><span class="icon">⚙️</span> Settings</div>
+    <div class="nav-item" data-section="sec-export"><span class="icon">📤</span> Export Schedules</div>
+    <div class="nav-item" data-section="sec-reports"><span class="icon">📊</span> Reports</div>
+    <div class="nav-item" data-section="sec-settings"><span class="icon">⚙️</span> Settings</div>
   </div>
 </aside>
 
@@ -282,19 +282,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div><h1>Dashboard</h1><div class="sub">Western Region · Jun 4, 2026</div></div>
   </div>
   <div class="content">
-    <div class="alert alert-danger">⚠️ <strong>3 jobs pending review</strong> — new flagging requests require your attention. <a href="#" onclick="navigate('requests');return false;">Review now →</a></div>
-    <div class="alert alert-warning">⏰ <strong>OT availability window closes Friday Jun 6 at 5 PM.</strong> 5 of 13 flagmen have responded. <a href="#" onclick="navigate('overtime');return false;">View responses →</a></div>
+    <div class="alert alert-danger">⚠️ <strong>3 jobs pending review</strong> — new flagging requests require your attention. <a href="#" onclick="showPage('sec-requests');return false;">Review now →</a></div>
+    <div class="alert alert-warning">⏰ <strong>OT availability window closes Friday Jun 6 at 5 PM.</strong> 5 of 13 flagmen have responded. <a href="#" onclick="showPage('sec-overtime');return false;">View responses →</a></div>
     <div class="stats-row">
-      <div class="stat-card blue" onclick="navigate('jobs')"><div class="stat-label">Active Jobs</div><div class="stat-value">11</div><div class="stat-sub">4 need assignment</div></div>
-      <div class="stat-card red" onclick="navigate('requests')"><div class="stat-label">Pending Review</div><div class="stat-value">3</div><div class="stat-sub">Awaiting approval</div></div>
-      <div class="stat-card green" onclick="navigate('flagmen')"><div class="stat-label">Flagmen Available</div><div class="stat-value">8</div><div class="stat-sub">3 on vacation</div></div>
-      <div class="stat-card orange" onclick="navigate('overtime')"><div class="stat-label">OT Responses</div><div class="stat-value">5</div><div class="stat-sub">8 pending</div></div>
-      <div class="stat-card purple" onclick="navigate('dfr')"><div class="stat-label">Overlap Alerts</div><div class="stat-value">2</div><div class="stat-sub">Handoff today</div></div>
+      <div class="stat-card blue" onclick="showPage('sec-jobs')"><div class="stat-label">Active Jobs</div><div class="stat-value">11</div><div class="stat-sub">4 need assignment</div></div>
+      <div class="stat-card red" onclick="showPage('sec-requests')"><div class="stat-label">Pending Review</div><div class="stat-value">3</div><div class="stat-sub">Awaiting approval</div></div>
+      <div class="stat-card green" onclick="showPage('sec-flagmen')"><div class="stat-label">Flagmen Available</div><div class="stat-value">8</div><div class="stat-sub">3 on vacation</div></div>
+      <div class="stat-card orange" onclick="showPage('sec-overtime')"><div class="stat-label">OT Responses</div><div class="stat-value">5</div><div class="stat-sub">8 pending</div></div>
+      <div class="stat-card purple" onclick="showPage('sec-dfr')"><div class="stat-label">Overlap Alerts</div><div class="stat-value">2</div><div class="stat-sub">Handoff today</div></div>
     </div>
     <div class="overlap-alert">🔄 <strong>Handoff Alert:</strong> Tremblay, Luc (9&5 A-cycle) ends today on PRJ-720312 · Coquitlam. Incoming: Callahan, Brett (B-cycle) overlaps Jun 4 PM shift. Overlap hours recorded in Daily Flagging Record.</div>
     <div class="two-col">
       <div class="card">
-        <div class="card-header"><h2>Active Jobs — Today</h2><div class="card-actions"><button class="btn btn-sm btn-blue" onclick="navigate('jobs')">View All</button></div></div>
+        <div class="card-header"><h2>Active Jobs — Today</h2><div class="card-actions"><button class="btn btn-sm btn-blue" onclick="showPage('sec-jobs')">View All</button></div></div>
         <div class="card-body" style="padding:0;">
           <table class="tbl">
             <thead><tr><th>Job #</th><th>Company</th><th>Subdivision</th><th>Shift</th><th>Flagmen</th><th>Status</th></tr></thead>
@@ -308,7 +308,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         </div>
       </div>
       <div class="card">
-        <div class="card-header"><h2>Incoming Requests</h2><div class="card-actions"><button class="btn btn-sm btn-primary" onclick="navigate('requests')">Review All</button></div></div>
+        <div class="card-header"><h2>Incoming Requests</h2><div class="card-actions"><button class="btn btn-sm btn-primary" onclick="showPage('sec-requests')">Review All</button></div></div>
         <div class="card-body" style="padding:0;">
           <table class="tbl">
             <thead><tr><th>Ref #</th><th>Company</th><th>Subdivision</th><th>Dates</th><th>Status</th></tr></thead>
@@ -540,7 +540,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
               <td>07:00</td><td id="ts-cout-1">—</td><td id="ts-hrs-1">—</td>
               <td><span class="aa-code-badge">0100</span></td>
               <td>Active shift</td>
-              <td id="ts-row-1"><button class="btn btn-xs btn-review" onclick="openCheckoutModal(1,'Tremblay, Luc','CN-1042','Jun 4','Morning','07:00')">Check Out</button></td>
+              <td id="ts-action-1"><button class="btn btn-xs btn-review" onclick="openCheckoutModal(1,'Tremblay, Luc','CN-1042','Jun 4','Morning','07:00')">Check Out</button></td>
             </tr>
             <!-- Overlap row for Tremblay (end of 9&5 A-cycle) -->
             <tr class="row-overlap">
@@ -1698,7 +1698,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   <div style="font-weight:700;color:#7c3aed;margin-bottom:6px;">↔ Handoff Overlap Alert</div>
   <div style="font-size:12px;color:#374151;">Tremblay (9&5 A) and Callahan (9&5 B) have an overlap handoff on <strong>Jun 4</strong> at PRJ-720312. Both flagmen will work partial hours. Records have been created in the Daily Flagging Record.</div>
   <div style="display:flex;gap:8px;margin-top:10px;">
-    <button class="btn btn-xs btn-primary" onclick="showPage('sec-flagging-record');document.getElementById('overlap-notification').style.display='none'">View Record</button>
+    <button class="btn btn-xs btn-primary" onclick="showPage('sec-dfr');document.getElementById('overlap-notification').style.display='none'">View Record</button>
     <button class="btn btn-xs btn-secondary" onclick="document.getElementById('overlap-notification').style.display='none'">Dismiss</button>
   </div>
 </div>
@@ -1755,7 +1755,7 @@ const pageConfig = {
   dashboard:   { title:'Dashboard',          section:'sec-dashboard' },
   jobs:        { title:'Active Jobs',         section:'sec-jobs',      actions:'<button class="btn btn-primary btn-sm" onclick="openInterestModal()">Assign Flagman</button>' },
   completed:   { title:'Completed Jobs',      section:'sec-completed' },
-  flagging:    { title:'Daily Flagging Record', section:'sec-flagging-record' },
+  dfr:         { title:'Daily Flagging Record', section:'sec-dfr' },
   schedule:    { title:'Schedule',            section:'sec-schedule' },
   flagmen:     { title:'Flagmen',             section:'sec-flagmen' },
   companies:   { title:'Contracting Companies', section:'sec-companies' },
@@ -1799,8 +1799,8 @@ document.querySelectorAll('.nav-item').forEach(item => {
 });
 
 // ═══════════════════════════════════════════════════════════ MODAL HELPERS
-function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // ═══════════════════════════════════════════════════════════ TOAST
 function toast(msg, type='success') {
@@ -2394,868 +2394,15 @@ function filterMyReqs(status, el) {
 }
 
 // ═══════════════════════════════════════════════════════════ INIT
-document.addEventListener('DOMContentLoaded', () => {
-  showPage('sec-dashboard');
-  // Show overlap notification after 2 seconds on load
-  setTimeout(() => { document.getElementById('overlap-notification').style.display = 'block'; }, 2000);
-});
 </script>
-</body>
-</html>
-
-<!-- ==================== INCOMING REQUESTS ==================== -->
-<div id="page-requests" class="page-section" style="display:none">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Incoming Requests</h1>
-      <p class="page-subtitle">Review, approve and assign flagging coverage requests</p>
-    </div>
-    <div class="page-actions">
-      <button class="btn btn-secondary" onclick="showToast('Requests exported','success')">⬇ Export</button>
-    </div>
-  </div>
-  <!-- Filter Bar -->
-  <div class="filter-bar">
-    <div class="filter-chips">
-      <button class="chip active" onclick="filterRequests('all',this)">All <span class="badge">9</span></button>
-      <button class="chip" onclick="filterRequests('new',this)">New <span class="badge badge-red">3</span></button>
-      <button class="chip" onclick="filterRequests('review',this)">Under Review <span class="badge badge-yellow">2</span></button>
-      <button class="chip" onclick="filterRequests('approved',this)">Approved <span class="badge badge-green">2</span></button>
-      <button class="chip" onclick="filterRequests('assigned',this)">Assigned <span class="badge">1</span></button>
-      <button class="chip" onclick="filterRequests('rejected',this)">Rejected <span class="badge">1</span></button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <input type="text" class="form-control" placeholder="Search requests..." style="width:220px" oninput="filterRequestSearch(this.value)">
-      <select class="form-control" style="width:160px">
-        <option>All Regions</option><option>BC</option><option>Alberta</option>
-      </select>
-    </div>
-  </div>
-  <!-- Two-panel layout -->
-  <div style="display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px">
-    <!-- Left: Request List -->
-    <div>
-      <div id="req-list">
-        <!-- REQ-041 -->
-        <div class="req-card" data-status="new" onclick="loadReqDetail('REQ-041',this)" style="border-left:4px solid var(--cn-red);background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-041</span>
-              <span class="badge badge-red" style="margin-left:8px">New</span>
-              <span class="badge badge-yellow" style="margin-left:4px">⚡ Urgent</span>
-            </div>
-            <span style="font-size:12px;color:#888">Jun 3, 2026 · 09:14</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Northgate Utilities</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Cascade Sub · MP 142.3–148.7 · Morning · Jun 9–27</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">2 flagmen · Excavation · Locate uploaded</div>
-        </div>
-        <!-- REQ-040 -->
-        <div class="req-card" data-status="review" onclick="loadReqDetail('REQ-040',this)" style="border-left:4px solid #f59e0b;background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-040</span>
-              <span class="badge badge-yellow" style="margin-left:8px">Under Review</span>
-            </div>
-            <span style="font-size:12px;color:#888">Jun 2, 2026 · 14:30</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Ridgeline Construction</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Wainwright Sub · MP 88.0–92.4 · Night · Jun 12–Jul 3</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">1 flagman · No excavation</div>
-        </div>
-        <!-- REQ-039 -->
-        <div class="req-card" data-status="new" onclick="loadReqDetail('REQ-039',this)" style="border-left:4px solid var(--cn-red);background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-039</span>
-              <span class="badge badge-red" style="margin-left:8px">New</span>
-            </div>
-            <span style="font-size:12px;color:#888">Jun 1, 2026 · 11:05</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Westfield Pipeline</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Edson Sub · MP 201.0–205.5 · Morning + Night · Jun 15–30</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">2 flagmen · Excavation · Locate uploaded</div>
-        </div>
-        <!-- REQ-038 -->
-        <div class="req-card" data-status="approved" onclick="loadReqDetail('REQ-038',this)" style="border-left:4px solid #10b981;background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-038</span>
-              <span class="badge badge-green" style="margin-left:8px">Approved</span>
-            </div>
-            <span style="font-size:12px;color:#888">May 30, 2026 · 08:45</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Apex Energy Corp</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Edson Sub · MP 310.2–315.0 · Afternoon · Jun 8–20</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">1 flagman · Awaiting assignment</div>
-        </div>
-        <!-- REQ-037 -->
-        <div class="req-card" data-status="assigned" onclick="loadReqDetail('REQ-037',this)" style="border-left:4px solid var(--cn-blue);background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-037</span>
-              <span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:8px">Assigned</span>
-            </div>
-            <span style="font-size:12px;color:#888">May 28, 2026 · 13:20</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Summit Rail Services</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Cascade Sub · MP 55.0–60.2 · Morning · Jun 2–14</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">1 flagman · Assigned: Tremblay, Luc</div>
-        </div>
-        <!-- REQ-036 -->
-        <div class="req-card" data-status="new" onclick="loadReqDetail('REQ-036',this)" style="border-left:4px solid var(--cn-red);background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-036</span>
-              <span class="badge badge-red" style="margin-left:8px">New</span>
-            </div>
-            <span style="font-size:12px;color:#888">May 27, 2026 · 16:00</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">CN Track Renewal (Internal)</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Wainwright Sub · MP 120.0–128.0 · Not specified · Jun 20–Jul 10</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">3 flagmen · No excavation</div>
-        </div>
-        <!-- REQ-035 -->
-        <div class="req-card" data-status="review" onclick="loadReqDetail('REQ-035',this)" style="border-left:4px solid #f59e0b;background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-035</span>
-              <span class="badge badge-yellow" style="margin-left:8px">Under Review</span>
-            </div>
-            <span style="font-size:12px;color:#888">May 26, 2026 · 10:30</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Prairie Municipal Works</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Wainwright Sub · MP 45.0–48.5 · Morning · Jun 10–15</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">1 flagman · Excavation · Locate uploaded</div>
-        </div>
-        <!-- REQ-034 -->
-        <div class="req-card" data-status="approved" onclick="loadReqDetail('REQ-034',this)" style="border-left:4px solid #10b981;background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-034</span>
-              <span class="badge badge-green" style="margin-left:8px">Approved</span>
-            </div>
-            <span style="font-size:12px;color:#888">May 25, 2026 · 09:00</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Highpoint Infrastructure</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Edson Sub · MP 180.0–185.0 · Morning + Afternoon · Jun 7–18</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">2 flagmen · Awaiting assignment</div>
-        </div>
-        <!-- REQ-033 -->
-        <div class="req-card" data-status="rejected" onclick="loadReqDetail('REQ-033',this)" style="border-left:4px solid #6b7280;background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <span style="font-weight:700;color:var(--cn-dark)">REQ-033</span>
-              <span class="badge" style="background:#f3f4f6;color:#6b7280;margin-left:8px">Rejected</span>
-            </div>
-            <span style="font-size:12px;color:#888">May 24, 2026 · 14:00</span>
-          </div>
-          <div style="margin-top:6px;font-weight:600">Stonebridge Excavation</div>
-          <div style="font-size:13px;color:#555;margin-top:2px">Cascade Sub · MP 200.0–202.0 · Night · May 28–Jun 5</div>
-          <div style="font-size:12px;color:#888;margin-top:4px">Rejected: Insufficient flagman availability</div>
-        </div>
-      </div>
-      <!-- Pagination -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-        <span style="font-size:13px;color:#888">Showing 9 of 9 requests</span>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-secondary btn-sm" disabled>← Prev</button>
-          <button class="btn btn-secondary btn-sm" style="background:var(--cn-dark);color:#fff">1</button>
-          <button class="btn btn-secondary btn-sm">Next →</button>
-        </div>
-      </div>
-    </div>
-    <!-- Right: Detail Panel -->
-    <div id="req-detail-panel" style="background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1);padding:20px;min-height:400px">
-      <div id="req-detail-empty" style="text-align:center;padding:60px 20px;color:#aaa">
-        <div style="font-size:48px">📋</div>
-        <div style="margin-top:12px;font-size:15px">Select a request to view details</div>
-      </div>
-      <div id="req-detail-content" style="display:none"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== SUBMIT A REQUEST ==================== -->
-<div id="page-submit" class="page-section" style="display:none">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Flagging Coverage Request</h1>
-      <p class="page-subtitle">Submit a new request or view your existing requests</p>
-    </div>
-  </div>
-  <!-- Tabs -->
-  <div style="display:flex;gap:0;border-bottom:2px solid #e5e7eb;margin-bottom:20px">
-    <button id="stab-new" onclick="switchSubmitTab('new')" style="padding:10px 24px;border:none;background:none;font-weight:600;color:var(--cn-red);border-bottom:3px solid var(--cn-red);cursor:pointer;margin-bottom:-2px">📝 New Request</button>
-    <button id="stab-my" onclick="switchSubmitTab('my')" style="padding:10px 24px;border:none;background:none;font-weight:600;color:#888;cursor:pointer">📋 My Requests</button>
-  </div>
-  <!-- New Request Form -->
-  <div id="submit-new-view">
-    <div style="background:#e0f2fe;border:1px solid #bae6fd;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#0369a1">
-      ℹ️ Flagman type (CN employee vs. contracted) is determined solely by the supervisor. Please focus on describing your work requirements.
-    </div>
-    <form onsubmit="submitRequest(event)">
-      <!-- Section 1: Requester Info -->
-      <div class="form-section">
-        <h3 class="form-section-title">1. Requester Information</h3>
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Requester Type *</label>
-            <select class="form-control" required>
-              <option value="">Select...</option>
-              <option>Internal CN Department</option>
-              <option>External Company</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Company / Department Name *</label>
-            <input type="text" class="form-control" required placeholder="e.g. CN Engineering or Northgate Utilities">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contact Name *</label>
-            <input type="text" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contact Phone *</label>
-            <input type="tel" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contact Email *</label>
-            <input type="email" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">CN Project / Permit Number</label>
-            <input type="text" class="form-control" placeholder="Optional">
-          </div>
-        </div>
-      </div>
-      <!-- Section 2: Work Location -->
-      <div class="form-section">
-        <h3 class="form-section-title">2. Work Location</h3>
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">CN Subdivision *</label>
-            <select class="form-control" required>
-              <option value="">Select subdivision...</option>
-              <option>Cascade Subdivision</option>
-              <option>Edson Subdivision</option>
-              <option>Wainwright Subdivision</option>
-              <option>Okanagan Subdivision</option>
-              <option>Kamloops Subdivision</option>
-              <option>Yale Subdivision</option>
-              <option>Ashcroft Subdivision</option>
-              <option>Boundary Subdivision</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Specific Work Location Description *</label>
-            <input type="text" class="form-control" required placeholder="e.g. Near Hope yard, south side of track">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Starting Milepost *</label>
-            <input type="number" class="form-control" step="0.1" required placeholder="e.g. 142.3">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Ending Milepost *</label>
-            <input type="number" class="form-control" step="0.1" required placeholder="e.g. 148.7">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Meeting Point *</label>
-            <input type="text" class="form-control" required placeholder="e.g. CN yard gate, Hope BC">
-          </div>
-        </div>
-      </div>
-      <!-- Section 3: Work Details -->
-      <div class="form-section">
-        <h3 class="form-section-title">3. Work Details</h3>
-        <div class="form-group">
-          <label class="form-label">Description of Work *</label>
-          <textarea class="form-control" rows="3" required placeholder="Describe the nature of the work being performed on or near CN track..."></textarea>
-        </div>
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Proposed Start Date *</label>
-            <input type="date" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Proposed End Date *</label>
-            <input type="date" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Estimated Days</label>
-            <input type="number" class="form-control" placeholder="Auto-calculated">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Number of Flagmen Required *</label>
-            <select class="form-control" required>
-              <option value="">Select...</option>
-              <option>1</option><option>2</option><option>3</option><option>4</option>
-              <option>Supervisor to Decide</option>
-            </select>
-          </div>
-        </div>
-        <!-- Shift Selection (Optional) -->
-        <div class="form-group">
-          <label class="form-label">Shift(s) Required <span style="font-weight:400;color:#888">(Optional — leave blank to let the supervisor decide)</span></label>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-              <input type="checkbox" id="shift-morning" onchange="toggleShiftTime('morning',this.checked)"> Morning
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-              <input type="checkbox" id="shift-afternoon" onchange="toggleShiftTime('afternoon',this.checked)"> Afternoon
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-              <input type="checkbox" id="shift-night" onchange="toggleShiftTime('night',this.checked)"> Night
-            </label>
-          </div>
-          <div id="shift-times" style="margin-top:12px;display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-        <!-- Billing -->
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Billing Method *</label>
-            <select class="form-control" required onchange="toggleBillingCode(this.value)">
-              <option value="">Select...</option>
-              <option>Cost Code</option>
-              <option>Network Code</option>
-              <option>Project ID</option>
-            </select>
-          </div>
-          <div class="form-group" id="billing-code-group" style="display:none">
-            <label class="form-label" id="billing-code-label">Code *</label>
-            <input type="text" class="form-control" id="billing-code-input" placeholder="Enter code">
-          </div>
-        </div>
-      </div>
-      <!-- Section 4: Site Conditions -->
-      <div class="form-section">
-        <h3 class="form-section-title">4. Site Conditions</h3>
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Distance of Work from Track *</label>
-            <select class="form-control" required>
-              <option value="">Select...</option>
-              <option>Within 3m</option><option>3–10m</option><option>10–30m</option><option>Over 30m</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Excavation Required? *</label>
-            <select class="form-control" required onchange="toggleLocateUpload(this.value)">
-              <option value="">Select...</option>
-              <option>No</option>
-              <option>Yes</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Machinery Utilized?</label>
-            <select class="form-control">
-              <option>No</option><option>Yes</option>
-            </select>
-          </div>
-        </div>
-        <!-- Locate Upload (shown when excavation = Yes) -->
-        <div id="locate-upload-section" style="display:none;margin-top:12px;padding:16px;background:#fef9c3;border:1px solid #fde68a;border-radius:8px">
-          <label class="form-label" style="color:#92400e">⚠️ Locate Document Required</label>
-          <p style="font-size:13px;color:#78350f;margin-bottom:10px">Excavation work requires a valid locate document. Please upload the locate before submitting.</p>
-          <input type="file" class="form-control" accept=".pdf,.jpg,.png" id="locate-file">
-          <div id="locate-preview" style="margin-top:8px;font-size:13px;color:#166534;display:none">✅ Locate document attached</div>
-        </div>
-        <div class="form-group" style="margin-top:12px">
-          <label class="form-label">Additional Notes</label>
-          <textarea class="form-control" rows="2" placeholder="Any other relevant information..."></textarea>
-        </div>
-      </div>
-      <!-- Form Actions -->
-      <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:16px;border-top:1px solid #e5e7eb">
-        <button type="button" class="btn btn-secondary" onclick="showToast('Request cancelled','info')">✕ Cancel</button>
-        <button type="button" class="btn btn-secondary" onclick="showToast('Draft saved — REF: DRAFT-006','success')">💾 Save Draft</button>
-        <button type="submit" class="btn btn-primary">📤 Publish Request</button>
-      </div>
-    </form>
-  </div>
-  <!-- My Requests View -->
-  <div id="submit-my-view" style="display:none">
-    <div class="filter-bar">
-      <div class="filter-chips">
-        <button class="chip active" onclick="filterMyReqs('all',this)">All <span class="badge">7</span></button>
-        <button class="chip" onclick="filterMyReqs('draft',this)">Drafts <span class="badge badge-yellow">2</span></button>
-        <button class="chip" onclick="filterMyReqs('published',this)">Published <span class="badge badge-green">3</span></button>
-        <button class="chip" onclick="filterMyReqs('chat',this)">With Chat <span class="badge badge-red">2</span></button>
-      </div>
-    </div>
-    <table class="data-table" style="margin-top:12px">
-      <thead><tr>
-        <th>Ref #</th><th>Subdivision</th><th>MP Range</th><th>Shift(s)</th><th>Proposed Dates</th><th>Flagmen</th><th>Status</th><th>Chat</th><th>Actions</th>
-      </tr></thead>
-      <tbody>
-        <tr data-myreq="published"><td><strong>REQ-041</strong></td><td>Cascade</td><td>142.3–148.7</td><td><span class="shift-badge shift-morning">Morning</span></td><td>Jun 9–27</td><td>2</td><td><span class="badge badge-red">New</span></td><td><button class="btn btn-secondary btn-sm" onclick="openChatThread('REQ-041')">💬 View Thread <span style="background:var(--cn-red);color:#fff;border-radius:50%;padding:1px 5px;font-size:10px">2</span></button></td><td><button class="btn btn-secondary btn-sm">View</button></td></tr>
-        <tr data-myreq="published"><td><strong>REQ-040</strong></td><td>Wainwright</td><td>88.0–92.4</td><td><span class="shift-badge shift-night">Night</span></td><td>Jun 12–Jul 3</td><td>1</td><td><span class="badge badge-yellow">Under Review</span></td><td><button class="btn btn-secondary btn-sm" onclick="openChatThread('REQ-040')">💬 View Thread <span style="background:var(--cn-red);color:#fff;border-radius:50%;padding:1px 5px;font-size:10px">1</span></button></td><td><button class="btn btn-secondary btn-sm">View</button></td></tr>
-        <tr data-myreq="published"><td><strong>REQ-037</strong></td><td>Cascade</td><td>55.0–60.2</td><td><span class="shift-badge shift-morning">Morning</span></td><td>Jun 2–14</td><td>1</td><td><span class="badge" style="background:#e0f2fe;color:#0369a1">Assigned</span></td><td>—</td><td><button class="btn btn-secondary btn-sm">Summary</button></td></tr>
-        <tr data-myreq="draft"><td><strong>DRAFT-005</strong></td><td>Okanagan</td><td>30.0–35.0</td><td>—</td><td>Jul 5–15</td><td>1</td><td><span class="badge badge-yellow">Draft</span></td><td>—</td><td><button class="btn btn-secondary btn-sm">Edit</button> <button class="btn btn-primary btn-sm" onclick="showToast('DRAFT-005 published','success')">Publish</button></td></tr>
-        <tr data-myreq="draft"><td><strong>DRAFT-004</strong></td><td>Edson</td><td>200.0–205.0</td><td><span class="shift-badge shift-afternoon">Afternoon</span></td><td>Jul 20–Aug 3</td><td>2</td><td><span class="badge badge-yellow">Draft</span></td><td>—</td><td><button class="btn btn-secondary btn-sm">Edit</button> <button class="btn btn-primary btn-sm" onclick="showToast('DRAFT-004 published','success')">Publish</button></td></tr>
-        <tr data-myreq="published"><td><strong>REQ-033</strong></td><td>Cascade</td><td>200.0–202.0</td><td><span class="shift-badge shift-night">Night</span></td><td>May 28–Jun 5</td><td>1</td><td><span class="badge" style="background:#f3f4f6;color:#6b7280">Rejected</span></td><td>—</td><td><button class="btn btn-secondary btn-sm">Summary</button></td></tr>
-        <tr data-myreq="published"><td><strong>REQ-028</strong></td><td>Wainwright</td><td>100.0–104.5</td><td><span class="shift-badge shift-morning">Morning</span></td><td>Apr 14–Apr 28</td><td>2</td><td><span class="badge badge-green">Completed</span></td><td>—</td><td><button class="btn btn-secondary btn-sm">Summary</button></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ==================== EXPORT ==================== -->
-<div id="page-export" class="page-section" style="display:none">
-  <div class="page-header">
-    <div><h1 class="page-title">Export Schedules</h1><p class="page-subtitle">Generate and download schedule reports</p></div>
-  </div>
-  <div style="background:#fff;border-radius:8px;padding:24px;max-width:600px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-    <div class="form-grid-2">
-      <div class="form-group"><label class="form-label">Region</label>
-        <select class="form-control"><option>Both</option><option>BC</option><option>Alberta</option></select></div>
-      <div class="form-group"><label class="form-label">Week Starting</label>
-        <input type="date" class="form-control" value="2026-06-01"></div>
-      <div class="form-group"><label class="form-label">Format</label>
-        <select class="form-control"><option>Excel (.xlsx)</option><option>PDF</option><option>CSV</option></select></div>
-      <div class="form-group"><label class="form-label">Flagman Type</label>
-        <select class="form-control"><option>All</option><option>CN Employees Only</option><option>Contracted Only</option></select></div>
-    </div>
-    <button class="btn btn-primary" onclick="showToast('Schedule exported successfully','success')">⬇ Download Schedule</button>
-  </div>
-</div>
-
-<!-- ==================== REPORTS ==================== -->
-<div id="page-reports" class="page-section" style="display:none">
-  <div class="page-header">
-    <div><h1 class="page-title">Reports</h1><p class="page-subtitle">Generate operational reports</p></div>
-  </div>
-  <div style="background:#fff;border-radius:8px;padding:24px;max-width:600px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-    <div class="form-group"><label class="form-label">Report Type</label>
-      <select class="form-control">
-        <option>Flagman Utilization Report</option>
-        <option>Overtime Summary</option>
-        <option>Qualification Expiry Report</option>
-        <option>Job Completion Summary</option>
-        <option>Daily Flagging Record Export</option>
-        <option>Vacation Balance Report</option>
-      </select>
-    </div>
-    <div class="form-grid-2">
-      <div class="form-group"><label class="form-label">From Date</label><input type="date" class="form-control" value="2026-05-01"></div>
-      <div class="form-group"><label class="form-label">To Date</label><input type="date" class="form-control" value="2026-06-04"></div>
-    </div>
-    <button class="btn btn-primary" onclick="showToast('Report generated','success')">📊 Generate Report</button>
-  </div>
-</div>
-
-<!-- ==================== SETTINGS ==================== -->
-<div id="page-settings" class="page-section" style="display:none">
-  <div class="page-header">
-    <div><h1 class="page-title">Settings</h1><p class="page-subtitle">System configuration and preferences</p></div>
-  </div>
-  <!-- A/A Code Rules -->
-  <div style="background:#fff;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h3 style="margin:0;font-size:16px">A/A Code Rules</h3>
-      <button class="btn btn-primary btn-sm" onclick="showToast('Add Rule — coming soon','info')">+ Add Rule</button>
-    </div>
-    <p style="font-size:13px;color:#666;margin-bottom:12px">These rules automatically assign A/A Type Codes to shifts. Supervisors can always override the suggested code.</p>
-    <table class="data-table">
-      <thead><tr><th>Job Type</th><th>Shift Name</th><th>Start Time</th><th>End Time</th><th>A/A Code</th><th>Description</th><th>Action</th></tr></thead>
-      <tbody>
-        <tr><td><span class="badge badge-green">Regular</span></td><td>Morning</td><td>07:00</td><td>15:00</td><td><strong>0100</strong></td><td>Regular time</td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Edit rule','info')">Edit</button></td></tr>
-        <tr><td><span class="badge badge-yellow">Overtime</span></td><td>Morning</td><td>07:00</td><td>15:00</td><td><strong>0204</strong></td><td>Overtime</td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Edit rule','info')">Edit</button></td></tr>
-        <tr><td><span class="badge badge-green">Regular</span></td><td>Afternoon</td><td>15:00</td><td>23:00</td><td><strong>0210</strong></td><td>2nd shift differential</td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Edit rule','info')">Edit</button></td></tr>
-        <tr><td><span class="badge badge-yellow">Overtime</span></td><td>Afternoon</td><td>15:00</td><td>23:00</td><td><strong>0214</strong></td><td>Overtime w/2nd shift</td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Edit rule','info')">Edit</button></td></tr>
-        <tr><td><span class="badge badge-green">Regular</span></td><td>Night</td><td>23:00</td><td>07:00</td><td><strong>0220</strong></td><td>3rd shift differential</td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Edit rule','info')">Edit</button></td></tr>
-        <tr><td><span class="badge badge-yellow">Overtime</span></td><td>Night</td><td>23:00</td><td>07:00</td><td><strong>0224</strong></td><td>Overtime w/3rd shift</td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Edit rule','info')">Edit</button></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <!-- Notification Settings -->
-  <div style="background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-    <h3 style="margin:0 0 16px;font-size:16px">Notification Preferences</h3>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <label style="display:flex;justify-content:space-between;align-items:center"><span>New flagging request received</span><input type="checkbox" checked></label>
-      <label style="display:flex;justify-content:space-between;align-items:center"><span>Flagman qualification expiring (30 days)</span><input type="checkbox" checked></label>
-      <label style="display:flex;justify-content:space-between;align-items:center"><span>OT availability window closing</span><input type="checkbox" checked></label>
-      <label style="display:flex;justify-content:space-between;align-items:center"><span>Handoff/overlap day approaching (48h notice)</span><input type="checkbox" checked></label>
-      <label style="display:flex;justify-content:space-between;align-items:center"><span>Flagman check-in / check-out</span><input type="checkbox" checked></label>
-      <label style="display:flex;justify-content:space-between;align-items:center"><span>135h cap advisory triggered</span><input type="checkbox" checked></label>
-    </div>
-    <button class="btn btn-primary" style="margin-top:16px" onclick="showToast('Settings saved','success')">Save Settings</button>
-  </div>
-</div>
-
-<!-- ==================== TOAST CONTAINER ==================== -->
-<div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px"></div>
-
-<!-- ==================== CHECKOUT MODAL ==================== -->
-<div id="checkout-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:440px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <h
-3 style="margin:0 0 16px">Check Out Flagman</h3>
-    <div id="checkout-info" style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:16px;font-size:14px"></div>
-    <div class="form-grid-2">
-      <div class="form-group"><label class="form-label">Check-Out Time</label>
-        <input type="time" class="form-control" id="checkout-time" oninput="calcCheckoutHours()"></div>
-      <div class="form-group"><label class="form-label">Total Hours</label>
-        <input type="text" class="form-control" id="checkout-hours" readonly style="background:#f0fdf4;font-weight:700;color:#166534"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes (optional)</label>
-      <input type="text" class="form-control" placeholder="Any notes about this checkout..."></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
-      <button class="btn btn-secondary" onclick="closeModal('checkout-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmCheckout()">✓ Confirm Check-Out</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== LOCATE VIEWER MODAL ==================== -->
-<div id="locate-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:680px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.3)">
-    <div style="background:var(--cn-dark);color:#fff;padding:16px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-weight:700">📄 Locate Document Viewer</span>
-      <div style="display:flex;gap:10px;align-items:center">
-        <span style="font-size:13px;opacity:.8">Page 1 of 2</span>
-        <button class="btn btn-secondary btn-sm" onclick="showToast('Locate document downloaded','success')">⬇ Download PDF</button>
-        <button onclick="closeModal('locate-modal')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-      </div>
-    </div>
-    <div style="padding:24px;font-family:monospace;font-size:13px">
-      <div style="border:2px solid #000;padding:20px">
-        <div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:16px">UTILITY LOCATE DOCUMENT</div>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
-          <tr><td style="padding:4px;font-weight:700;width:40%">Locate Number:</td><td>LOC-2026-04821</td></tr>
-          <tr><td style="padding:4px;font-weight:700">Date Issued:</td><td>Jun 1, 2026</td></tr>
-          <tr><td style="padding:4px;font-weight:700">Requester:</td><td>Northgate Utilities — R. Kowalczyk</td></tr>
-          <tr><td style="padding:4px;font-weight:700">Work Area:</td><td>Cascade Sub MP 142.3–148.7, Hope BC</td></tr>
-          <tr><td style="padding:4px;font-weight:700">Expiry Date:</td><td style="color:#dc2626;font-weight:700">Jun 30, 2026</td></tr>
-        </table>
-        <div style="font-weight:700;margin-bottom:8px;border-bottom:1px solid #000;padding-bottom:4px">UTILITIES LOCATED</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead><tr style="background:#f3f4f6"><th style="padding:6px;border:1px solid #ccc;text-align:left">Utility</th><th style="padding:6px;border:1px solid #ccc">Depth</th><th style="padding:6px;border:1px solid #ccc">Distance from Track</th><th style="padding:6px;border:1px solid #ccc">Status</th></tr></thead>
-          <tbody>
-            <tr><td style="padding:6px;border:1px solid #ccc">CN Signal Cable</td><td style="padding:6px;border:1px solid #ccc;text-align:center">0.6m</td><td style="padding:6px;border:1px solid #ccc;text-align:center">1.2m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:#d97706;font-weight:700">⚠ Approximate</td></tr>
-            <tr><td style="padding:6px;border:1px solid #ccc">Telus Fiber</td><td style="padding:6px;border:1px solid #ccc;text-align:center">0.9m</td><td style="padding:6px;border:1px solid #ccc;text-align:center">3.5m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:#166534">✓ Located</td></tr>
-            <tr><td style="padding:6px;border:1px solid #ccc">BC Hydro Power Line</td><td style="padding:6px;border:1px solid #ccc;text-align:center">Overhead</td><td style="padding:6px;border:1px solid #ccc;text-align:center">8.0m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:#166534">✓ Located</td></tr>
-            <tr><td style="padding:6px;border:1px solid #ccc">Municipal Water Main</td><td style="padding:6px;border:1px solid #ccc;text-align:center">1.5m</td><td style="padding:6px;border:1px solid #ccc;text-align:center">12.0m</td><td style="padding:6px;border:1px solid #ccc;text-align:center;color:#166534">✓ Located</td></tr>
-          </tbody>
-        </table>
-        <div style="margin-top:16px;background:#fef2f2;border:1px solid #fecaca;padding:12px;border-radius:4px;color:#991b1b;font-size:12px">
-          ⚠️ CAUTION: CN Signal Cable depth is approximate. Hand-dig required within 1m of marked location. Do not use mechanical equipment within 1m of this utility.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== CHAT THREAD MODAL ==================== -->
-<div id="chat-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:520px;height:560px;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="background:var(--cn-dark);color:#fff;padding:16px 20px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-weight:700" id="chat-title">Chat Thread</div><div style="font-size:12px;opacity:.7" id="chat-subtitle"></div></div>
-      <button onclick="closeModal('chat-modal')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f9fafb"></div>
-    <div style="padding:12px 16px;border-top:1px solid #e5e7eb;display:flex;gap:8px">
-      <textarea id="chat-input" rows="2" class="form-control" placeholder="Type a message... (Enter to send, Shift+Enter for new line)" style="flex:1;resize:none" onkeydown="chatKeydown(event)"></textarea>
-      <button class="btn btn-primary" onclick="sendChatMsg()" style="align-self:flex-end">Send</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== REVIEW MODAL (Approve / Reject) ==================== -->
-<div id="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:600px;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="margin:0" id="review-modal-title">Review Request</h3>
-      <button onclick="closeModal('review-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div id="review-modal-body"></div>
-    <div style="border-top:1px solid #e5e7eb;padding-top:16px;margin-top:16px">
-      <div class="form-group">
-        <label class="form-label">Required Qualifications for this Job</label>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="qual-tigs"> TIGS</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="qual-cror"> CROR</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="qual-erail"> eRail Safe</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="qual-formb"> Form B</label>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Supervisor Notes</label>
-        <textarea class="form-control" rows="2" id="review-notes" placeholder="Optional notes for this decision..."></textarea>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeModal('review-modal')">Cancel</button>
-        <button class="btn btn-secondary" style="background:#dc2626;color:#fff" onclick="rejectRequest()">✕ Reject</button>
-        <button class="btn btn-primary" onclick="approveRequest()">✓ Approve</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== UNIFIED ASSIGNMENT WIZARD MODAL ==================== -->
-<div id="wizard-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:780px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.3)">
-    <!-- Wizard Header -->
-    <div style="background:var(--cn-dark);color:#fff;padding:20px 24px;border-radius:12px 12px 0 0">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <span style="font-weight:700;font-size:16px">Assign Flagman</span>
-        <button onclick="closeModal('wizard-modal')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:0" id="wizard-steps-bar">
-        <div class="wstep wstep-active" data-step="1">1. Job Details</div>
-        <div class="wstep-arrow">›</div>
-        <div class="wstep" data-step="2">2. Rank & Select</div>
-        <div class="wstep-arrow">›</div>
-        <div class="wstep" data-step="3">3. Cycle & Off-Days</div>
-        <div class="wstep-arrow">›</div>
-        <div class="wstep" data-step="4">4. Confirm</div>
-      </div>
-    </div>
-    <!-- Wizard Body -->
-    <div style="padding:24px" id="wizard-body">
-      <!-- Step 1 content injected by JS -->
-    </div>
-    <!-- Wizard Footer -->
-    <div style="padding:16px 24px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center">
-      <button id="wiz-back" class="btn btn-secondary" onclick="wizBack()" style="display:none">← Back</button>
-      <div style="flex:1"></div>
-      <button id="wiz-next" class="btn btn-primary" onclick="wizNext()">Next →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== FLAGMAN PROFILE MODAL ==================== -->
-<div id="profile-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:580px;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="margin:0">Flagman Profile</h3>
-      <button onclick="closeModal('profile-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div id="profile-modal-body"></div>
-  </div>
-</div>
-
-<!-- ==================== JOB DETAIL MODAL ==================== -->
-<div id="job-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:640px;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="margin:0" id="jd-title">Job Details</h3>
-      <button onclick="closeModal('job-detail-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div id="jd-body"></div>
-  </div>
-</div>
-
-<!-- ==================== VACATION MODALS ==================== -->
-<div id="add-vacation-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:480px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="margin:0">Add Vacation Entry</h3>
-      <button onclick="closeModal('add-vacation-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div class="form-group"><label class="form-label">Flagman</label>
-      <select class="form-control" id="vac-flagman">
-        <option>Tremblay, Luc</option><option>Callahan, Brett</option><option>Ferreira, Marco</option>
-        <option>Yamamoto, Dean</option><option>Hartley, Marcus</option><option>Okafor, James</option>
-        <option>Petrov, Daniel</option><option>Nguyen, Kevin</option><option>Larsson, Erik</option>
-        <option>Beaumont, Claude</option><option>Kowalski, Piotr</option>
-      </select></div>
-    <div class="form-grid-2">
-      <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-control" id="vac-start"></div>
-      <div class="form-group"><label class="form-label">End Date</label><input type="date" class="form-control" id="vac-end"></div>
-    </div>
-    <div id="vac-days-preview" style="background:#f0fdf4;border-radius:6px;padding:10px;font-size:13px;color:#166534;margin-bottom:12px;display:none"></div>
-    <div id="vac-limit-warning" style="background:#fef2f2;border-radius:6px;padding:10px;font-size:13px;color:#991b1b;margin-bottom:12px;display:none">⚠️ This would exceed the 25-day annual vacation limit.</div>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button class="btn btn-secondary" onclick="closeModal('add-vacation-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmAddVacation()">✓ Add Vacation</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== ADD/EDIT FLAGMAN MODAL ==================== -->
-<div id="flagman-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:680px;max-height:90vh;overflow-y:auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="margin:0" id="flagman-modal-title">Add CN Flagman</h3>
-      <button onclick="closeModal('flagman-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <!-- Personal Info -->
-    <div class="form-section">
-      <h4 class="form-section-title">Personal Information</h4>
-      <div class="form-grid-2">
-        <div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-control" required></div>
-        <div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-control" required></div>
-        <div class="form-group"><label class="form-label">Employee ID *</label><input type="text" class="form-control" required placeholder="e.g. CN-10045"></div>
-        <div class="form-group"><label class="form-label">Phone *</label><input type="tel" class="form-control" required></div>
-        <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-control" required></div>
-        <div class="form-group"><label class="form-label">Region *</label>
-          <select class="form-control" required><option>BC</option><option>Alberta</option></select></div>
-        <div class="form-group" style="grid-column:1/-1"><label class="form-label">Address *</label><input type="text" class="form-control" required placeholder="Full mailing address"></div>
-      </div>
-    </div>
-    <!-- Work Info -->
-    <div class="form-section">
-      <h4 class="form-section-title">Work Information</h4>
-      <div class="form-grid-2">
-        <div class="form-group"><label class="form-label">Work Cycle *</label>
-          <select class="form-control" required id="fm-cycle" onchange="toggleCycleAB(this.value)">
-            <option value="">Select...</option>
-            <option value="5&2">5 & 2 (Mon–Fri, fixed weekends off)</option>
-            <option value="8&6">8 & 6 (A/B cycle)</option>
-            <option value="9&5">9 & 5 (A/B cycle)</option>
-          </select></div>
-        <div class="form-group" id="fm-cycle-ab" style="display:none"><label class="form-label">Cycle Group *</label>
-          <select class="form-control" id="fm-cycle-group">
-            <option value="A">A Cycle</option>
-            <option value="B">B Cycle</option>
-          </select></div>
-        <div class="form-group"><label class="form-label">Seniority Number *</label><input type="number" class="form-control" required placeholder="e.g. 12 (years of service)"></div>
-        <div class="form-group"><label class="form-label">Hire Date *</label><input type="date" class="form-control" required></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Protection Sign-Off Type (select all that apply) *</label>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> Flagging Protection</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> Foul Protection</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> Working Limits Protection</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> Form B Protection</label>
-        </div>
-      </div>
-    </div>
-    <!-- Qualifications -->
-    <div class="form-section">
-      <h4 class="form-section-title">Qualifications</h4>
-      <table class="data-table">
-        <thead><tr><th>Qualification</th><th>Qualified?</th><th>Date of Qualification</th><th>Expiry Date</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><strong>TIGS</strong></td>
-            <td><input type="checkbox" id="q-tigs"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="text" class="form-control" style="padding:4px;font-size:12px" placeholder="Optional"></td>
-          </tr>
-          <tr>
-            <td><strong>CROR</strong></td>
-            <td><input type="checkbox" id="q-cror"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="text" class="form-control" style="padding:4px;font-size:12px" placeholder="Optional"></td>
-          </tr>
-          <tr>
-            <td><strong>eRail Safe</strong></td>
-            <td><input type="checkbox" id="q-erail"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="text" class="form-control" style="padding:4px;font-size:12px" placeholder="eRail Safe # (e.g. ERS-10045)"></td>
-          </tr>
-          <tr>
-            <td><strong>Form B</strong></td>
-            <td><input type="checkbox" id="q-formb"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="date" class="form-control" style="padding:4px;font-size:12px"></td>
-            <td><input type="text" class="form-control" style="padding:4px;font-size:12px" placeholder="Optional"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid #e5e7eb">
-      <button class="btn btn-secondary" onclick="closeModal('flagman-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveFlagman()">✓ Save Flagman</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== ADD COMPANY MODAL ==================== -->
-<div id="company-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:480px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="margin:0">Add Contracting Company</h3>
-      <button onclick="closeModal('company-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div class="form-group"><label class="form-label">Company Name *</label><input type="text" class="form-control" required></div>
-    <div class="form-group"><label class="form-label">Company Email *</label><input type="email" class="form-control" required></div>
-    <div class="form-group"><label class="form-label">Company Phone</label><input type="tel" class="form-control"></div>
-    <div class="form-group"><label class="form-label">Primary Contact Name</label><input type="text" class="form-control"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
-      <button class="btn btn-secondary" onclick="closeModal('company-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="showToast('Company added','success');closeModal(\'company-modal\')">✓ Add Company</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== SENIORITY UPLOAD MODAL ==================== -->
-<div id="seniority-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:500px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h3 style="margin:0">Upload Seniority List</h3>
-      <button onclick="closeModal('seniority-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <p style="font-size:13px;color:#666;margin-bottom:16px">Upload a CSV or Excel file with columns: Employee ID, Last Name, First Name, Seniority Number. The system will match by Employee ID and update seniority rankings automatically.</p>
-    <div style="background:#f9fafb;border:2px dashed #d1d5db;border-radius:8px;padding:24px;text-align:center;margin-bottom:16px">
-      <div style="font-size:32px;margin-bottom:8px">📁</div>
-      <div style="font-size:14px;color:#666">Drag & drop your file here, or</div>
-      <input type="file" accept=".csv,.xlsx,.xls" style="margin-top:8px">
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <a href="#" style="font-size:13px;color:var(--cn-blue)" onclick="showToast('Template downloaded','success');return false">⬇ Download Template</a>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-secondary" onclick="closeModal('seniority-modal')">Cancel</button>
-        <button class="btn btn-primary" onclick="showToast('Seniority list uploaded — 11 records updated','success');closeModal('seniority-modal')">⬆ Upload</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== VACATION HISTORY MODAL ==================== -->
-<div id="vac-history-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:12px;width:560px;max-height:80vh;overflow-y:auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h3 style="margin:0" id="vac-history-title">Vacation History</h3>
-      <button onclick="closeModal('vac-history-modal')" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div id="vac-history-body"></div>
-  </div>
-</div>
 
 <!-- ==================== JAVASCRIPT ==================== -->
 <script>
 // ===== PAGE CONFIG =====
-const pageConfig = {
-  dashboard:  { title: 'Dashboard', subtitle: 'Overview of flagging operations' },
-  jobs:       { title: 'Active Jobs', subtitle: 'All active and pending flagging jobs', actions: '<button class="btn btn-primary" onclick="openWizard()">+ Assign Flagman</button>' },
-  completed:  { title: 'Completed Jobs', subtitle: 'Historical record of all completed flagging jobs' },
-  timesheet:  { title: 'Daily Flagging Record', subtitle: 'Daily check-in/check-out records and hours' },
-  schedule:   { title: 'Schedule', subtitle: 'Working schedule — list, weekly and calendar views' },
-  flagmen:    { title: 'People', subtitle: 'CN flagmen and contracted flagmen management' },
-  companies:  { title: 'Contracting Companies', subtitle: 'All contracting companies and their associated flagmen' },
-  overtime:   { title: 'Overtime Availability', subtitle: 'Flagman overtime availability responses' },
-  vacation:   { title: 'Vacation Management', subtitle: 'Flagman vacation balances and calendar' },
-  requests:   { title: 'Incoming Requests', subtitle: 'Review, approve and assign flagging coverage requests' },
-  submit:     { title: 'Flagging Coverage Request', subtitle: 'Submit a new request or view your existing requests' },
-  export:     { title: 'Export Schedules', subtitle: 'Generate and download schedule reports' },
-  reports:    { title: 'Reports', subtitle: 'Generate operational reports' },
-  settings:   { title: 'Settings', subtitle: 'System configuration and preferences' }
-};
+
 
 // ===== NAVIGATION =====
-function showPage(id) {
-  document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
-  const page = document.getElementById('page-' + id);
-  if (page) page.style.display = 'block';
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navItem = document.querySelector(`.nav-item[data-page="${id}"]`);
-  if (navItem) navItem.classList.add('active');
-  // Update header
-  const cfg = pageConfig[id];
-  if (cfg) {
-    document.getElementById('page-header-title').textContent = cfg.title;
-    document.getElementById('page-header-subtitle').textContent = cfg.subtitle || '';
-    const actionsEl = document.getElementById('page-header-actions');
-    if (actionsEl) actionsEl.innerHTML = cfg.actions || '';
-  }
-}
+// showPage function defined above
 
 // ===== TOAST =====
 function showToast(msg, type='info') {
@@ -3269,8 +2416,18 @@ function showToast(msg, type='info') {
 }
 
 // ===== MODAL HELPERS =====
-function openModal(id) { const m = document.getElementById(id); if(m){ m.style.display='flex'; } }
-function closeModal(id) { const m = document.getElementById(id); if(m){ m.style.display='none'; } }
+function openModal(id) { 
+  const m = document.getElementById(id); 
+  if(!m) return;
+  if(m.classList.contains('modal-overlay')) { m.classList.add('open'); }
+  else { m.style.display='flex'; }
+}
+function closeModal(id) { 
+  const m = document.getElementById(id); 
+  if(!m) return;
+  if(m.classList.contains('modal-overlay')) { m.classList.remove('open'); }
+  else { m.style.display='none'; }
+}
 
 // ===== FILTER CHIPS HELPER =====
 function activateChip(btn) {
@@ -3802,13 +2959,13 @@ function openWizard(reqId) {
     wizData.sub = r.sub;
   }
   renderWizStep();
-  openModal('wizard-modal');
+  openModal('modal-assign-wizard');
 }
 
 function renderWizStep() {
   const body = document.getElementById('wizard-body');
-  const backBtn = document.getElementById('wiz-back');
-  const nextBtn = document.getElementById('wiz-next');
+  const backBtn = document.getElementById('wizard-back');
+  const nextBtn = document.getElementById('wizard-next');
   backBtn.style.display = wizStep > 1 ? 'block' : 'none';
   nextBtn.textContent = wizStep === 4 ? '✓ Confirm Assignment' : 'Next →';
 
@@ -4011,7 +3168,7 @@ function wizNext() {
   } else if (wizStep === 2) {
     if (wizData.selectedFlagmen.length === 0) { showToast('Please select at least one flagman', 'error'); return; }
   } else if (wizStep === 4) {
-    closeModal('wizard-modal');
+    closeModal('modal-assign-wizard');
     showToast('Assignment confirmed ✓', 'success');
     return;
   }
@@ -4144,8 +3301,10 @@ function filterTimesheet() {
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
-  showPage('dashboard');
+  showPage('sec-dashboard');
   renderSchedule();
+  // Show overlap notification after 2 seconds
+  setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 2000);
   renderVacCalendar();
   // Locate file input preview
   const locateFile = document.getElementById('locate-file');
