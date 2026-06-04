@@ -647,7 +647,7 @@ function mToast(msg) {
 // cycleStatus: 'on' = active cycle day, 'off' = off-cycle, 'vacation' = vacation
 const flagmanState = {
   cycleStatus: 'on',
-  hours14day: 102,
+  hours14day: 56,   // 56h used — 79h remaining, well within 135h cap
   cap14day: 135,
   vacationDates: ['2026-06-02','2026-06-03','2026-06-04','2026-06-05',
                   '2026-06-06','2026-06-07','2026-06-08',
@@ -671,9 +671,10 @@ const jobWeeks = [
     mkJob('jw0b','Highpoint Infrastructure','Cascade Sub','MP 55.0–56.0','May 26–30',5,['morning','afternoon','night'],'TIGS · Form B',false),
   ]},
   { label:'Week of Jun 1, 2026', jobs:[
-    mkJob('jw1a','Northgate Utilities','Cascade Sub','MP 88.5–89.0','Jun 9–13',5,['morning','afternoon'],'TIGS',true),
-    mkJob('jw1b','Ironwood Track Services','Bulkley Sub','MP 88.0–89.5','Jun 16–25',10,['afternoon'],'TIGS · CROR',false),
-    mkJob('jw1c','Clearwater Land Authority','Clearwater Sub','MP 25.1–26.0','TBD',7,['morning','afternoon','night'],'TIGS · Form B',false),
+    mkJob('jw1a','Northgate Utilities','Cascade Sub','MP 88.5–89.0','Jun 9–13',5,['morning','afternoon'],'TIGS',true,40),
+    mkJob('jw1b','Ironwood Track Services','Bulkley Sub','MP 88.0–89.5','Jun 16–25',10,['afternoon'],'TIGS · CROR',false,80),
+    mkJob('jw1c','Clearwater Land Authority','Clearwater Sub','MP 25.1–26.0','TBD',7,['morning','afternoon','night'],'TIGS · Form B',false,56),
+    mkJob('jw1d','Prairie Municipal Works','Wainwright Sub','MP 55.0–56.2','Jun 10–12',3,['morning'],'TIGS',false,24),
   ]},
   { label:'Week of Jun 8, 2026', jobs:[
     mkJob('jw2a','Westfield Pipeline','Edson Sub','MP 44.0–45.5','Jun 16–20',5,['morning','night'],'TIGS · CROR',false),
