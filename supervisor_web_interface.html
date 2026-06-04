@@ -1912,8 +1912,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
 });
 
 // ═══════════════════════════════════════════════════════════ MODAL HELPERS
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// openModal / closeModal defined in second script block (handles both .modal-overlay and display:none modals)
 
 // ═══════════════════════════════════════════════════════════ TOAST
 function toast(msg, type='success') {
@@ -1925,6 +1924,23 @@ function toast(msg, type='success') {
   tc.appendChild(t);
   setTimeout(() => t.remove(), 3500);
 }
+// ═══════════════════════════════════════════════════════════ NOTIFICATION PANEL
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  const dot = document.getElementById('notif-dot');
+  if (!panel) return;
+  const isOpen = panel.style.display === 'block';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen && dot) dot.style.display = 'none';
+}
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notif-panel');
+  const bell = document.getElementById('notif-bell');
+  if (panel && bell && !bell.contains(e.target) && !panel.contains(e.target)) {
+    panel.style.display = 'none';
+  }
+});
+
 
 // ═══════════════════════════════════════════════════════════ TABS
 function switchTab(prefix, name, el) {
@@ -2187,17 +2203,7 @@ function loadRequest(id) {
     </div>`;
 }
 
-function approveRequest(id) {
-  toast(`${id} approved ✓ — you can now assign a flagman`, 'success');
-  const btn = document.getElementById('assign-btn-'+id);
-  if (btn) { btn.disabled = false; btn.classList.remove('btn-disabled'); btn.title = ''; }
-  // Update status badge in table
-  const rows = document.querySelectorAll('.req-row');
-  rows.forEach(r => { if (r.textContent.includes(id)) {
-    const badge = r.querySelector('.badge');
-    if (badge) { badge.className = 'badge badge-approved'; badge.textContent = 'Approved'; }
-  }});
-}
+// approveRequest: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ UNIFIED ASSIGNMENT WIZARD
 let wizardStep = 1;
@@ -2396,12 +2402,7 @@ function renderWizardStep() {
   }
 }
 
-function toggleWizFlagman(id) {
-  const idx = selectedFlagmenIds.indexOf(id);
-  if (idx >= 0) selectedFlagmenIds.splice(idx, 1);
-  else selectedFlagmenIds.push(id);
-  renderWizardStep();
-}
+// toggleWizFlagman: defined in second script block (more complete)
 
 function updateWizAA() {
   const type = document.getElementById('wiz-type')?.value || 'regular';
@@ -2423,13 +2424,7 @@ function updateOffDayType(i) {
   typeEl.innerHTML = `<span class="badge ${type==='Regular'?'badge-inprogress':'badge-approved'}">${type}</span>`;
 }
 
-function confirmOffDay(i) {
-  const row = document.getElementById('offday-row-'+i);
-  const sel = document.getElementById('offday-sel-'+i);
-  if (!sel || !sel.value) { toast('Please select a flagman first','warning'); return; }
-  if (row) row.style.background = '#d1fae5';
-  toast('Off-day coverage confirmed','success');
-}
+// confirmOffDay: defined in second script block
 
 function wizardNext() {
   if (wizardStep === 2 && selectedFlagmenIds.length === 0) { toast('Please select at least one flagman','warning'); return; }
@@ -2458,46 +2453,16 @@ function openEditFlagmanModal(name) {
   document.getElementById('company-group').style.display = 'none';
   openModal('modal-add-flagman');
 }
-function toggleCycleAB() {
-  const sel = document.getElementById('cycle-select');
-  const grp = document.getElementById('cycle-ab-group');
-  if (sel && grp) grp.style.display = sel.value !== '5-2' ? 'block' : 'none';
-}
+// toggleCycleAB: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ VACATION
-function calcVacDays() {
-  const s = document.getElementById('vac-start')?.value;
-  const e = document.getElementById('vac-end')?.value;
-  const calc = document.getElementById('vac-days-calc');
-  if (!s || !e || !calc) return;
-  const days = Math.round((new Date(e) - new Date(s)) / 86400000) + 1;
-  if (days <= 0) { calc.style.display = 'none'; return; }
-  calc.style.display = 'block';
-  calc.textContent = `This entry uses ${days} vacation day${days>1?'s':''}.`;
-  if (days > 15) calc.style.background = '#fee2e2';
-}
+// calcVacDays: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ CHECKOUT
 let checkoutRow = null;
-function openCheckoutModal(rowId, name, id, shift, checkin) {
-  checkoutRow = rowId;
-  const defaults = {Morning:'15:00',Afternoon:'23:00',Night:'06:00'};
-  document.getElementById('checkout-info').innerHTML = `<strong>${name}</strong> (${id}) · ${shift} shift · Checked in: <strong>${checkin}</strong>`;
-  document.getElementById('checkout-time').value = defaults[shift] || '15:00';
-  calcCheckoutHours();
-  openModal('modal-checkout');
-}
-function calcCheckoutHours() {
-  const timeEl = document.getElementById('checkout-time');
-  const calcEl = document.getElementById('checkout-hours-calc');
-  if (!timeEl || !calcEl) return;
-  calcEl.textContent = `Estimated total: ~8h (based on check-out time ${timeEl.value})`;
-}
-function confirmCheckout() {
-  const t = document.getElementById('checkout-time')?.value || '15:00';
-  toast(`Check-out recorded at ${t} ✓`, 'success');
-  closeModal('modal-checkout');
-}
+// openCheckoutModal: defined in second script block
+// calcCheckoutHours: defined in second script block
+// confirmCheckout: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ CHAT
 const chatData = {
@@ -2512,34 +2477,8 @@ const chatData = {
     {from:'supervisor',name:'Taylor, Sandra',time:'Jun 1, 9:30 AM',msg:'Received. We will review and get back to you by Jun 3.'},
   ],
 };
-function openChatThread(reqId) {
-  const r = requestData[reqId] || {};
-  document.getElementById('chat-title').textContent = `${reqId} — ${r.company || reqId} · Chat Thread`;
-  const thread = document.getElementById('chat-thread');
-  const msgs = chatData[reqId] || [];
-  thread.innerHTML = msgs.map(m => `
-    <div style="display:flex;flex-direction:column;align-items:${m.from==='supervisor'?'flex-end':'flex-start'};">
-      <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">${m.name} · ${m.time}</div>
-      <div style="background:${m.from==='supervisor'?'var(--cn-dark)':'#fff'};color:${m.from==='supervisor'?'#fff':'#1f2937'};border:1px solid #e9ecef;border-radius:8px;padding:8px 12px;max-width:80%;font-size:12px;">${m.msg}</div>
-      ${m.from==='supervisor'?'<div style="font-size:10px;color:#6b7280;margin-top:2px;">Read ✓✓</div>':''}
-    </div>`).join('');
-  thread.scrollTop = thread.scrollHeight;
-  openModal('modal-chat');
-}
-function sendChatMsg() {
-  const input = document.getElementById('chat-input');
-  if (!input || !input.value.trim()) return;
-  const thread = document.getElementById('chat-thread');
-  const now = new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
-  thread.innerHTML += `
-    <div style="display:flex;flex-direction:column;align-items:flex-end;">
-      <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">Taylor, Sandra · ${now}</div>
-      <div style="background:var(--cn-dark);color:#fff;border-radius:8px;padding:8px 12px;max-width:80%;font-size:12px;">${input.value.trim()}</div>
-      <div style="font-size:10px;color:#6b7280;margin-top:2px;">Sent ✓</div>
-    </div>`;
-  input.value = '';
-  thread.scrollTop = thread.scrollHeight;
-}
+// openChatThread: defined in second script block
+// sendChatMsg: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ MISC
 function toggleBillingField() {
@@ -2549,23 +2488,9 @@ function toggleBillingField() {
   if (label) label.textContent = type;
   if (input) input.placeholder = `Enter ${type?.toLowerCase() || 'code'}`;
 }
-function toggleLocateUpload() {
-  const sel = document.getElementById('excavation-select');
-  const grp = document.getElementById('locate-upload-group');
-  if (sel && grp) grp.style.display = sel.value === 'yes' ? 'block' : 'none';
-}
-function submitRequest() {
-  const ref = 'REQ-' + (Math.floor(Math.random()*900)+100);
-  toast(`Request ${ref} submitted successfully ✓`, 'success');
-}
-function filterMyReqs(status, el) {
-  document.querySelectorAll('#submit-my .chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('#submit-my tbody tr').forEach(row => {
-    const s = row.getAttribute('data-req-status');
-    row.style.display = (status === 'all' || s === status || (status === 'chat' && row.querySelector('.btn-primary'))) ? '' : 'none';
-  });
-}
+// toggleLocateUpload: defined in second script block
+// submitRequest: defined in second script block
+// filterMyReqs: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ INIT
 </script>
@@ -2613,7 +2538,7 @@ function activateChip(btn) {
 let schedView = 'weekly';
 let schedWeekOffset = 0;
 // switchSchedView is defined in the first script block above
-function shiftSchedWeek(d) { schedWeekOffset += d; renderSchedule(); }
+// shiftSchedWeek: defined in first script block
 function renderScheduleWeekly() { /* weekly tab pane is static HTML — no re-render needed */ }
 function renderScheduleList() { /* list tab pane is static HTML — no re-render needed */ }
 
@@ -2754,12 +2679,7 @@ function renderSchedule() {
 }
 
 // ===== SUBMIT REQUEST TABS =====
-function switchSubmitTab(tab) {
-  document.getElementById('submit-new-view').style.display = tab === 'new' ? 'block' : 'none';
-  document.getElementById('submit-my-view').style.display = tab === 'my' ? 'block' : 'none';
-  document.getElementById('stab-new').style.cssText = tab==='new' ? 'padding:10px 24px;border:none;background:none;font-weight:600;color:var(--cn-red);border-bottom:3px solid var(--cn-red);cursor:pointer;margin-bottom:-2px' : 'padding:10px 24px;border:none;background:none;font-weight:600;color:#888;cursor:pointer';
-  document.getElementById('stab-my').style.cssText = tab==='my' ? 'padding:10px 24px;border:none;background:none;font-weight:600;color:var(--cn-red);border-bottom:3px solid var(--cn-red);cursor:pointer;margin-bottom:-2px' : 'padding:10px 24px;border:none;background:none;font-weight:600;color:#888;cursor:pointer';
-}
+// switchSubmitTab: defined in first script block
 
 // ===== REQUEST FORM HELPERS =====
 function toggleShiftTime(shift, checked) {
@@ -3050,57 +2970,9 @@ function openVacHistory(name) {
 // ===== VACATION CALENDAR =====
 let vacMonth = 5; // June = 5
 let vacYear = 2026;
-function switchVacView(v, btn) {
-  document.querySelectorAll('#vac-view-tabs .chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('vac-list-view').style.display = v === 'list' ? 'block' : 'none';
-  document.getElementById('vac-cal-view').style.display = v === 'calendar' ? 'block' : 'none';
-  if (v === 'calendar') renderVacCalendar();
-}
-function shiftVacCal(d) {
-  vacMonth += d;
-  if (vacMonth > 11) { vacMonth = 0; vacYear++; }
-  if (vacMonth < 0) { vacMonth = 11; vacYear--; }
-  renderVacCalendar();
-}
-function renderVacCalendar() {
-  const container = document.getElementById('vac-cal-content');
-  if (!container) return;
-  const firstDay = new Date(vacYear, vacMonth, 1);
-  const lastDay = new Date(vacYear, vacMonth + 1, 0);
-  const monthName = firstDay.toLocaleDateString('en-CA', {month:'long', year:'numeric'});
-  const vacEntries = [
-    { name:'Tremblay', start:new Date('2026-06-02'), end:new Date('2026-06-08'), color:'#fde68a' },
-    { name:'Ferreira', start:new Date('2026-06-04'), end:new Date('2026-06-06'), color:'#bfdbfe' },
-    { name:'Callahan', start:new Date('2026-07-06'), end:new Date('2026-07-10'), color:'#bbf7d0' },
-    { name:'Okafor', start:new Date('2026-07-20'), end:new Date('2026-07-24'), color:'#fecaca' },
-    { name:'Hartley', start:new Date('2026-08-03'), end:new Date('2026-08-07'), color:'#e9d5ff' },
-    { name:'Nguyen', start:new Date('2026-08-10'), end:new Date('2026-08-14'), color:'#fed7aa' },
-  ];
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <button class="btn btn-secondary" onclick="shiftVacCal(-1)">← Prev</button>
-    <strong>${monthName}</strong>
-    <button class="btn btn-secondary" onclick="shiftVacCal(1)">Next →</button>
-  </div><table style="width:100%;border-collapse:collapse">
-  <thead><tr>${days.map(d=>`<th style="padding:8px;text-align:center;background:#f9fafb;border:1px solid #e5e7eb;font-size:13px">${d}</th>`).join('')}</tr></thead><tbody>`;
-  let row = '<tr>';
-  const startDow = firstDay.getDay();
-  for (let i = 0; i < startDow; i++) row += '<td style="border:1px solid #e5e7eb;height:70px;background:#f9fafb"></td>';
-  let col = startDow;
-  for (let d = 1; d <= lastDay.getDate(); d++) {
-    const date = new Date(vacYear, vacMonth, d);
-    const isToday = date.toDateString() === new Date('2026-06-04').toDateString();
-    const entries = vacEntries.filter(v => date >= v.start && date <= v.end);
-    let cellContent = entries.map(v => `<div style="background:${v.color};border-radius:3px;padding:1px 4px;font-size:10px;margin-top:2px">${v.name}</div>`).join('');
-    row += `<td style="border:1px solid #e5e7eb;height:70px;vertical-align:top;padding:4px;${isToday?'background:#fef9c3;':''}"><div style="font-weight:600;font-size:13px">${d}</div>${cellContent}</td>`;
-    col++;
-    if (col % 7 === 0) { row += '</tr>'; html += row; row = '<tr>'; }
-  }
-  if (col % 7 !== 0) { while (col % 7 !== 0) { row += '<td style="border:1px solid #e5e7eb;background:#f9fafb"></td>'; col++; } row += '</tr>'; html += row; }
-  html += '</tbody></table>';
-  container.innerHTML = html;
-}
+// switchVacView: defined in first script block
+// shiftVacCal: defined in first script block
+// renderVacCalendar: replaced by renderVacCal in first script block
 
 // ===== CYCLE HELPER =====
 function toggleCycleAB(val) {
@@ -3723,5 +3595,30 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
+
+<div id="notif-panel" style="display:none;position:fixed;top:56px;right:16px;width:340px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:9999;max-height:420px;overflow-y:auto;">
+  <div style="padding:14px 18px;border-bottom:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center;">
+    <strong style="font-size:14px;">Notifications</strong>
+    <span style="font-size:12px;color:#6b7280;">3 unread</span>
+  </div>
+  <div style="padding:0;">
+    <div style="padding:12px 18px;border-bottom:1px solid #f9fafb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="font-size:13px;font-weight:600;color:#111827;">⚠️ Overlap Alert</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">Tremblay / Callahan overlap on PRJ-720312 · Jun 4 PM</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Today, 8:02 AM</div>
+    </div>
+    <div style="padding:12px 18px;border-bottom:1px solid #f9fafb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="font-size:13px;font-weight:600;color:#111827;">📥 New Request</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">REQ-042 submitted by Metro Water Auth. — Coquitlam Sub</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Today, 7:45 AM</div>
+    </div>
+    <div style="padding:12px 18px;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="font-size:13px;font-weight:600;color:#111827;">⏰ OT Window Closing</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">OT availability window closes Friday Jun 6 at 5 PM. 8 flagmen have not responded.</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Jun 3, 4:00 PM</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
