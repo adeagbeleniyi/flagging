@@ -2916,6 +2916,13 @@ function openAssignWizard(jobId) {
   openInterestModal(shifts);
 }
 function openJobDetail(jobId) {
+  // Restore any fields hidden by openRuleEditor
+  ['jd-job-num','jd-company','jd-subdivision','jd-mp','jd-shifts','jd-dates','jd-days','jd-req','jd-assigned'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.closest('div').style.display='';
+  });
+  // Reset footer button
+  const assignBtnR = document.getElementById('jd-assign-btn');
+  if(assignBtnR) { assignBtnR.textContent = 'Assign Flagman'; assignBtnR.onclick = ()=>{ closeModal('modal-job-detail'); openAssignWizard(document.getElementById('jd-job-num').textContent); }; }
   // Job data lookup
   const jobs = {
     'PRJ-720312': { company:'Northgate Utilities', sub:'Coquitlam', mp:'48.2–49.5', shifts:['Morning'], dates:'May 28–Jun 10', days:14, req:1, assigned:'Tremblay, Luc', status:'Active', notes:'⚠ Overlap: Callahan, Brett (B-cycle) overlaps Jun 4 PM shift.' },
@@ -3695,22 +3702,31 @@ function openRuleEditor(ruleId) {
     {id:'0224', name:'Overtime Night', desc:'Overtime with 3rd shift differential', shift:'Night', type:'Overtime', start:'23:00', end:'07:00', code:'0224'},
   ];
   const rule = ruleData.find(r=>r.id===ruleId) || {name:'Rule',desc:'',code:ruleId,shift:'',type:'',start:'',end:''};
-  const modal = document.getElementById('modal-job-detail');
-  if (!modal) { toast('Rule editor — coming soon','info'); return; }
-  document.getElementById('job-detail-title').textContent = 'Edit Rule — ' + rule.name;
-  document.getElementById('job-detail-body').innerHTML = `
+  // Reuse modal-job-detail with correct IDs: jd-title, jd-status-badge, jd-notes, jd-assign-btn
+  // Hide job-specific fields and show rule editor in jd-notes area
+  document.getElementById('jd-title').textContent = 'Edit A/A Code Rule';
+  document.getElementById('jd-status-badge').innerHTML = `<span class="badge" style="background:#1d4ed8;color:#fff;font-size:11px;">Code ${rule.code}</span>`;
+  // Hide job detail fields
+  ['jd-job-num','jd-company','jd-subdivision','jd-mp','jd-shifts','jd-dates','jd-days','jd-req','jd-assigned'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.closest('div').style.display='none';
+  });
+  // Use jd-notes to show the rule editor form
+  const notesEl = document.getElementById('jd-notes');
+  notesEl.style.display = 'block';
+  notesEl.style.background = '#f8fafc';
+  notesEl.style.border = '1px solid #e2e8f0';
+  notesEl.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div class="form-group"><label>Job Type</label><select class="form-control"><option ${rule.type==='Regular'?'selected':''}>Regular</option><option ${rule.type==='Overtime'?'selected':''}>Overtime</option></select></div>
-      <div class="form-group"><label>Shift</label><select class="form-control"><option ${rule.shift==='Morning'?'selected':''}>Morning</option><option ${rule.shift==='Afternoon'?'selected':''}>Afternoon</option><option ${rule.shift==='Night'?'selected':''}>Night</option></select></div>
-      <div class="form-group"><label>Start Time</label><input class="form-control" type="time" value="${rule.start}"></div>
-      <div class="form-group"><label>End Time</label><input class="form-control" type="time" value="${rule.end}"></div>
-      <div class="form-group"><label>A/A Code</label><input class="form-control" id="rule-value-input" value="${rule.code}" maxlength="4" style="font-weight:700;letter-spacing:2px;"></div>
-      <div class="form-group"><label>Description</label><input class="form-control" value="${rule.desc}"></div>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn btn-primary" onclick="toast('Rule ${rule.code} updated','success');closeModal('modal-job-detail')">Save Rule</button>
-      <button class="btn btn-secondary" onclick="closeModal('modal-job-detail')">Cancel</button>
+      <div class="form-group"><label style="font-size:12px;font-weight:600;">Job Type</label><select class="form-control"><option ${rule.type==='Regular'?'selected':''}>Regular</option><option ${rule.type==='Overtime'?'selected':''}>Overtime</option></select></div>
+      <div class="form-group"><label style="font-size:12px;font-weight:600;">Shift</label><select class="form-control"><option ${rule.shift==='Morning'?'selected':''}>Morning</option><option ${rule.shift==='Afternoon'?'selected':''}>Afternoon</option><option ${rule.shift==='Night'?'selected':''}>Night</option></select></div>
+      <div class="form-group"><label style="font-size:12px;font-weight:600;">Start Time</label><input class="form-control" type="time" value="${rule.start}"></div>
+      <div class="form-group"><label style="font-size:12px;font-weight:600;">End Time</label><input class="form-control" type="time" value="${rule.end}"></div>
+      <div class="form-group"><label style="font-size:12px;font-weight:600;">A/A Code</label><input class="form-control" id="rule-value-input" value="${rule.code}" maxlength="4" style="font-weight:700;letter-spacing:2px;font-size:15px;"></div>
+      <div class="form-group"><label style="font-size:12px;font-weight:600;">Description</label><input class="form-control" value="${rule.desc}"></div>
     </div>`;
+  // Update footer buttons
+  const assignBtn = document.getElementById('jd-assign-btn');
+  if(assignBtn) { assignBtn.textContent = 'Save Rule'; assignBtn.onclick = ()=>{ toast('Rule '+rule.code+' updated','success'); closeModal('modal-job-detail'); }; }
   openModal('modal-job-detail');
 }
 
