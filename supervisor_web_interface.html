@@ -2276,7 +2276,7 @@ function openChatThread(id) {
     </div>`;
   }).join('');
   container.scrollTop = container.scrollHeight;
-  openModal('chat-modal');
+  openModal('modal-chat');
   document.getElementById('chat-input').dataset.reqId = id;
 }
 
@@ -2303,7 +2303,7 @@ function chatKeydown(e) {
 // ===== CHECKOUT =====
 let checkoutRow = null;
 function openCheckoutModal(btn, name, id, date, shift, checkin) {
-  checkoutRow = btn.closest('tr');
+  checkoutRow = (btn && typeof btn.closest === 'function') ? btn.closest('tr') : null;
   document.getElementById('checkout-info').innerHTML = `<strong>${name}</strong> (${id})<br>Date: ${date} · Shift: ${shift} · Check-In: ${checkin}`;
   const defaults = { Morning:'15:00', Afternoon:'23:00', Night:'06:00' };
   document.getElementById('checkout-time').value = defaults[shift] || '15:00';
