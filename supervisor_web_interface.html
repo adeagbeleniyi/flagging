@@ -1654,7 +1654,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="hideModal('modal-interest')">Close</button>
-      <button class="btn btn-primary" onclick="toast('Selected flagmen assigned ✓','success');hideModal('modal-interest')">Confirm Selection</button>
+      <button class="btn btn-primary" onclick="proceedToAssignModal()">Proceed to Assign →</button>
     </div>
   </div>
 </div>
@@ -2037,6 +2037,37 @@ function toggleSelectFlagman(id) {
   else selectedFlagmen.add(id);
   renderInterestTable();
   toast(selectedFlagmen.size + ' flagman(men) selected', '');
+}
+function proceedToAssignModal() {
+  if (selectedFlagmen.size === 0) { toast('Please select at least one flagman first','warning'); return; }
+  const ids = Array.from(selectedFlagmen);
+  const first = allFlagmenData.find(f => f.id === ids[0]);
+  hideModal('modal-interest');
+  // Pre-fill the assign modal with the selected flagman's details
+  const jobTitle = document.getElementById('interest-job-title').textContent;
+  document.getElementById('assign-job-title').textContent = jobTitle;
+  document.getElementById('cycle-breakdown-section').style.display = 'none';
+  document.getElementById('off-day-coverage').style.display = 'none';
+  updateAACode();
+  showModal('modal-assign');
+  // Auto-trigger cycle breakdown for the first selected flagman
+  if (first) {
+    setTimeout(() => {
+      // Highlight the matching flagman option if present, else just generate breakdown
+      const opts = document.querySelectorAll('.flagman-opt');
+      let matched = false;
+      opts.forEach(opt => {
+        const nameEl = opt.querySelector('.flagman-opt-name');
+        if (nameEl && nameEl.textContent.trim().startsWith(first.name)) {
+          opt.style.borderColor = 'var(--cn-blue)';
+          opt.querySelector('input[type=radio]').checked = true;
+          matched = true;
+        }
+      });
+      generateCycleBreakdown(first.name, first.cycle);
+      if (ids.length > 1) toast(ids.length + ' flagmen selected — configure each shift below', 'success');
+    }, 200);
+  }
 }
 
 // ── ASSIGN MODAL ──
