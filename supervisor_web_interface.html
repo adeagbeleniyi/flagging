@@ -2985,25 +2985,30 @@ function renderOvertimeTable() {
 
 // ===== JOB DETAIL / ASSIGN WIZARD =====
 function openAssignWizard(jobId) {
-  // Map job IDs to their allowed shifts and required flagmen count
+  // Map job IDs to their allowed shifts, required flagmen count, company, and dates
   const jobMeta = {
-    'PRJ-721100': { shifts:['Morning','Afternoon'],          req:1 },
-    'PRJ-720312': { shifts:['Morning','Afternoon'],          req:1 },
-    'PRJ-720415': { shifts:['Morning'],                      req:1 },
-    'PRJ-721400': { shifts:['Morning','Afternoon','Night'],  req:3 },
-    'PRJ-721250': { shifts:['Morning','Afternoon'],          req:2 },
-    'PRJ-720890': { shifts:['Night'],                        req:1 },
-    'PRJ-721600': { shifts:['Morning'],                      req:1 },
-    'PRJ-721750': { shifts:['Night'],                        req:1 },
-    'PRJ-721900': { shifts:['Morning','Afternoon'],          req:2 },
-    'PRJ-722050': { shifts:['Morning','Afternoon'],          req:1 },
-    'PRJ-722100': { shifts:['Morning'],                      req:1 },
-    'PRJ-722300': { shifts:['Afternoon'],                    req:1 },
-    'PRJ-722500': { shifts:['Morning','Afternoon','Night'],  req:2 },
+    'PRJ-721100': { shifts:['Morning'],                      req:1, company:'Apex Energy Corp',          start:'2026-06-09', end:'2026-06-20', stime:'07:00', etime:'15:00' },
+    'PRJ-720312': { shifts:['Morning','Afternoon'],          req:1, company:'Northgate Utilities',        start:'2026-05-28', end:'2026-06-10', stime:'07:00', etime:'15:00' },
+    'PRJ-720415': { shifts:['Afternoon'],                    req:1, company:'Ridgeline Construction',     start:'2026-06-01', end:'2026-06-14', stime:'15:00', etime:'23:00' },
+    'PRJ-721400': { shifts:['Morning','Afternoon','Night'],  req:3, company:'Stonebridge Excavation',     start:'2026-06-03', end:'2026-06-21', stime:'07:00', etime:'15:00' },
+    'PRJ-721250': { shifts:['Morning','Afternoon'],          req:2, company:'Meridian Rail Services',     start:'2026-06-05', end:'2026-06-18', stime:'07:00', etime:'15:00' },
+    'PRJ-720890': { shifts:['Night'],                        req:1, company:'Westfield Pipeline',         start:'2026-06-02', end:'2026-06-16', stime:'23:00', etime:'07:00' },
+    'PRJ-721600': { shifts:['Morning'],                      req:1, company:'Summit Rail Services',       start:'2026-06-08', end:'2026-06-15', stime:'07:00', etime:'15:00' },
+    'PRJ-721750': { shifts:['Night'],                        req:1, company:'Clearwater Land Authority',  start:'2026-06-10', end:'2026-06-24', stime:'23:00', etime:'07:00' },
+    'PRJ-721900': { shifts:['Morning','Afternoon'],          req:2, company:'Highpoint Infrastructure',   start:'2026-06-06', end:'2026-06-19', stime:'07:00', etime:'15:00' },
+    'PRJ-722050': { shifts:['Morning','Afternoon'],          req:1, company:'Unknown',                    start:'2026-06-05', end:'2026-06-15', stime:'07:00', etime:'15:00' },
+    'PRJ-722100': { shifts:['Morning'],                      req:1, company:'Pacific Telecom',            start:'2026-06-04', end:'2026-06-11', stime:'07:00', etime:'15:00' },
+    'PRJ-722300': { shifts:['Afternoon'],                    req:1, company:'Prairie Municipal Works',    start:'2026-06-09', end:'2026-06-13', stime:'15:00', etime:'23:00' },
+    'PRJ-722500': { shifts:['Morning','Afternoon','Night'],  req:2, company:'Unknown',                    start:'2026-06-10', end:'2026-06-20', stime:'07:00', etime:'15:00' },
   };
-  const meta = jobMeta[jobId] || { shifts:['Morning','Afternoon','Night'], req:1 };
+  const meta = jobMeta[jobId] || { shifts:['Morning','Afternoon','Night'], req:1, company:'', start:'2026-06-09', end:'2026-06-27', stime:'07:00', etime:'15:00' };
   wizardData.jobTitle = jobId;
+  wizardData.jobLabel = jobId + (meta.company ? ' — ' + meta.company : '');
   wizardData.requiredFlagmen = meta.req;
+  wizardData.startDate = meta.start;
+  wizardData.endDate = meta.end;
+  wizardData.stime = meta.stime;
+  wizardData.etime = meta.etime;
   openInterestModal(meta.shifts, meta.req);
 }
 function openJobDetail(jobId) {
@@ -3479,7 +3484,7 @@ function renderWizardStep() {
       <h3 style="margin:0 0 14px;font-size:15px;">Step 1 — Job Details & Shift</h3>
       ${wizardData.allowedShifts.length ? `<div class="alert alert-warning" style="font-size:12px;">⚠ This job was requested for specific shifts only. Shift selector is restricted.</div>` : ''}
       <div class="form-grid-2">
-        <div class="form-group"><label>Job / Project</label><input class="form-control" id="wiz-job" type="text" value="PRJ-720312 — Northgate Utilities" placeholder="Job title or project number"></div>
+        <div class="form-group"><label>Job / Project</label><input class="form-control" id="wiz-job" type="text" value="${wizardData.jobLabel || wizardData.jobTitle || ''}" placeholder="Job title or project number"></div>
         <div class="form-group"><label>Shift Type</label>
           <select class="form-control" id="wiz-type" onchange="updateWizAA()">
             <option value="regular">Regular</option>
@@ -3497,10 +3502,10 @@ function renderWizardStep() {
             <span id="wiz-aa-desc" style="font-size:11px;color:var(--text-muted);">Regular time</span>
           </div>
         </div>
-        <div class="form-group"><label>Start Date</label><input class="form-control" id="wiz-start" type="date" value="2026-06-09"></div>
-        <div class="form-group"><label>End Date</label><input class="form-control" id="wiz-end" type="date" value="2026-06-27"></div>
-        <div class="form-group"><label>Requester Start Time</label><input class="form-control" id="wiz-stime" type="time" value="07:00"></div>
-        <div class="form-group"><label>Requester End Time</label><input class="form-control" id="wiz-etime" type="time" value="15:00"></div>
+        <div class="form-group"><label>Start Date</label><input class="form-control" id="wiz-start" type="date" value="${wizardData.startDate || '2026-06-09'}"></div>
+        <div class="form-group"><label>End Date</label><input class="form-control" id="wiz-end" type="date" value="${wizardData.endDate || '2026-06-27'}"></div>
+        <div class="form-group"><label>Requester Start Time</label><input class="form-control" id="wiz-stime" type="time" value="${wizardData.stime || '07:00'}"></div>
+        <div class="form-group"><label>Requester End Time</label><input class="form-control" id="wiz-etime" type="time" value="${wizardData.etime || '15:00'}"></div>
       </div>`;
   } else if (wizardStep === 2) {
     const reqCount = wizardData.requiredFlagmen || 1;
