@@ -150,13 +150,39 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 .checkbox-group{display:flex;flex-wrap:wrap;gap:10px;}
 .checkbox-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;cursor:pointer;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}.modal-overlay.open{display:flex;}
-.modal{background:#fff;border-radius:10px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal,.modal-box{background:#fff;border-radius:12px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);}
 .modal-lg{max-width:860px;}
+.modal-box{width:100%;}
 .modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .modal-header h3{font-size:15px;font-weight:700;flex:1;}
 .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);line-height:1;}
-.modal-body{padding:20px;overflow-y:auto;flex:1;}
+.jd-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.jd-field{display:flex;flex-direction:column;gap:4px;}
+.jd-field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);}
+.jd-field .jd-val{font-size:14px;font-weight:500;color:var(--text);}
+.jd-field.full{grid-column:1/-1;}
+.modal-status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.modal-status-badge.active{background:#dcfce7;color:#166534;}
+.modal-status-badge.unassigned{background:#fef9c3;color:#854d0e;}
+.modal-status-badge.pending{background:#dbeafe;color:#1e40af;}
+.modal-status-badge.completed{background:#f3f4f6;color:#374151;}
+.modal-body{padding:20px;overflow-y:auto;flex:1;min-height:0;}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+.jd-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;}
+.jd-field{display:flex;flex-direction:column;gap:5px;}
+.jd-field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);}
+.jd-field .jd-val{font-size:14px;font-weight:500;color:var(--text);line-height:1.4;}
+.modal-status-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.modal-status-badge.active{background:#dcfce7;color:#166534;}
+.modal-status-badge.unassigned{background:#fef9c3;color:#854d0e;}
+.modal-status-badge.pending{background:#dbeafe;color:#1e40af;}
+.modal-status-badge.completed{background:#f3f4f6;color:#374151;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-grid-2 .full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group label{font-size:12px;font-weight:600;color:var(--text-muted);}
+.form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text);background:#fff;width:100%;box-sizing:border-box;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
 .tab-bar{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0;}
 .tab-btn{padding:8px 16px;border:none;background:none;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
 .tab-btn.active{color:var(--cn-blue);border-bottom-color:var(--cn-blue);}
@@ -1576,7 +1602,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- UNIFIED ASSIGNMENT WIZARD -->
 <div class="modal-overlay" id="modal-assign-wizard" onclick="if(event.target===this)closeModal('modal-assign-wizard')">
-  <div class="modal-box" style="max-width:860px;max-height:90vh;overflow-y:auto;">
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:860px;max-height:90vh;overflow-y:auto;">
     <div class="modal-header" style="background:var(--cn-dark);color:#fff;padding:16px 20px;">
       <div style="font-size:16px;font-weight:700;">Assign Flagman</div>
       <div style="display:flex;gap:6px;margin-top:8px;" id="wizard-steps">
@@ -1603,8 +1629,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- ADD/EDIT FLAGMAN MODAL -->
 <div class="modal-overlay" id="modal-add-flagman" onclick="if(event.target===this)closeModal('modal-add-flagman')">
-  <div class="modal-box" style="max-width:700px;max-height:90vh;overflow-y:auto;">
-    <div class="modal-header"><span id="flagman-modal-title">Add CN Flagman</span><button onclick="closeModal('modal-add-flagman')">✕</button></div>
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:700px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header"><h3 id="flagman-modal-title">Add CN Flagman</h3><button class="modal-close" onclick="closeModal('modal-add-flagman')">✕</button></div>
     <div class="modal-body">
       <div class="form-section-title">Personal Information</div>
       <div class="form-grid-2">
@@ -1649,8 +1675,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- ADD COMPANY MODAL -->
 <div class="modal-overlay" id="modal-add-company" onclick="if(event.target===this)closeModal('modal-add-company')">
-  <div class="modal-box" style="max-width:500px;">
-    <div class="modal-header"><span>Add Contracting Company</span><button onclick="closeModal('modal-add-company')">✕</button></div>
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:500px;">
+    <div class="modal-header"><h3>Add Contracting Company</h3><button class="modal-close" onclick="closeModal('modal-add-company')">✕</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Company Name</label><input class="form-control" type="text" placeholder="e.g. Ironwood Track Services"></div>
       <div class="form-group"><label>Company Email</label><input class="form-control" type="email" placeholder="info@company.ca"></div>
@@ -1664,8 +1690,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- SENIORITY UPLOAD MODAL -->
 <div class="modal-overlay" id="modal-seniority" onclick="if(event.target===this)closeModal('modal-seniority')">
-  <div class="modal-box" style="max-width:500px;">
-    <div class="modal-header"><span>Upload Seniority List</span><button onclick="closeModal('modal-seniority')">✕</button></div>
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:500px;">
+    <div class="modal-header"><h3>Upload Seniority List</h3><button class="modal-close" onclick="closeModal('modal-seniority')">✕</button></div>
     <div class="modal-body">
       <div class="alert alert-info">Upload a CSV or Excel file with columns: Employee ID, Seniority Number. The system will update all matched flagmen's seniority rankings automatically.</div>
       <div class="form-group"><label>Select File</label><input class="form-control" type="file" accept=".csv,.xlsx"></div>
@@ -1677,8 +1703,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- ADD VACATION MODAL -->
 <div class="modal-overlay" id="modal-add-vacation" onclick="if(event.target===this)closeModal('modal-add-vacation')">
-  <div class="modal-box" style="max-width:480px;">
-    <div class="modal-header"><span>Add Vacation Entry</span><button onclick="closeModal('modal-add-vacation')">✕</button></div>
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:480px;">
+    <div class="modal-header"><h3>Add Vacation Entry</h3><button class="modal-close" onclick="closeModal('modal-add-vacation')">✕</button></div>
     <div class="modal-body">
       <div class="form-group"><label>Flagman</label><select class="form-control" id="vac-flagman-select" onchange="updateVacBalance()"><option>Tremblay, Luc (15 days remaining)</option><option>Hartley, Marcus (4 days remaining)</option><option>Petrov, Daniel (17 days remaining)</option><option>Ferreira, Marco (13 days remaining)</option><option>Kowalski, Piotr (5 days remaining)</option><option>Marchetti, Giulio (18 days remaining)</option></select></div>
       <div class="alert alert-info" id="vac-balance-info">Remaining vacation days: 15 of 25</div>
@@ -1693,9 +1719,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- CHECKOUT MODAL -->
 <div class="modal-overlay" id="modal-checkout" onclick="if(event.target===this)closeModal('modal-checkout')">
-  <div class="modal-box" style="max-width:420px;">
-    <div class="modal-header"><span>Supervisor Check-Out</span><button onclick="closeModal('modal-checkout')">✕</button></div>
-    <div class="modal-body">
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:420px;">
+    <div class="modal-header"><h3>Supervisor Check-Out</h3><button class="modal-close" onclick="closeModal('modal-checkout')">✕</button></div>
+    <div class="modal-body" style="min-height:0;">
       <div id="checkout-info" style="margin-bottom:12px;font-size:13px;"></div>
       <div class="form-group"><label>Check-Out Time</label><input class="form-control" type="time" id="checkout-time" oninput="calcCheckoutHours()"></div>
       <div class="alert alert-info" id="checkout-hours-calc"></div>
@@ -1708,7 +1734,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <!-- CHAT THREAD MODAL -->
 <div class="modal-overlay" id="modal-chat" onclick="if(event.target===this)closeModal('modal-chat')">
   <div class="modal-box" style="max-width:560px;height:560px;display:flex;flex-direction:column;">
-    <div class="modal-header"><div><span id="chat-title" style="font-weight:700;font-size:15px;">Chat Thread</span><div id="chat-subtitle" style="font-size:11px;color:#9ca3af;margin-top:2px;"></div></div><button onclick="closeModal('modal-chat')">✕</button></div>
+    <div class="modal-header"><div style="flex:1;"><span id="chat-title" style="font-weight:700;font-size:15px;">Chat Thread</span><div id="chat-subtitle" style="font-size:11px;color:#9ca3af;margin-top:2px;"></div></div><button class="modal-close" onclick="closeModal('modal-chat')">✕</button></div>
     <div id="chat-thread" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#f8f9fa;"></div>
     <div style="padding:12px;border-top:1px solid #e9ecef;display:flex;gap:8px;">
       <textarea id="chat-input" class="form-control" rows="2" placeholder="Type a message… (Enter to send, Shift+Enter for new line)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg();}"></textarea>
@@ -1719,8 +1745,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- LOCATE VIEWER MODAL -->
 <div class="modal-overlay" id="modal-locate" onclick="if(event.target===this)closeModal('modal-locate')">
-  <div class="modal-box" style="max-width:640px;max-height:85vh;overflow-y:auto;">
-    <div class="modal-header"><span>Locate Document — REQ-041</span><button onclick="closeModal('modal-locate')">✕</button></div>
+  <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:640px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-header"><h3>Locate Document</h3><button class="modal-close" onclick="closeModal('modal-locate')">✕</button></div>
     <div class="modal-body">
       <div style="background:#fff;border:1px solid #dee2e6;border-radius:6px;padding:20px;font-family:monospace;font-size:12px;">
         <div style="text-align:center;font-weight:700;font-size:14px;margin-bottom:12px;">UTILITY LOCATE CERTIFICATE</div>
@@ -1812,7 +1838,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- DAY DETAIL MODAL -->
 <div class="modal-overlay" id="modal-day-detail">
-  <div class="modal" style="max-width:800px;width:95%;">
+  <div class="modal" style="display:flex;flex-direction:column;overflow:hidden;max-width:800px;width:95%;">
     <div class="modal-header">
       <h3 id="day-modal-title">Flagmen on Date</h3>
       <button class="modal-close" onclick="closeModal('modal-day-detail')">✕</button>
@@ -1826,7 +1852,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- EDIT COMPANY MODAL -->
 <div class="modal-overlay" id="modal-edit-company">
-  <div class="modal" style="max-width:480px;width:95%;">
+  <div class="modal" style="display:flex;flex-direction:column;overflow:hidden;max-width:480px;width:95%;">
     <div class="modal-header">
       <h3>Edit Company</h3>
       <button class="modal-close" onclick="closeModal('modal-edit-company')">✕</button>
@@ -2941,7 +2967,9 @@ function openJobDetail(jobId) {
   const statusColors = { Active:'#16a34a', Unassigned:'#d97706', 'Pending Approval':'#2563eb', Delayed:'#dc2626' };
   const shiftBadge = s => { const c={Morning:'#2563eb',Afternoon:'#d97706',Night:'#7c3aed'}; return `<span class="badge" style="background:${c[s]||'#6b7280'};color:#fff;margin-right:4px;">${s}</span>`; };
   document.getElementById('jd-title').textContent = jobId;
-  document.getElementById('jd-status-badge').innerHTML = `<span class="badge" style="background:${statusColors[j.status]||'#6b7280'};color:#fff;">${j.status}</span>`;
+  const statusBadgeEl = document.getElementById('jd-status-badge');
+  statusBadgeEl.textContent = j.status;
+  statusBadgeEl.className = 'modal-status-badge ' + (j.status === 'Active' ? 'active' : j.status === 'Unassigned' ? 'unassigned' : j.status === 'Pending Approval' ? 'pending' : 'completed');
   document.getElementById('jd-job-num').textContent = jobId;
   document.getElementById('jd-company').textContent = j.company;
   document.getElementById('jd-subdivision').textContent = j.sub;
@@ -3758,33 +3786,36 @@ function shiftDFRDay(dir) {
 
 <!-- JOB DETAIL MODAL -->
 <div class="modal-overlay" id="modal-job-detail" onclick="if(event.target===this)closeModal('modal-job-detail')">
-  <div class="modal-box" style="max-width:680px;max-height:90vh;overflow-y:auto;">
-    <div class="modal-header">
-      <div>
-        <span id="jd-title" style="font-weight:700;font-size:16px;">Job Details</span>
-        <div id="jd-status-badge" style="margin-top:4px;"></div>
+  <div class="modal-box" style="max-width:680px;width:95%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div class="modal-header" style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <div style="flex:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span id="jd-title" style="font-weight:700;font-size:17px;color:var(--text);">Job Details</span>
+        <span id="jd-status-badge" class="modal-status-badge"></span>
       </div>
-      <button onclick="closeModal('modal-job-detail')">✕</button>
+      <button class="modal-close" onclick="closeModal('modal-job-detail')" style="font-size:20px;line-height:1;background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0 4px;">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="form-grid-2" style="margin-bottom:16px;">
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Job #</label><div id="jd-job-num" style="font-weight:700;font-size:15px;"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Company</label><div id="jd-company" style="font-weight:600;"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Subdivision</label><div id="jd-subdivision"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">MP Range</label><div id="jd-mp"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Shift(s)</label><div id="jd-shifts"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Dates</label><div id="jd-dates"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Duration</label><div id="jd-days"></div></div>
-        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Flagmen Required</label><div id="jd-req"></div></div>
+    <div class="modal-body" style="padding:22px;overflow-y:auto;flex:1;min-height:0;">
+      <div class="jd-grid">
+        <div class="jd-field"><label>Job #</label><div class="jd-val" id="jd-job-num"></div></div>
+        <div class="jd-field"><label>Company</label><div class="jd-val" id="jd-company"></div></div>
+        <div class="jd-field"><label>Subdivision</label><div class="jd-val" id="jd-subdivision"></div></div>
+        <div class="jd-field"><label>MP Range</label><div class="jd-val" id="jd-mp"></div></div>
+        <div class="jd-field"><label>Shift(s)</label><div class="jd-val" id="jd-shifts"></div></div>
+        <div class="jd-field"><label>Dates</label><div class="jd-val" id="jd-dates"></div></div>
+        <div class="jd-field"><label>Duration</label><div class="jd-val" id="jd-days"></div></div>
+        <div class="jd-field"><label>Flagmen Required</label><div class="jd-val" id="jd-req"></div></div>
+        <div class="jd-field" style="grid-column:1/-1;">
+          <label>Assigned Flagmen <span id="jd-overlap-badge" style="display:none;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:10px;margin-left:6px;font-weight:700;">⚠ OVERLAP</span></label>
+          <div class="jd-val" id="jd-assigned"></div>
+        </div>
+        <div id="jd-overlap-row" style="grid-column:1/-1;display:none;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;font-size:13px;color:#9a3412;margin-top:4px;"></div>
+        <div id="jd-notes-row" style="grid-column:1/-1;display:none;">
+          <div class="jd-field"><label>Notes</label><div class="jd-val" id="jd-notes" style="color:var(--text-muted);font-size:13px;"></div></div>
+        </div>
       </div>
-      <div style="margin-bottom:12px;">
-        <label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Assigned Flagmen</label>
-        <div id="jd-assigned" style="margin-top:4px;font-weight:600;"></div>
-      </div>
-      <div id="jd-notes" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px;font-size:12px;margin-bottom:12px;"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-job-detail')">Close</button>
+    <div class="modal-footer" style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;">
+      <button class="btn btn-outline" onclick="closeModal('modal-job-detail')">Close</button>
       <button class="btn btn-primary" id="jd-assign-btn" onclick="closeModal('modal-job-detail');openAssignWizard(document.getElementById('jd-job-num').textContent)">Assign Flagman</button>
     </div>
   </div>
