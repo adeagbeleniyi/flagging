@@ -1861,647 +1861,73 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 </style>
 
+
+
+
+
+<!-- DAY DETAIL MODAL -->
+<div class="modal-overlay" id="modal-day-detail">
+  <div class="modal" style="max-width:800px;width:95%;">
+    <div class="modal-header">
+      <h3 id="day-modal-title">Flagmen on Date</h3>
+      <button class="modal-close" onclick="closeModal('modal-day-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="day-modal-body" style="max-height:420px;overflow-y:auto;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-day-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT COMPANY MODAL -->
+<div class="modal-overlay" id="modal-edit-company">
+  <div class="modal" style="max-width:480px;width:95%;">
+    <div class="modal-header">
+      <h3>Edit Company</h3>
+      <button class="modal-close" onclick="closeModal('modal-edit-company')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Company Name</label><input class="form-control" id="edit-company-name" type="text"></div>
+      <div class="form-group"><label>Type</label><select class="form-control"><option>External</option><option>Internal</option></select></div>
+      <div class="form-group"><label>Primary Subdivision</label><select class="form-control"><option>Coquitlam</option><option>Wainwright</option><option>Edson</option><option>Jasper</option><option>Biggar</option><option>Hope</option><option>Cascade</option></select></div>
+      <div class="form-group"><label>Contact Name</label><input class="form-control" type="text" placeholder="Primary contact"></div>
+      <div class="form-group"><label>Contact Email</label><input class="form-control" type="email" placeholder="email@company.com"></div>
+      <div class="form-group"><label>Status</label><select class="form-control"><option>Active</option><option>Inactive</option><option>Under Review</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="toast('Company saved','success');closeModal('modal-edit-company')">💾 Save Changes</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-company')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="notif-panel" style="display:none;position:fixed;top:56px;right:16px;width:340px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:9999;max-height:420px;overflow-y:auto;">
+  <div style="padding:14px 18px;border-bottom:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center;">
+    <strong style="font-size:14px;">Notifications</strong>
+    <span style="font-size:12px;color:#6b7280;">3 unread</span>
+  </div>
+  <div style="padding:0;">
+    <div style="padding:12px 18px;border-bottom:1px solid #f9fafb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="font-size:13px;font-weight:600;color:#111827;">⚠️ Overlap Alert</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">Tremblay / Callahan overlap on PRJ-720312 · Jun 4 PM</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Today, 8:02 AM</div>
+    </div>
+    <div style="padding:12px 18px;border-bottom:1px solid #f9fafb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="font-size:13px;font-weight:600;color:#111827;">📥 New Request</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">REQ-042 submitted by Metro Water Auth. — Coquitlam Sub</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Today, 7:45 AM</div>
+    </div>
+    <div style="padding:12px 18px;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="font-size:13px;font-weight:600;color:#111827;">⏰ OT Window Closing</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">OT availability window closes Friday Jun 6 at 5 PM. 8 flagmen have not responded.</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Jun 3, 4:00 PM</div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ═══════════════════════════════════════════════════════════ CORE NAV
-const pageConfig = {
-  dashboard:   { title:'Dashboard',          section:'sec-dashboard' },
-  jobs:        { title:'Active Jobs',         section:'sec-jobs',      actions:'<button class="btn btn-primary btn-sm" onclick="openInterestModal()">Assign Flagman</button>' },
-  completed:   { title:'Completed Jobs',      section:'sec-completed' },
-  dfr:         { title:'Daily Flagging Record', section:'sec-dfr' },
-  schedule:    { title:'Schedule',            section:'sec-schedule' },
-  flagmen:     { title:'Flagmen',             section:'sec-flagmen' },
-  companies:   { title:'Contracting Companies', section:'sec-companies' },
-  overtime:    { title:'Overtime Availability', section:'sec-overtime' },
-  vacation:    { title:'Vacation Management', section:'sec-vacation' },
-  requests:    { title:'Incoming Requests',   section:'sec-requests' },
-  submit:      { title:'Flagging Request Portal', section:'sec-submit' },
-  export:      { title:'Export Schedules',    section:'sec-export' },
-  reports:     { title:'Reports',             section:'sec-reports' },
-  settings:    { title:'Settings',            section:'sec-settings' },
-};
-
-function showPage(sectionId) {
-  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const sec = document.getElementById(sectionId);
-  if (sec) sec.classList.add('active');
-  const navItem = document.querySelector(`.nav-item[data-section="${sectionId}"]`);
-  if (navItem) navItem.classList.add('active');
-  // Header is self-contained in each section's .page-header
-  // Trigger calendar renders
-  if (sectionId === 'sec-schedule') renderSchedCal();
-  if (sectionId === 'sec-overtime') { setTimeout(renderOvertimeTable, 50); }
-  if (sectionId === 'sec-vacation') renderVacCal();
-  // Show overlap notification on schedule
-  if (sectionId === 'sec-schedule') {
-    setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 800);
-  }
-}
-
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const sec = item.getAttribute('data-section');
-    if (sec) showPage(sec);
-  });
-});
-
-// ═══════════════════════════════════════════════════════════ MODAL HELPERS
-function openModal(id) { 
-  const m = document.getElementById(id); 
-  if(!m) return;
-  if(m.classList.contains('modal-overlay')) { m.classList.add('open'); }
-  else { m.style.display='flex'; }
-}
-function closeModal(id) { 
-  const m = document.getElementById(id); 
-  if(!m) return;
-  if(m.classList.contains('modal-overlay')) { m.classList.remove('open'); }
-  else { m.style.display='none'; }
-}
-
-// ═══════════════════════════════════════════════════════════ TOAST
-function toast(msg, type='success') {
-  const tc = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  const colors = { success:'#16a34a', warning:'#d97706', error:'#dc2626', info:'#2563eb' };
-  t.style.cssText = `background:${colors[type]||colors.success};color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:300px;`;
-  t.textContent = msg;
-  tc.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
-}
-// ═══════════════════════════════════════════════════════════ NOTIFICATION PANEL
-function toggleNotifPanel() {
-  const panel = document.getElementById('notif-panel');
-  const dot = document.getElementById('notif-dot');
-  if (!panel) return;
-  const isOpen = panel.style.display === 'block';
-  panel.style.display = isOpen ? 'none' : 'block';
-  if (!isOpen && dot) dot.style.display = 'none';
-}
-document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notif-panel');
-  const bell = document.getElementById('notif-bell');
-  if (panel && bell && !bell.contains(e.target) && !panel.contains(e.target)) {
-    panel.style.display = 'none';
-  }
-});
-
-
-// ═══════════════════════════════════════════════════════════ TABS
-function switchTab(prefix, name, el) {
-  document.querySelectorAll(`#${prefix} .tab-pane`).forEach(p => p.classList.remove('active'));
-  document.querySelectorAll(`#${prefix} .tab-btn`).forEach(b => b.classList.remove('active'));
-  document.getElementById(`${prefix}-${name}`).classList.add('active');
-  el.classList.add('active');
-}
-function switchSchedView(v, el) {
-  ['list','weekly','calendar'].forEach(x => { const p = document.getElementById('sched-'+x); if(p) p.classList.remove('active'); });
-  document.querySelectorAll('#sec-schedule .tab-btn').forEach(b => b.classList.remove('active'));
-  const p = document.getElementById('sched-'+v); if(p) p.classList.add('active');
-  el.classList.add('active');
-  if (v === 'calendar') renderSchedCal();
-}
-function switchFlagmanTab(tab, el) {
-  document.querySelectorAll('#sec-flagmen .tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('#sec-flagmen .tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('flagman-'+tab).classList.add('active');
-  el.classList.add('active');
-}
-function switchVacView(v, el) {
-  document.querySelectorAll('#sec-vacation .tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('#sec-vacation .tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('vac-'+v).classList.add('active');
-  el.classList.add('active');
-  if (v === 'calendar') renderVacCal();
-}
-function switchSubmitTab(tab, el) {
-  document.querySelectorAll('#sec-submit .tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('#sec-submit .tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('submit-'+tab).classList.add('active');
-  el.classList.add('active');
-}
-
-// ═══════════════════════════════════════════════════════════ SCHEDULE WEEK NAV
-let schedWeekOffset = 0;
-function shiftSchedWeek(dir) {
-  schedWeekOffset += dir;
-  const base = new Date(2026, 5, 1); // Jun 1
-  const start = new Date(base); start.setDate(base.getDate() + schedWeekOffset * 7);
-  const end = new Date(start); end.setDate(start.getDate() + 6);
-  const fmt = d => d.toLocaleDateString('en-CA',{month:'short',day:'numeric'});
-  document.getElementById('sched-week-label').textContent = `${fmt(start)} – ${fmt(end)}, 2026`;
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(start); d.setDate(start.getDate() + i);
-    const el = document.getElementById('wh-'+i);
-    if (el) el.textContent = `${days[i]} ${d.toLocaleDateString('en-CA',{month:'short',day:'numeric'})}`;
-  }
-}
-
-// ═══════════════════════════════════════════════════════════ SCHEDULE CALENDAR
-let schedMonthOffset = 0;
-function shiftSchedMonth(dir) { schedMonthOffset += dir; renderSchedCal(); }
-// ── SCHEDULE DATA (shared between weekly, list, and calendar views) ──────────
-const SCHED_FLAGMEN = [
-  { name:'Hartley, Marcus',   id:'CN-1001', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'AM',    job:'PRJ-720415', color:'#FFB6C1' },
-  { name:'Larsson, Erik',     id:'CN-1002', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'AM',    job:'PRJ-721400', color:'#FFB6C1' },
-  { name:'Okafor, James',     id:'CN-1003', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'PM',    job:'PRJ-721400', color:'#FF69B4' },
-  { name:'Kowalski, Piotr',   id:'CN-1004', type:'CN',         cycle:'5&2', group:'',  region:'BC',      shift:'AM',    job:'PRJ-721250', color:'#FFB6C1' },
-  { name:'Tremblay, Luc',     id:'CN-1005', type:'CN',         cycle:'8&6', group:'A', region:'BC',      shift:'AM',    job:'PRJ-720312', color:'#FFB6C1' },
-  { name:'Callahan, Brett',   id:'CN-1006', type:'CN',         cycle:'8&6', group:'B', region:'BC',      shift:'AM',    job:'PRJ-720312', color:'#FFB6C1' },
-  { name:'Ferreira, Marco',   id:'CN-1007', type:'CN',         cycle:'8&6', group:'B', region:'BC',      shift:'Night', job:'PRJ-721900', color:'#FF69B4' },
-  { name:'Yamamoto, Dean',    id:'CN-1008', type:'CN',         cycle:'8&6', group:'A', region:'BC',      shift:'PM',    job:'PRJ-721100', color:'#FF69B4' },
-  { name:'Petrov, Daniel',    id:'CN-1009', type:'CN',         cycle:'8&6', group:'A', region:'Alberta', shift:'Night', job:'PRJ-720890', color:'#FF69B4' },
-  { name:'Nguyen, Kevin',     id:'CN-1010', type:'CN',         cycle:'8&6', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-722050', color:'#FFB6C1' },
-  { name:'Beaumont, Claude',  id:'CN-1011', type:'CN',         cycle:'9&5', group:'A', region:'BC',      shift:'AM',    job:'PRJ-721250', color:'#FFB6C1' },
-  { name:'Marchetti, Giulio', id:'CN-1012', type:'CN',         cycle:'9&5', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-721900', color:'#FFB6C1' },
-  { name:'Varga, Stefan',     id:'CT-2001', type:'Contracted', cycle:'9&5', group:'A', region:'BC',      shift:'AM OT', job:'Available',  color:'#ADD8E6' },
-  { name:'Dubois, Remi',      id:'CT-2002', type:'Contracted', cycle:'9&5', group:'B', region:'BC',      shift:'Night', job:'PRJ-721400', color:'#FF69B4' },
-  { name:'Nakamura, Yuki',    id:'CT-2003', type:'Contracted', cycle:'8&6', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-722100', color:'#FFB6C1' },
-];
-const CYCLE_REF = new Date('2026-01-05'); // Monday reference
-const CYCLE_OFFSETS = {
-  'Hartley, Marcus':0,'Larsson, Erik':0,'Okafor, James':0,'Kowalski, Piotr':0,'Okonkwo, Tunde':0,
-  'Tremblay, Luc':0,'Yamamoto, Dean':0,'Nguyen, Kevin':0,
-  'Ferreira, Marco':8,'Petrov, Daniel':8,'Nakamura, Yuki':8,
-  'Beaumont, Claude':0,'Varga, Stefan':0,
-  'Callahan, Brett':14,'Kowalski, Piotr':0,
-  'Marchetti, Giulio':9,'Dubois, Remi':9,
-};
-function isOnCycle(fm, date) {
-  const diff = Math.floor((date - CYCLE_REF) / 86400000);
-  if (fm.cycle === '5&2') { const dow = date.getDay(); return dow >= 1 && dow <= 5; }
-  const [on, off] = fm.cycle.split('&').map(Number);
-  const period = on + off;
-  const offset = CYCLE_OFFSETS[fm.name] || 0;
-  const pos = ((diff - offset) % period + period) % period;
-  if (fm.group === 'A') return pos < on;
-  if (fm.group === 'B') return pos >= on;
-  return pos < on;
-}
-function getFlagmenOnDate(dateStr) {
-  const date = new Date(dateStr + 'T00:00:00');
-  return SCHED_FLAGMEN.filter(fm => isOnCycle(fm, date));
-}
-
-function renderSchedCal() {
-  const base = new Date(2026, 5 + schedMonthOffset, 1);
-  const label = base.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
-  const el = document.getElementById('sched-month-label'); if(el) el.textContent = label;
-  const grid = document.getElementById('sched-cal-grid'); if(!grid) return;
-  const daysInMonth = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
-  const firstDay = base.getDay();
-  let html = '';
-  for (let i = 0; i < firstDay; i++) html += '<div style="min-height:80px;"></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const isToday = dateStr === '2026-06-04';
-    const workers = getFlagmenOnDate(dateStr);
-    const shown = workers.slice(0, 3);
-    const extra = workers.length - shown.length;
-    const bgStyle = isToday ? 'background:#fef9c3;border-color:var(--cn-red);' : '';
-    html += `<div onclick="openDayModal('${dateStr}')" style="min-height:80px;border:1px solid #e9ecef;border-radius:6px;padding:5px;cursor:pointer;transition:box-shadow .15s;${bgStyle}" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='none'">`
-      + `<div style="font-size:12px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--cn-red)':'#374151'};">${d}${isToday?' ●':''}</div>`
-      + shown.map(fm => `<div style="background:${fm.color};border-radius:3px;font-size:9px;padding:1px 4px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${fm.name.split(',')[0]}</div>`).join('')
-      + (extra > 0 ? `<div style="font-size:9px;color:#6b7280;margin-top:2px;">+${extra} more</div>` : '')
-      + (workers.length === 0 ? '<div style="font-size:9px;color:#d1d5db;margin-top:4px;">No assignments</div>' : '')
-      + '</div>';
-  }
-  grid.innerHTML = html;
-}
-
-function openDayModal(dateStr) {
-  const date = new Date(dateStr + 'T00:00:00');
-  const label = date.toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const workers = getFlagmenOnDate(dateStr);
-  const modal = document.getElementById('modal-day-detail');
-  if (!modal) return;
-  document.getElementById('day-modal-title').textContent = label;
-  const body = document.getElementById('day-modal-body');
-  if (workers.length === 0) {
-    body.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No flagmen assigned on this date.</p>';
-  } else {
-    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th></tr></thead><tbody>'
-      + workers.map(fm => '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td></tr>').join('')
-      + '</tbody></table>';
-  }
-  modal.classList.add('open');
-}
-
-// ═══════════════════════════════════════════════════════════ VACATION CALENDAR
-let vacMonthOffset = 0;
-function shiftVacCal(dir) { vacMonthOffset += dir; renderVacCal(); }
-function renderVacCal() {
-  const base = new Date(2026, 5 + vacMonthOffset, 1);
-  const label = base.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
-  const el = document.getElementById('vac-month-label'); if(el) el.textContent = label;
-  const grid = document.getElementById('vac-cal-grid'); if(!grid) return;
-  const daysInMonth = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
-  const firstDay = base.getDay();
-  const vacData = {
-    '2026-06-04': [{name:'Ferreira',color:'#fb923c'},{name:'Marchetti',color:'#a78bfa'}],
-    '2026-06-05': [{name:'Ferreira',color:'#fb923c'},{name:'Marchetti',color:'#a78bfa'}],
-    '2026-06-06': [{name:'Ferreira',color:'#fb923c'},{name:'Marchetti',color:'#a78bfa'}],
-    '2026-06-07': [{name:'Ferreira',color:'#fb923c'}],
-    '2026-06-08': [{name:'Ferreira',color:'#fb923c'}],
-    '2026-09-07': [{name:'Tremblay',color:'#60a5fa'}],
-  };
-  let html = `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>`;
-  html += `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">`;
-  for (let i = 0; i < firstDay; i++) html += `<div style="min-height:52px;"></div>`;
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = dateStr === '2026-06-04';
-    const evs = vacData[dateStr] || [];
-    html += `<div style="min-height:52px;border:1px solid #e9ecef;border-radius:4px;padding:3px;${isToday?'background:#fef9c3;':''}">
-      <div style="font-size:10px;font-weight:${isToday?'700':'400'};color:${isToday?'var(--cn-red)':'#374151'};">${d}</div>
-      ${evs.map(e=>`<div style="background:${e.color};border-radius:2px;font-size:9px;padding:1px 3px;margin-top:1px;color:#fff;">${e.name}</div>`).join('')}
-    </div>`;
-  }
-  html += `</div>`;
-  grid.innerHTML = html;
-}
-
-// ═══════════════════════════════════════════════════════════ REQUEST DETAIL
-const requestData = {
-  'REQ-041': {
-    company:'Northgate Utilities', type:'External', contact:'R. Kowalczyk', phone:'(604) 555-0182', email:'r.kowalczyk@northgate.ca',
-    permit:'CN-2026-4821', sub:'Cascade', mpStart:'88.4', mpEnd:'91.2', location:'East side of bridge, near crossing',
-    work:'Overhead line replacement and pole installation', start:'Jun 9, 2026', end:'Jun 23, 2026', days:15,
-    shifts:['Morning','Night'], startTime:'07:00', endTime:'15:00', flagmen:2, meeting:'CN yard gate, Hwy 1',
-    billing:'Cost Code', billingCode:'CC-4821-NW', excavation:'Yes', machinery:'Yes', distance:'3m',
-    notes:'Locate document uploaded. Hand dig required near signal cable.', status:'New',
-    qualifications:[], locateUploaded:true,
-    chat:[
-      {from:'requester',name:'R. Kowalczyk',time:'May 30, 10:14 AM',msg:'Hello, we submitted REQ-041 for the Cascade Sub work. Can you confirm receipt?'},
-      {from:'supervisor',name:'Taylor, Sandra',time:'May 30, 11:02 AM',msg:'Confirmed — we have received your request. Under review.'},
-      {from:'requester',name:'R. Kowalczyk',time:'Jun 2, 9:30 AM',msg:'Any update? We need to confirm our crew by Jun 6.'},
-      {from:'supervisor',name:'Taylor, Sandra',time:'Jun 2, 10:15 AM',msg:'We are reviewing availability now. Will confirm by Jun 5.'},
-    ]
-  },
-  'REQ-040': {
-    company:'CN Track Renewal', type:'Internal', contact:'M. Beauchamp', phone:'(780) 555-0211', email:'m.beauchamp@cn.ca',
-    permit:'CN-INT-2026-0088', sub:'Wainwright', mpStart:'142.0', mpEnd:'144.5', location:'Track renewal zone, west of yard',
-    work:'Rail replacement and tie installation', start:'Jun 12, 2026', end:'Jun 18, 2026', days:7,
-    shifts:['Morning'], startTime:'06:00', endTime:'16:00', flagmen:1, meeting:'Wainwright yard office',
-    billing:'Network Code', billingCode:'NET-0088-TR', excavation:'No', machinery:'Yes', distance:'On track',
-    notes:'Internal CN project. Supervisor has full discretion on flagman selection.', status:'New',
-    qualifications:[], locateUploaded:false,
-    chat:[]
-  },
-};
-
-function loadRequest(id) {
-  const r = requestData[id];
-  if (!r) { document.getElementById('req-detail-panel').innerHTML = `<div class="card" style="padding:20px;">Request ${id} details not available.</div>`; return; }
-  const statusBadge = {New:'badge-pending',  'Under Review':'badge-inprogress', Approved:'badge-approved', Rejected:'badge-rejected'}[r.status] || 'badge-pending';
-  const isApproved = r.status === 'Approved';
-  document.getElementById('req-detail-panel').innerHTML = `
-    <div class="card">
-      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-        <span>${id} — ${r.company}</span>
-        <span class="badge ${statusBadge}">${r.status}</span>
-      </div>
-      <div class="card-body" style="font-size:12px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
-          <div><strong>Contact:</strong> ${r.contact}</div>
-          <div><strong>Phone:</strong> ${r.phone}</div>
-          <div><strong>Email:</strong> ${r.email}</div>
-          <div><strong>Permit #:</strong> ${r.permit}</div>
-          <div><strong>Subdivision:</strong> ${r.sub}</div>
-          <div><strong>MP Range:</strong> ${r.mpStart} – ${r.mpEnd}</div>
-          <div><strong>Work Location:</strong> ${r.location}</div>
-          <div><strong>Work Description:</strong> ${r.work}</div>
-          <div><strong>Dates:</strong> ${r.start} – ${r.end} (${r.days} days)</div>
-          <div><strong>Shifts:</strong> ${r.shifts.length ? r.shifts.join(', ') : 'Not specified'}</div>
-          <div><strong>Shift Times:</strong> ${r.startTime} – ${r.endTime}</div>
-          <div><strong>Flagmen Needed:</strong> ${r.flagmen}</div>
-          <div><strong>Meeting Point:</strong> ${r.meeting}</div>
-          <div><strong>Billing:</strong> ${r.billing} — ${r.billingCode}</div>
-          <div><strong>Excavation:</strong> ${r.excavation}</div>
-          <div><strong>Machinery:</strong> ${r.machinery}</div>
-          <div><strong>Distance from Track:</strong> ${r.distance}</div>
-        </div>
-        ${r.locateUploaded ? `<div style="margin-bottom:10px;"><button class="btn btn-xs btn-primary" onclick="openModal('modal-locate')">📄 View Locate</button> <button class="btn btn-xs btn-secondary" onclick="toast('Locate document downloaded','success')">⬇ Download</button></div>` : ''}
-        <div style="margin-bottom:8px;font-size:11px;color:var(--text-muted);">${r.notes}</div>
-        ${r.status === 'New' || r.status === 'Under Review' ? `
-        <div style="margin-bottom:10px;">
-          <div style="font-weight:700;font-size:12px;margin-bottom:6px;">Required Qualifications for this Job:</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-tigs"> TIGS</label>
-            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-cror"> CROR</label>
-            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-erail"> eRail Safe</label>
-            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-formb"> Form B</label>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-approve btn-sm" onclick="approveRequest('${id}')">✓ Approve</button>
-          <button class="btn btn-primary btn-sm ${isApproved?'':'btn-disabled'}" id="assign-btn-${id}" ${isApproved?'':'disabled title="Approve the request first"'} onclick="openInterestModal()">👥 Assign Flagman</button>
-          <button class="btn btn-xs btn-primary" onclick="openChatThread('${id}')">💬 Message Requester</button>
-          <button class="btn btn-danger btn-sm" onclick="toast('Request rejected','warning')">✕ Reject</button>
-        </div>` : `
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-primary btn-sm" onclick="openInterestModal()">👥 Assign Flagman</button>
-          <button class="btn btn-xs btn-primary" onclick="openChatThread('${id}')">💬 Message Requester</button>
-        </div>`}
-      </div>
-    </div>`;
-}
-
-// approveRequest: defined in second script block
-
-// ═══════════════════════════════════════════════════════════ UNIFIED ASSIGNMENT WIZARD
-let wizardStep = 1;
-let wizardData = { jobTitle:'', allowedShifts:[], selectedShift:'', shiftType:'regular', startDate:'', endDate:'', selectedFlagmen:[], aaCode:'0100', aaDesc:'Regular time' };
-
-const aaRules = {
-  'regular-morning':'0100','regular-afternoon':'0210','regular-night':'0220',
-  'overtime-morning':'0204','overtime-afternoon':'0214','overtime-night':'0224',
-};
-const aaDescs = {
-  '0100':'Regular time','0210':'2nd shift differential','0220':'3rd shift differential',
-  '0204':'Overtime','0214':'Overtime w/2nd shift','0224':'Overtime w/3rd shift',
-};
-
-const interestData = [
-  {name:'Beaumont, Claude',id:'CN-1061',type:'CN',cycle:'9&5',ab:'A',seniority:4,distance:12,hours14:72,interest:'Regular',shift:'Morning',conflict:false},
-  {name:'Kowalski, Piotr',id:'CN-1065',type:'CN',cycle:'5&2',ab:'Fixed',seniority:2,distance:8,hours14:56,interest:'Regular',shift:'Morning',conflict:false},
-  {name:'Ferreira, Marco',id:'CN-1053',type:'CN',cycle:'8&6',ab:'B',seniority:9,distance:25,hours14:88,interest:'OT',shift:'Morning',conflict:false},
-  {name:'Yamamoto, Dean',id:'CN-1058',type:'CN',cycle:'8&6',ab:'B',seniority:12,distance:30,hours14:118,interest:'OT',shift:'Night',conflict:true,conflictDays:'Jun 12–14'},
-  {name:'Varga, Stefan',id:'CTR-2005',type:'CTR',cycle:'9&5',ab:'A',seniority:3,distance:15,hours14:40,interest:'Regular',shift:'Morning',conflict:false},
-  {name:'Marchetti, Giulio',id:'CN-1063',type:'CN',cycle:'9&5',ab:'B',seniority:13,distance:45,hours14:32,interest:'None',shift:'—',conflict:false},
-  {name:'Larsson, Erik',id:'CN-1052',type:'CN',cycle:'5&2',ab:'Fixed',seniority:7,distance:20,hours14:60,interest:'None',shift:'—',conflict:false},
-  {name:'Okafor, James',id:'CN-1049',type:'CN',cycle:'5&2',ab:'Fixed',seniority:10,distance:35,hours14:48,interest:'None',shift:'—',conflict:false},
-];
-
-let interestSort = 'seniority';
-let selectedFlagmenIds = [];
-
-function openInterestModal(allowedShifts) {
-  wizardStep = 1;
-  wizardData.allowedShifts = allowedShifts || [];
-  selectedFlagmenIds = [];
-  openModal('modal-assign-wizard');
-  renderWizardStep();
-}
-
-function renderWizardStep() {
-  // Update step indicators
-  for (let i = 1; i <= 4; i++) {
-    const el = document.getElementById('ws'+i);
-    if (!el) continue;
-    el.className = i < wizardStep ? 'wstep wstep-done' : i === wizardStep ? 'wstep wstep-active' : 'wstep';
-  }
-  document.getElementById('wizard-back').style.display = wizardStep > 1 ? 'block' : 'none';
-  document.getElementById('wizard-next').textContent = wizardStep === 4 ? '✓ Confirm Assignment' : 'Next →';
-
-  const body = document.getElementById('wizard-body');
-  if (wizardStep === 1) {
-    const shifts = wizardData.allowedShifts.length ? wizardData.allowedShifts : ['morning','afternoon','night'];
-    const shiftLabels = {morning:'Morning (07:00–15:00)',afternoon:'Afternoon (15:00–23:00)',night:'Night (23:00–07:00)'};
-    body.innerHTML = `
-      <h3 style="margin:0 0 14px;font-size:15px;">Step 1 — Job Details & Shift</h3>
-      ${wizardData.allowedShifts.length ? `<div class="alert alert-warning" style="font-size:12px;">⚠ This job was requested for specific shifts only. Shift selector is restricted.</div>` : ''}
-      <div class="form-grid-2">
-        <div class="form-group"><label>Job / Project</label><input class="form-control" id="wiz-job" type="text" value="PRJ-720312 — Northgate Utilities" placeholder="Job title or project number"></div>
-        <div class="form-group"><label>Shift Type</label>
-          <select class="form-control" id="wiz-type" onchange="updateWizAA()">
-            <option value="regular">Regular</option>
-            <option value="overtime">Overtime</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Shift</label>
-          <select class="form-control" id="wiz-shift" onchange="updateWizAA()">
-            ${shifts.map(s=>`<option value="${s}">${shiftLabels[s]||s}</option>`).join('')}
-          </select>
-        </div>
-        <div class="form-group"><label>A/A Code <span style="font-size:11px;color:var(--text-muted);">(auto-calculated)</span></label>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input class="form-control" id="wiz-aa" type="text" value="0100" style="width:80px;">
-            <span id="wiz-aa-desc" style="font-size:11px;color:var(--text-muted);">Regular time</span>
-          </div>
-        </div>
-        <div class="form-group"><label>Start Date</label><input class="form-control" id="wiz-start" type="date" value="2026-06-09"></div>
-        <div class="form-group"><label>End Date</label><input class="form-control" id="wiz-end" type="date" value="2026-06-27"></div>
-        <div class="form-group"><label>Requester Start Time</label><input class="form-control" id="wiz-stime" type="time" value="07:00"></div>
-        <div class="form-group"><label>Requester End Time</label><input class="form-control" id="wiz-etime" type="time" value="15:00"></div>
-      </div>`;
-  } else if (wizardStep === 2) {
-    const sorted = [...interestData].sort((a,b) => {
-      if (interestSort === 'seniority') return a.seniority - b.seniority;
-      if (interestSort === 'proximity') return a.distance - b.distance;
-      if (interestSort === 'hours') return a.hours14 - b.hours14;
-      return (a.seniority * 0.4 + a.distance * 0.3 + (a.hours14/135)*100 * 0.3) - (b.seniority * 0.4 + b.distance * 0.3 + (b.hours14/135)*100 * 0.3);
-    });
-    body.innerHTML = `
-      <h3 style="margin:0 0 14px;font-size:15px;">Step 2 — Review Interest & Select Flagman</h3>
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-        <span style="font-size:12px;font-weight:700;align-self:center;">Rank by:</span>
-        ${['seniority','proximity','hours','combined'].map(s=>`<button class="btn btn-sm ${interestSort===s?'btn-primary':'btn-secondary'}" onclick="interestSort='${s}';renderWizardStep()">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
-      </div>
-      <div class="tbl-scroll">
-        <table class="tbl" style="font-size:11px;">
-          <thead><tr><th>#</th><th>Flagman</th><th>Type</th><th>Cycle</th><th>Seniority</th><th>Distance</th><th>14-Day Hours</th><th>Interest</th><th>Conflict</th><th>Select</th></tr></thead>
-          <tbody>
-            ${sorted.map((f,i)=>{
-              const pct = Math.round(f.hours14/135*100);
-              const barColor = pct >= 85 ? '#dc2626' : pct >= 65 ? '#d97706' : '#16a34a';
-              const isSelected = selectedFlagmenIds.includes(f.id);
-              const overCap = f.hours14 > 115;
-              return `<tr style="${isSelected?'background:#dbeafe;':''}">
-                <td>${i+1}</td>
-                <td><strong>${f.name}</strong><br><span style="color:var(--text-muted);">${f.id}</span></td>
-                <td><span class="badge ${f.type==='CN'?'badge-cn':'badge-contracted'}">${f.type}</span></td>
-                <td>${f.cycle} <span class="${f.ab==='A'?'cycle-badge-a':f.ab==='B'?'cycle-badge-b':'cycle-badge-52'}">${f.ab}</span></td>
-                <td>#${f.seniority}</td>
-                <td>${f.distance} km</td>
-                <td>
-                  <div style="font-size:10px;margin-bottom:2px;">${f.hours14}/135h</div>
-                  <div style="background:#e9ecef;border-radius:4px;height:6px;width:80px;"><div style="background:${barColor};height:6px;border-radius:4px;width:${pct}%;"></div></div>
-                  ${overCap?`<div style="font-size:9px;color:#d97706;">⚠ ~${Math.round((135-f.hours14)/10)} days max</div>`:''}
-                </td>
-                <td><span class="badge ${f.interest==='Regular'?'badge-inprogress':f.interest==='OT'?'badge-approved':'badge-pending'}">${f.interest}</span>${f.interest!=='None'?`<br><span style="font-size:9px;color:var(--text-muted);">${f.shift}</span>`:''}</td>
-                <td>${f.conflict?`<span style="color:#d97706;font-size:10px;" title="Overlap: ${f.conflictDays}">⚠ ${f.conflictDays}</span>`:'—'}</td>
-                <td><button class="btn btn-xs ${isSelected?'btn-approve':'btn-primary'}" onclick="toggleWizFlagman('${f.id}')">${isSelected?'✓ Selected':'Select'}</button></td>
-              </tr>`;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-      ${selectedFlagmenIds.length ? `<div class="alert alert-info" style="margin-top:10px;font-size:12px;">✓ Selected: <strong>${selectedFlagmenIds.join(', ')}</strong></div>` : ''}`;
-  } else if (wizardStep === 3) {
-    const primary = interestData.find(f => selectedFlagmenIds.includes(f.id)) || interestData[0];
-    const start = new Date(2026, 5, 9), end = new Date(2026, 5, 27);
-    const totalDays = Math.round((end - start) / 86400000) + 1;
-    let cycleHtml = '', offDays = [];
-    if (primary.cycle === '5&2') {
-      for (let d = 0; d < totalDays; d++) {
-        const date = new Date(start); date.setDate(start.getDate() + d);
-        const dow = date.getDay();
-        const isOff = dow === 0 || dow === 6;
-        if (isOff) offDays.push(date.toLocaleDateString('en-CA',{month:'short',day:'numeric',weekday:'short'}));
-        cycleHtml += `<div style="text-align:center;padding:4px 6px;border-radius:4px;font-size:10px;background:${isOff?'#f3f4f6':'#FFB6C1'};color:${isOff?'#6b7280':'#7b0021'};">
-          <div>${date.toLocaleDateString('en-CA',{weekday:'short'})}</div>
-          <div>${date.getDate()}</div>
-          <div>${isOff?'OFF':'ON'}</div>
-        </div>`;
-      }
-    } else {
-      const onDays = primary.cycle === '9&5' ? 9 : 8;
-      const offDaysCount = primary.cycle === '9&5' ? 5 : 6;
-      const cycleLen = onDays + offDaysCount;
-      for (let d = 0; d < totalDays; d++) {
-        const pos = d % cycleLen;
-        const isOff = pos >= onDays;
-        const date = new Date(start); date.setDate(start.getDate() + d);
-        if (isOff) offDays.push(date.toLocaleDateString('en-CA',{month:'short',day:'numeric',weekday:'short'}));
-        const isOverlap = pos === onDays - 1 || pos === onDays;
-        cycleHtml += `<div style="text-align:center;padding:4px 6px;border-radius:4px;font-size:10px;background:${isOverlap?'#e9d5ff':isOff?'#f3f4f6':'#FFB6C1'};color:${isOverlap?'#5b21b6':isOff?'#6b7280':'#7b0021'};">
-          <div>${date.toLocaleDateString('en-CA',{weekday:'short'})}</div>
-          <div>${date.getDate()}</div>
-          <div>${isOverlap?'↔':''}${isOff?'OFF':'ON'}</div>
-        </div>`;
-      }
-    }
-    body.innerHTML = `
-      <h3 style="margin:0 0 14px;font-size:15px;">Step 3 — Cycle Breakdown & Off-Day Coverage</h3>
-      <div class="alert alert-info" style="font-size:12px;">Primary flagman: <strong>${primary.name}</strong> · ${primary.cycle} ${primary.ab !== 'Fixed' ? primary.ab+' Cycle' : '(Mon–Fri fixed)'}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;">${cycleHtml}</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Legend: <span style="background:#FFB6C1;padding:1px 6px;border-radius:3px;">ON</span> <span style="background:#f3f4f6;padding:1px 6px;border-radius:3px;">OFF</span> <span style="background:#e9d5ff;padding:1px 6px;border-radius:3px;">↔ Overlap/Handoff</span></div>
-      ${offDays.length ? `
-      <div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--cn-dark);">⚠ Off-Cycle Days — Coverage Required (${offDays.length} days)</div>
-      <table class="tbl" style="font-size:11px;">
-        <thead><tr><th>Off-Cycle Date</th><th>Shift</th><th>Assign Coverage Flagman</th><th>Type</th><th>Action</th></tr></thead>
-        <tbody>
-          ${offDays.map((day,i)=>`<tr id="offday-row-${i}">
-            <td>${day}</td>
-            <td>Morning</td>
-            <td><select class="form-control" style="font-size:11px;" id="offday-sel-${i}" onchange="updateOffDayType(${i})">
-              <option value="">— Vacant —</option>
-              <option value="Ferreira, Marco|Regular">Ferreira, Marco (Regular)</option>
-              <option value="Kowalski, Piotr|Regular">Kowalski, Piotr (Regular)</option>
-              <option value="Yamamoto, Dean|OT">Yamamoto, Dean (OT)</option>
-              <option value="Varga, Stefan|OT">Varga, Stefan (OT)</option>
-            </select></td>
-            <td id="offday-type-${i}"><span style="color:var(--text-muted);">—</span></td>
-            <td><button class="btn btn-xs btn-approve" onclick="confirmOffDay(${i})">Confirm</button></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>` : '<div class="alert alert-info" style="font-size:12px;">No off-cycle days during this job span. No additional coverage needed.</div>'}`;
-  } else if (wizardStep === 4) {
-    body.innerHTML = `
-      <h3 style="margin:0 0 14px;font-size:15px;">Step 4 — Confirm Assignment</h3>
-      <div class="card" style="background:#f8f9fa;">
-        <div class="card-body" style="font-size:12px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div><strong>Job:</strong> PRJ-720312 — Northgate Utilities</div>
-            <div><strong>Shift:</strong> Morning (Regular)</div>
-            <div><strong>Dates:</strong> Jun 9 – Jun 27, 2026</div>
-            <div><strong>A/A Code:</strong> <span style="background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700;">0100</span> — Regular time</div>
-            <div><strong>Shift Times:</strong> 07:00 – 15:00</div>
-            <div><strong>Flagmen Assigned:</strong> ${selectedFlagmenIds.length ? selectedFlagmenIds.join(', ') : 'None selected'}</div>
-          </div>
-          <div class="alert alert-warning" style="margin-top:12px;font-size:11px;">⚠ Regular hours = 10h/day. Any hours beyond 10h will be automatically recorded as a separate OT entry in the Daily Flagging Record.</div>
-        </div>
-      </div>`;
-  }
-}
-
-// toggleWizFlagman: defined in second script block (more complete)
-
-function updateWizAA() {
-  const type = document.getElementById('wiz-type')?.value || 'regular';
-  const shift = document.getElementById('wiz-shift')?.value || 'morning';
-  const key = `${type}-${shift}`;
-  const code = aaRules[key] || '0100';
-  const desc = aaDescs[code] || '';
-  const aaEl = document.getElementById('wiz-aa'); if(aaEl) aaEl.value = code;
-  const descEl = document.getElementById('wiz-aa-desc'); if(descEl) descEl.textContent = desc;
-}
-
-function updateOffDayType(i) {
-  const sel = document.getElementById('offday-sel-'+i);
-  const typeEl = document.getElementById('offday-type-'+i);
-  if (!sel || !typeEl) return;
-  const val = sel.value;
-  if (!val) { typeEl.innerHTML = '<span style="color:var(--text-muted);">—</span>'; return; }
-  const type = val.split('|')[1];
-  typeEl.innerHTML = `<span class="badge ${type==='Regular'?'badge-inprogress':'badge-approved'}">${type}</span>`;
-}
-
-// confirmOffDay: defined in second script block
-
-function wizardNext() {
-  if (wizardStep === 2 && selectedFlagmenIds.length === 0) { toast('Please select at least one flagman','warning'); return; }
-  if (wizardStep === 4) {
-    toast('Assignment confirmed ✓','success');
-    closeModal('modal-assign-wizard');
-    return;
-  }
-  wizardStep++;
-  renderWizardStep();
-}
-
-function wizardBack() {
-  if (wizardStep > 1) { wizardStep--; renderWizardStep(); }
-}
-
-// ═══════════════════════════════════════════════════════════ FLAGMAN MODALS
-function openAddFlagmanModal(type) {
-  document.getElementById('flagman-modal-title').textContent = type === 'cn' ? 'Add CN Flagman' : 'Add Contracted Flagman';
-  document.getElementById('company-group').style.display = type === 'contracted' ? 'block' : 'none';
-  toggleCycleAB();
-  openModal('modal-add-flagman');
-}
-function openEditFlagmanModal(name) {
-  document.getElementById('flagman-modal-title').textContent = `Edit — ${name}`;
-  document.getElementById('company-group').style.display = 'none';
-  openModal('modal-add-flagman');
-}
-// toggleCycleAB: defined in second script block
-
-// ═══════════════════════════════════════════════════════════ VACATION
-// calcVacDays: defined in second script block
-
-// ═══════════════════════════════════════════════════════════ CHECKOUT
-let checkoutRow = null;
-// openCheckoutModal: defined in second script block
-// calcCheckoutHours: defined in second script block
-// confirmCheckout: defined in second script block
-
-// ═══════════════════════════════════════════════════════════ CHAT
-const chatData = {
-  'REQ-041': [
-    {from:'requester',name:'R. Kowalczyk',time:'May 30, 10:14 AM',msg:'Hello, we submitted REQ-041 for the Cascade Sub work. Can you confirm receipt?'},
-    {from:'supervisor',name:'Taylor, Sandra',time:'May 30, 11:02 AM',msg:'Confirmed — we have received your request. Under review.'},
-    {from:'requester',name:'R. Kowalczyk',time:'Jun 2, 9:30 AM',msg:'Any update? We need to confirm our crew by Jun 6.'},
-    {from:'supervisor',name:'Taylor, Sandra',time:'Jun 2, 10:15 AM',msg:'We are reviewing availability now. Will confirm by Jun 5.'},
-  ],
-  'REQ-040': [
-    {from:'requester',name:'M. Beauchamp',time:'Jun 1, 8:00 AM',msg:'Hi, submitting REQ-040 for the Wainwright track renewal. Please advise on flagman availability.'},
-    {from:'supervisor',name:'Taylor, Sandra',time:'Jun 1, 9:30 AM',msg:'Received. We will review and get back to you by Jun 3.'},
-  ],
-};
-// openChatThread: defined in second script block
-// sendChatMsg: defined in second script block
-
-// ═══════════════════════════════════════════════════════════ MISC
-function toggleBillingField() {
-  const type = document.getElementById('billing-type')?.value;
-  const label = document.getElementById('billing-code-label');
-  const input = document.getElementById('billing-code');
-  if (label) label.textContent = type;
-  if (input) input.placeholder = `Enter ${type?.toLowerCase() || 'code'}`;
-}
-// toggleLocateUpload: defined in second script block
-// submitRequest: defined in second script block
-// filterMyReqs: defined in second script block
-
-// ═══════════════════════════════════════════════════════════ INIT
-</script>
-
-<!-- ==================== JAVASCRIPT ==================== -->
-<script>
+// ==================== MERGED JAVASCRIPT ====================
+// Block 2: Helper functions, data, feature logic
 // ===== PAGE CONFIG =====
 
 
@@ -3547,67 +2973,645 @@ document.addEventListener('DOMContentLoaded', () => {
   if (vacStart) vacStart.addEventListener('input', calcVacDays);
   if (vacEnd) vacEnd.addEventListener('input', calcVacDays);
 });
+
+// ==================== CORE NAVIGATION ====================
+// Block 1: pageConfig, showPage, openModal, nav init
+// ═══════════════════════════════════════════════════════════ CORE NAV
+const pageConfig = {
+  dashboard:   { title:'Dashboard',          section:'sec-dashboard' },
+  jobs:        { title:'Active Jobs',         section:'sec-jobs',      actions:'<button class="btn btn-primary btn-sm" onclick="openInterestModal()">Assign Flagman</button>' },
+  completed:   { title:'Completed Jobs',      section:'sec-completed' },
+  dfr:         { title:'Daily Flagging Record', section:'sec-dfr' },
+  schedule:    { title:'Schedule',            section:'sec-schedule' },
+  flagmen:     { title:'Flagmen',             section:'sec-flagmen' },
+  companies:   { title:'Contracting Companies', section:'sec-companies' },
+  overtime:    { title:'Overtime Availability', section:'sec-overtime' },
+  vacation:    { title:'Vacation Management', section:'sec-vacation' },
+  requests:    { title:'Incoming Requests',   section:'sec-requests' },
+  submit:      { title:'Flagging Request Portal', section:'sec-submit' },
+  export:      { title:'Export Schedules',    section:'sec-export' },
+  reports:     { title:'Reports',             section:'sec-reports' },
+  settings:    { title:'Settings',            section:'sec-settings' },
+};
+
+function showPage(sectionId) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById(sectionId);
+  if (sec) sec.classList.add('active');
+  const navItem = document.querySelector(`.nav-item[data-section="${sectionId}"]`);
+  if (navItem) navItem.classList.add('active');
+  // Header is self-contained in each section's .page-header
+  // Trigger calendar renders
+  if (sectionId === 'sec-schedule') renderSchedCal();
+  if (sectionId === 'sec-overtime') { setTimeout(renderOvertimeTable, 50); }
+  if (sectionId === 'sec-vacation') renderVacCal();
+  // Show overlap notification on schedule
+  if (sectionId === 'sec-schedule') {
+    setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 800);
+  }
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const sec = item.getAttribute('data-section');
+    if (sec) showPage(sec);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════ MODAL HELPERS
+function openModal(id) { 
+  const m = document.getElementById(id); 
+  if(!m) return;
+  if(m.classList.contains('modal-overlay')) { m.classList.add('open'); }
+  else { m.style.display='flex'; }
+}
+function closeModal(id) { 
+  const m = document.getElementById(id); 
+  if(!m) return;
+  if(m.classList.contains('modal-overlay')) { m.classList.remove('open'); }
+  else { m.style.display='none'; }
+}
+
+// ═══════════════════════════════════════════════════════════ TOAST
+function toast(msg, type='success') {
+  const tc = document.getElementById('toast-container');
+  t = document.createElement('div');
+  colors = { success:'#16a34a', warning:'#d97706', error:'#dc2626', info:'#2563eb' };
+  t.style.cssText = `background:${colors[type]||colors.success};color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:300px;`;
+  t.textContent = msg;
+  tc.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+// ═══════════════════════════════════════════════════════════ NOTIFICATION PANEL
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  const dot = document.getElementById('notif-dot');
+  if (!panel) return;
+  const isOpen = panel.style.display === 'block';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen && dot) dot.style.display = 'none';
+}
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notif-panel');
+  const bell = document.getElementById('notif-bell');
+  if (panel && bell && !bell.contains(e.target) && !panel.contains(e.target)) {
+    panel.style.display = 'none';
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════ TABS
+function switchTab(prefix, name, el) {
+  document.querySelectorAll(`#${prefix} .tab-pane`).forEach(p => p.classList.remove('active'));
+  document.querySelectorAll(`#${prefix} .tab-btn`).forEach(b => b.classList.remove('active'));
+  document.getElementById(`${prefix}-${name}`).classList.add('active');
+  el.classList.add('active');
+}
+function switchSchedView(v, el) {
+  ['list','weekly','calendar'].forEach(x => { const p = document.getElementById('sched-'+x); if(p) p.classList.remove('active'); });
+  document.querySelectorAll('#sec-schedule .tab-btn').forEach(b => b.classList.remove('active'));
+  const p = document.getElementById('sched-'+v); if(p) p.classList.add('active');
+  el.classList.add('active');
+  if (v === 'calendar') renderSchedCal();
+}
+function switchFlagmanTab(tab, el) {
+  document.querySelectorAll('#sec-flagmen .tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sec-flagmen .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('flagman-'+tab).classList.add('active');
+  el.classList.add('active');
+}
+function switchVacView(v, el) {
+  document.querySelectorAll('#sec-vacation .tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sec-vacation .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('vac-'+v).classList.add('active');
+  el.classList.add('active');
+  if (v === 'calendar') renderVacCal();
+}
+function switchSubmitTab(tab, el) {
+  document.querySelectorAll('#sec-submit .tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sec-submit .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('submit-'+tab).classList.add('active');
+  el.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════ SCHEDULE WEEK NAV
+schedWeekOffset = 0;
+function shiftSchedWeek(dir) {
+  schedWeekOffset += dir;
+  base = new Date(2026, 5, 1); // Jun 1
+  start = new Date(base); start.setDate(base.getDate() + schedWeekOffset * 7);
+  end = new Date(start); end.setDate(start.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+  document.getElementById('sched-week-label').textContent = `${fmt(start)} – ${fmt(end)}, 2026`;
+  days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  for (let i = 0; i < 7; i++) {
+    d = new Date(start); d.setDate(start.getDate() + i);
+    el = document.getElementById('wh-'+i);
+    if (el) el.textContent = `${days[i]} ${d.toLocaleDateString('en-CA',{month:'short',day:'numeric'})}`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════ SCHEDULE CALENDAR
+let schedMonthOffset = 0;
+function shiftSchedMonth(dir) { schedMonthOffset += dir; renderSchedCal(); }
+// ── SCHEDULE DATA (shared between weekly, list, and calendar views) ──────────
+const SCHED_FLAGMEN = [
+  { name:'Hartley, Marcus',   id:'CN-1001', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'AM',    job:'PRJ-720415', color:'#FFB6C1' },
+  { name:'Larsson, Erik',     id:'CN-1002', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'AM',    job:'PRJ-721400', color:'#FFB6C1' },
+  { name:'Okafor, James',     id:'CN-1003', type:'CN',         cycle:'5&2', group:'',  region:'Alberta', shift:'PM',    job:'PRJ-721400', color:'#FF69B4' },
+  { name:'Kowalski, Piotr',   id:'CN-1004', type:'CN',         cycle:'5&2', group:'',  region:'BC',      shift:'AM',    job:'PRJ-721250', color:'#FFB6C1' },
+  { name:'Tremblay, Luc',     id:'CN-1005', type:'CN',         cycle:'8&6', group:'A', region:'BC',      shift:'AM',    job:'PRJ-720312', color:'#FFB6C1' },
+  { name:'Callahan, Brett',   id:'CN-1006', type:'CN',         cycle:'8&6', group:'B', region:'BC',      shift:'AM',    job:'PRJ-720312', color:'#FFB6C1' },
+  { name:'Ferreira, Marco',   id:'CN-1007', type:'CN',         cycle:'8&6', group:'B', region:'BC',      shift:'Night', job:'PRJ-721900', color:'#FF69B4' },
+  { name:'Yamamoto, Dean',    id:'CN-1008', type:'CN',         cycle:'8&6', group:'A', region:'BC',      shift:'PM',    job:'PRJ-721100', color:'#FF69B4' },
+  { name:'Petrov, Daniel',    id:'CN-1009', type:'CN',         cycle:'8&6', group:'A', region:'Alberta', shift:'Night', job:'PRJ-720890', color:'#FF69B4' },
+  { name:'Nguyen, Kevin',     id:'CN-1010', type:'CN',         cycle:'8&6', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-722050', color:'#FFB6C1' },
+  { name:'Beaumont, Claude',  id:'CN-1011', type:'CN',         cycle:'9&5', group:'A', region:'BC',      shift:'AM',    job:'PRJ-721250', color:'#FFB6C1' },
+  { name:'Marchetti, Giulio', id:'CN-1012', type:'CN',         cycle:'9&5', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-721900', color:'#FFB6C1' },
+  { name:'Varga, Stefan',     id:'CT-2001', type:'Contracted', cycle:'9&5', group:'A', region:'BC',      shift:'AM OT', job:'Available',  color:'#ADD8E6' },
+  { name:'Dubois, Remi',      id:'CT-2002', type:'Contracted', cycle:'9&5', group:'B', region:'BC',      shift:'Night', job:'PRJ-721400', color:'#FF69B4' },
+  { name:'Nakamura, Yuki',    id:'CT-2003', type:'Contracted', cycle:'8&6', group:'B', region:'Alberta', shift:'AM',    job:'PRJ-722100', color:'#FFB6C1' },
+];
+const CYCLE_REF = new Date('2026-01-05'); // Monday reference
+const CYCLE_OFFSETS = {
+  'Hartley, Marcus':0,'Larsson, Erik':0,'Okafor, James':0,'Kowalski, Piotr':0,'Okonkwo, Tunde':0,
+  'Tremblay, Luc':0,'Yamamoto, Dean':0,'Nguyen, Kevin':0,
+  'Ferreira, Marco':8,'Petrov, Daniel':8,'Nakamura, Yuki':8,
+  'Beaumont, Claude':0,'Varga, Stefan':0,
+  'Callahan, Brett':14,'Kowalski, Piotr':0,
+  'Marchetti, Giulio':9,'Dubois, Remi':9,
+};
+function isOnCycle(fm, date) {
+  diff = Math.floor((date - CYCLE_REF) / 86400000);
+  if (fm.cycle === '5&2') { const dow = date.getDay(); return dow >= 1 && dow <= 5; }
+  const [on, off] = fm.cycle.split('&').map(Number);
+  period = on + off;
+  offset = CYCLE_OFFSETS[fm.name] || 0;
+  pos = ((diff - offset) % period + period) % period;
+  if (fm.group === 'A') return pos < on;
+  if (fm.group === 'B') return pos >= on;
+  return pos < on;
+}
+function getFlagmenOnDate(dateStr) {
+  date = new Date(dateStr + 'T00:00:00');
+  return SCHED_FLAGMEN.filter(fm => isOnCycle(fm, date));
+}
+
+function renderSchedCal() {
+  base = new Date(2026, 5 + schedMonthOffset, 1);
+  const label = base.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
+  el = document.getElementById('sched-month-label'); if(el) el.textContent = label;
+  const grid = document.getElementById('sched-cal-grid'); if(!grid) return;
+  const daysInMonth = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
+  firstDay = base.getDay();
+  html = '';
+  for (let i = 0; i < firstDay; i++) html += '<div style="min-height:80px;"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    isToday = dateStr === '2026-06-04';
+    const workers = getFlagmenOnDate(dateStr);
+    const shown = workers.slice(0, 3);
+    const extra = workers.length - shown.length;
+    const bgStyle = isToday ? 'background:#fef9c3;border-color:var(--cn-red);' : '';
+    html += `<div onclick="openDayModal('${dateStr}')" style="min-height:80px;border:1px solid #e9ecef;border-radius:6px;padding:5px;cursor:pointer;transition:box-shadow .15s;${bgStyle}" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='none'">`
+      + `<div style="font-size:12px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--cn-red)':'#374151'};">${d}${isToday?' ●':''}</div>`
+      + shown.map(fm => `<div style="background:${fm.color};border-radius:3px;font-size:9px;padding:1px 4px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${fm.name.split(',')[0]}</div>`).join('')
+      + (extra > 0 ? `<div style="font-size:9px;color:#6b7280;margin-top:2px;">+${extra} more</div>` : '')
+      + (workers.length === 0 ? '<div style="font-size:9px;color:#d1d5db;margin-top:4px;">No assignments</div>' : '')
+      + '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function openDayModal(dateStr) {
+  date = new Date(dateStr + 'T00:00:00');
+  const label = date.toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const workers = getFlagmenOnDate(dateStr);
+  modal = document.getElementById('modal-day-detail');
+  if (!modal) return;
+  document.getElementById('day-modal-title').textContent = label;
+  body = document.getElementById('day-modal-body');
+  if (workers.length === 0) {
+    body.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No flagmen assigned on this date.</p>';
+  } else {
+    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th></tr></thead><tbody>'
+      + workers.map(fm => '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td></tr>').join('')
+      + '</tbody></table>';
+  }
+  modal.classList.add('open');
+}
+
+// ═══════════════════════════════════════════════════════════ VACATION CALENDAR
+let vacMonthOffset = 0;
+function shiftVacCal(dir) { vacMonthOffset += dir; renderVacCal(); }
+function renderVacCal() {
+  base = new Date(2026, 5 + vacMonthOffset, 1);
+  const label = base.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
+  el = document.getElementById('vac-month-label'); if(el) el.textContent = label;
+  const grid = document.getElementById('vac-cal-grid'); if(!grid) return;
+  const daysInMonth = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
+  firstDay = base.getDay();
+  const vacData = {
+    '2026-06-04': [{name:'Ferreira',color:'#fb923c'},{name:'Marchetti',color:'#a78bfa'}],
+    '2026-06-05': [{name:'Ferreira',color:'#fb923c'},{name:'Marchetti',color:'#a78bfa'}],
+    '2026-06-06': [{name:'Ferreira',color:'#fb923c'},{name:'Marchetti',color:'#a78bfa'}],
+    '2026-06-07': [{name:'Ferreira',color:'#fb923c'}],
+    '2026-06-08': [{name:'Ferreira',color:'#fb923c'}],
+    '2026-09-07': [{name:'Tremblay',color:'#60a5fa'}],
+  };
+  html = `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>`;
+  html += `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">`;
+  for (let i = 0; i < firstDay; i++) html += `<div style="min-height:52px;"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    isToday = dateStr === '2026-06-04';
+    const evs = vacData[dateStr] || [];
+    html += `<div style="min-height:52px;border:1px solid #e9ecef;border-radius:4px;padding:3px;${isToday?'background:#fef9c3;':''}">
+      <div style="font-size:10px;font-weight:${isToday?'700':'400'};color:${isToday?'var(--cn-red)':'#374151'};">${d}</div>
+      ${evs.map(e=>`<div style="background:${e.color};border-radius:2px;font-size:9px;padding:1px 3px;margin-top:1px;color:#fff;">${e.name}</div>`).join('')}
+    </div>`;
+  }
+  html += `</div>`;
+  grid.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════ REQUEST DETAIL
+const requestData = {
+  'REQ-041': {
+    company:'Northgate Utilities', type:'External', contact:'R. Kowalczyk', phone:'(604) 555-0182', email:'r.kowalczyk@northgate.ca',
+    permit:'CN-2026-4821', sub:'Cascade', mpStart:'88.4', mpEnd:'91.2', location:'East side of bridge, near crossing',
+    work:'Overhead line replacement and pole installation', start:'Jun 9, 2026', end:'Jun 23, 2026', days:15,
+    shifts:['Morning','Night'], startTime:'07:00', endTime:'15:00', flagmen:2, meeting:'CN yard gate, Hwy 1',
+    billing:'Cost Code', billingCode:'CC-4821-NW', excavation:'Yes', machinery:'Yes', distance:'3m',
+    notes:'Locate document uploaded. Hand dig required near signal cable.', status:'New',
+    qualifications:[], locateUploaded:true,
+    chat:[
+      {from:'requester',name:'R. Kowalczyk',time:'May 30, 10:14 AM',msg:'Hello, we submitted REQ-041 for the Cascade Sub work. Can you confirm receipt?'},
+      {from:'supervisor',name:'Taylor, Sandra',time:'May 30, 11:02 AM',msg:'Confirmed — we have received your request. Under review.'},
+      {from:'requester',name:'R. Kowalczyk',time:'Jun 2, 9:30 AM',msg:'Any update? We need to confirm our crew by Jun 6.'},
+      {from:'supervisor',name:'Taylor, Sandra',time:'Jun 2, 10:15 AM',msg:'We are reviewing availability now. Will confirm by Jun 5.'},
+    ]
+  },
+  'REQ-040': {
+    company:'CN Track Renewal', type:'Internal', contact:'M. Beauchamp', phone:'(780) 555-0211', email:'m.beauchamp@cn.ca',
+    permit:'CN-INT-2026-0088', sub:'Wainwright', mpStart:'142.0', mpEnd:'144.5', location:'Track renewal zone, west of yard',
+    work:'Rail replacement and tie installation', start:'Jun 12, 2026', end:'Jun 18, 2026', days:7,
+    shifts:['Morning'], startTime:'06:00', endTime:'16:00', flagmen:1, meeting:'Wainwright yard office',
+    billing:'Network Code', billingCode:'NET-0088-TR', excavation:'No', machinery:'Yes', distance:'On track',
+    notes:'Internal CN project. Supervisor has full discretion on flagman selection.', status:'New',
+    qualifications:[], locateUploaded:false,
+    chat:[]
+  },
+};
+
+function loadRequest(id) {
+  r = requestData[id];
+  if (!r) { document.getElementById('req-detail-panel').innerHTML = `<div class="card" style="padding:20px;">Request ${id} details not available.</div>`; return; }
+  statusBadge = {New:'badge-pending',  'Under Review':'badge-inprogress', Approved:'badge-approved', Rejected:'badge-rejected'}[r.status] || 'badge-pending';
+  const isApproved = r.status === 'Approved';
+  document.getElementById('req-detail-panel').innerHTML = `
+    <div class="card">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>${id} — ${r.company}</span>
+        <span class="badge ${statusBadge}">${r.status}</span>
+      </div>
+      <div class="card-body" style="font-size:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
+          <div><strong>Contact:</strong> ${r.contact}</div>
+          <div><strong>Phone:</strong> ${r.phone}</div>
+          <div><strong>Email:</strong> ${r.email}</div>
+          <div><strong>Permit #:</strong> ${r.permit}</div>
+          <div><strong>Subdivision:</strong> ${r.sub}</div>
+          <div><strong>MP Range:</strong> ${r.mpStart} – ${r.mpEnd}</div>
+          <div><strong>Work Location:</strong> ${r.location}</div>
+          <div><strong>Work Description:</strong> ${r.work}</div>
+          <div><strong>Dates:</strong> ${r.start} – ${r.end} (${r.days} days)</div>
+          <div><strong>Shifts:</strong> ${r.shifts.length ? r.shifts.join(', ') : 'Not specified'}</div>
+          <div><strong>Shift Times:</strong> ${r.startTime} – ${r.endTime}</div>
+          <div><strong>Flagmen Needed:</strong> ${r.flagmen}</div>
+          <div><strong>Meeting Point:</strong> ${r.meeting}</div>
+          <div><strong>Billing:</strong> ${r.billing} — ${r.billingCode}</div>
+          <div><strong>Excavation:</strong> ${r.excavation}</div>
+          <div><strong>Machinery:</strong> ${r.machinery}</div>
+          <div><strong>Distance from Track:</strong> ${r.distance}</div>
+        </div>
+        ${r.locateUploaded ? `<div style="margin-bottom:10px;"><button class="btn btn-xs btn-primary" onclick="openModal('modal-locate')">📄 View Locate</button> <button class="btn btn-xs btn-secondary" onclick="toast('Locate document downloaded','success')">⬇ Download</button></div>` : ''}
+        <div style="margin-bottom:8px;font-size:11px;color:var(--text-muted);">${r.notes}</div>
+        ${r.status === 'New' || r.status === 'Under Review' ? `
+        <div style="margin-bottom:10px;">
+          <div style="font-weight:700;font-size:12px;margin-bottom:6px;">Required Qualifications for this Job:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-tigs"> TIGS</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-cror"> CROR</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-erail"> eRail Safe</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;"><input type="checkbox" id="req-qual-formb"> Form B</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-approve btn-sm" onclick="approveRequest('${id}')">✓ Approve</button>
+          <button class="btn btn-primary btn-sm ${isApproved?'':'btn-disabled'}" id="assign-btn-${id}" ${isApproved?'':'disabled title="Approve the request first"'} onclick="openInterestModal()">👥 Assign Flagman</button>
+          <button class="btn btn-xs btn-primary" onclick="openChatThread('${id}')">💬 Message Requester</button>
+          <button class="btn btn-danger btn-sm" onclick="toast('Request rejected','warning')">✕ Reject</button>
+        </div>` : `
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="openInterestModal()">👥 Assign Flagman</button>
+          <button class="btn btn-xs btn-primary" onclick="openChatThread('${id}')">💬 Message Requester</button>
+        </div>`}
+      </div>
+    </div>`;
+}
+
+// approveRequest: defined in second script block
+
+// ═══════════════════════════════════════════════════════════ UNIFIED ASSIGNMENT WIZARD
+let wizardStep = 1;
+let wizardData = { jobTitle:'', allowedShifts:[], selectedShift:'', shiftType:'regular', startDate:'', endDate:'', selectedFlagmen:[], aaCode:'0100', aaDesc:'Regular time' };
+
+const aaRules = {
+  'regular-morning':'0100','regular-afternoon':'0210','regular-night':'0220',
+  'overtime-morning':'0204','overtime-afternoon':'0214','overtime-night':'0224',
+};
+const aaDescs = {
+  '0100':'Regular time','0210':'2nd shift differential','0220':'3rd shift differential',
+  '0204':'Overtime','0214':'Overtime w/2nd shift','0224':'Overtime w/3rd shift',
+};
+
+const interestData = [
+  {name:'Beaumont, Claude',id:'CN-1061',type:'CN',cycle:'9&5',ab:'A',seniority:4,distance:12,hours14:72,interest:'Regular',shift:'Morning',conflict:false},
+  {name:'Kowalski, Piotr',id:'CN-1065',type:'CN',cycle:'5&2',ab:'Fixed',seniority:2,distance:8,hours14:56,interest:'Regular',shift:'Morning',conflict:false},
+  {name:'Ferreira, Marco',id:'CN-1053',type:'CN',cycle:'8&6',ab:'B',seniority:9,distance:25,hours14:88,interest:'OT',shift:'Morning',conflict:false},
+  {name:'Yamamoto, Dean',id:'CN-1058',type:'CN',cycle:'8&6',ab:'B',seniority:12,distance:30,hours14:118,interest:'OT',shift:'Night',conflict:true,conflictDays:'Jun 12–14'},
+  {name:'Varga, Stefan',id:'CTR-2005',type:'CTR',cycle:'9&5',ab:'A',seniority:3,distance:15,hours14:40,interest:'Regular',shift:'Morning',conflict:false},
+  {name:'Marchetti, Giulio',id:'CN-1063',type:'CN',cycle:'9&5',ab:'B',seniority:13,distance:45,hours14:32,interest:'None',shift:'—',conflict:false},
+  {name:'Larsson, Erik',id:'CN-1052',type:'CN',cycle:'5&2',ab:'Fixed',seniority:7,distance:20,hours14:60,interest:'None',shift:'—',conflict:false},
+  {name:'Okafor, James',id:'CN-1049',type:'CN',cycle:'5&2',ab:'Fixed',seniority:10,distance:35,hours14:48,interest:'None',shift:'—',conflict:false},
+];
+
+let interestSort = 'seniority';
+let selectedFlagmenIds = [];
+
+function openInterestModal(allowedShifts) {
+  wizardStep = 1;
+  wizardData.allowedShifts = allowedShifts || [];
+  selectedFlagmenIds = [];
+  openModal('modal-assign-wizard');
+  renderWizardStep();
+}
+
+function renderWizardStep() {
+  // Update step indicators
+  for (let i = 1; i <= 4; i++) {
+    el = document.getElementById('ws'+i);
+    if (!el) continue;
+    el.className = i < wizardStep ? 'wstep wstep-done' : i === wizardStep ? 'wstep wstep-active' : 'wstep';
+  }
+  document.getElementById('wizard-back').style.display = wizardStep > 1 ? 'block' : 'none';
+  document.getElementById('wizard-next').textContent = wizardStep === 4 ? '✓ Confirm Assignment' : 'Next →';
+
+  body = document.getElementById('wizard-body');
+  if (wizardStep === 1) {
+    const shifts = wizardData.allowedShifts.length ? wizardData.allowedShifts : ['morning','afternoon','night'];
+    const shiftLabels = {morning:'Morning (07:00–15:00)',afternoon:'Afternoon (15:00–23:00)',night:'Night (23:00–07:00)'};
+    body.innerHTML = `
+      <h3 style="margin:0 0 14px;font-size:15px;">Step 1 — Job Details & Shift</h3>
+      ${wizardData.allowedShifts.length ? `<div class="alert alert-warning" style="font-size:12px;">⚠ This job was requested for specific shifts only. Shift selector is restricted.</div>` : ''}
+      <div class="form-grid-2">
+        <div class="form-group"><label>Job / Project</label><input class="form-control" id="wiz-job" type="text" value="PRJ-720312 — Northgate Utilities" placeholder="Job title or project number"></div>
+        <div class="form-group"><label>Shift Type</label>
+          <select class="form-control" id="wiz-type" onchange="updateWizAA()">
+            <option value="regular">Regular</option>
+            <option value="overtime">Overtime</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Shift</label>
+          <select class="form-control" id="wiz-shift" onchange="updateWizAA()">
+            ${shifts.map(s=>`<option value="${s}">${shiftLabels[s]||s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label>A/A Code <span style="font-size:11px;color:var(--text-muted);">(auto-calculated)</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input class="form-control" id="wiz-aa" type="text" value="0100" style="width:80px;">
+            <span id="wiz-aa-desc" style="font-size:11px;color:var(--text-muted);">Regular time</span>
+          </div>
+        </div>
+        <div class="form-group"><label>Start Date</label><input class="form-control" id="wiz-start" type="date" value="2026-06-09"></div>
+        <div class="form-group"><label>End Date</label><input class="form-control" id="wiz-end" type="date" value="2026-06-27"></div>
+        <div class="form-group"><label>Requester Start Time</label><input class="form-control" id="wiz-stime" type="time" value="07:00"></div>
+        <div class="form-group"><label>Requester End Time</label><input class="form-control" id="wiz-etime" type="time" value="15:00"></div>
+      </div>`;
+  } else if (wizardStep === 2) {
+    const sorted = [...interestData].sort((a,b) => {
+      if (interestSort === 'seniority') return a.seniority - b.seniority;
+      if (interestSort === 'proximity') return a.distance - b.distance;
+      if (interestSort === 'hours') return a.hours14 - b.hours14;
+      return (a.seniority * 0.4 + a.distance * 0.3 + (a.hours14/135)*100 * 0.3) - (b.seniority * 0.4 + b.distance * 0.3 + (b.hours14/135)*100 * 0.3);
+    });
+    body.innerHTML = `
+      <h3 style="margin:0 0 14px;font-size:15px;">Step 2 — Review Interest & Select Flagman</h3>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <span style="font-size:12px;font-weight:700;align-self:center;">Rank by:</span>
+        ${['seniority','proximity','hours','combined'].map(s=>`<button class="btn btn-sm ${interestSort===s?'btn-primary':'btn-secondary'}" onclick="interestSort='${s}';renderWizardStep()">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+      </div>
+      <div class="tbl-scroll">
+        <table class="tbl" style="font-size:11px;">
+          <thead><tr><th>#</th><th>Flagman</th><th>Type</th><th>Cycle</th><th>Seniority</th><th>Distance</th><th>14-Day Hours</th><th>Interest</th><th>Conflict</th><th>Select</th></tr></thead>
+          <tbody>
+            ${sorted.map((f,i)=>{
+              pct = Math.round(f.hours14/135*100);
+              barColor = pct >= 85 ? '#dc2626' : pct >= 65 ? '#d97706' : '#16a34a';
+              const isSelected = selectedFlagmenIds.includes(f.id);
+              const overCap = f.hours14 > 115;
+              return `<tr style="${isSelected?'background:#dbeafe;':''}">
+                <td>${i+1}</td>
+                <td><strong>${f.name}</strong><br><span style="color:var(--text-muted);">${f.id}</span></td>
+                <td><span class="badge ${f.type==='CN'?'badge-cn':'badge-contracted'}">${f.type}</span></td>
+                <td>${f.cycle} <span class="${f.ab==='A'?'cycle-badge-a':f.ab==='B'?'cycle-badge-b':'cycle-badge-52'}">${f.ab}</span></td>
+                <td>#${f.seniority}</td>
+                <td>${f.distance} km</td>
+                <td>
+                  <div style="font-size:10px;margin-bottom:2px;">${f.hours14}/135h</div>
+                  <div style="background:#e9ecef;border-radius:4px;height:6px;width:80px;"><div style="background:${barColor};height:6px;border-radius:4px;width:${pct}%;"></div></div>
+                  ${overCap?`<div style="font-size:9px;color:#d97706;">⚠ ~${Math.round((135-f.hours14)/10)} days max</div>`:''}
+                </td>
+                <td><span class="badge ${f.interest==='Regular'?'badge-inprogress':f.interest==='OT'?'badge-approved':'badge-pending'}">${f.interest}</span>${f.interest!=='None'?`<br><span style="font-size:9px;color:var(--text-muted);">${f.shift}</span>`:''}</td>
+                <td>${f.conflict?`<span style="color:#d97706;font-size:10px;" title="Overlap: ${f.conflictDays}">⚠ ${f.conflictDays}</span>`:'—'}</td>
+                <td><button class="btn btn-xs ${isSelected?'btn-approve':'btn-primary'}" onclick="toggleWizFlagman('${f.id}')">${isSelected?'✓ Selected':'Select'}</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${selectedFlagmenIds.length ? `<div class="alert alert-info" style="margin-top:10px;font-size:12px;">✓ Selected: <strong>${selectedFlagmenIds.join(', ')}</strong></div>` : ''}`;
+  } else if (wizardStep === 3) {
+    const primary = interestData.find(f => selectedFlagmenIds.includes(f.id)) || interestData[0];
+    start = new Date(2026, 5, 9), end = new Date(2026, 5, 27);
+    totalDays = Math.round((end - start) / 86400000) + 1;
+    let cycleHtml = '', offDays = [];
+    if (primary.cycle === '5&2') {
+      for (let d = 0; d < totalDays; d++) {
+        date = new Date(start); date.setDate(start.getDate() + d);
+        dow = date.getDay();
+        const isOff = dow === 0 || dow === 6;
+        if (isOff) offDays.push(date.toLocaleDateString('en-CA',{month:'short',day:'numeric',weekday:'short'}));
+        cycleHtml += `<div style="text-align:center;padding:4px 6px;border-radius:4px;font-size:10px;background:${isOff?'#f3f4f6':'#FFB6C1'};color:${isOff?'#6b7280':'#7b0021'};">
+          <div>${date.toLocaleDateString('en-CA',{weekday:'short'})}</div>
+          <div>${date.getDate()}</div>
+          <div>${isOff?'OFF':'ON'}</div>
+        </div>`;
+      }
+    } else {
+      onDays = primary.cycle === '9&5' ? 9 : 8;
+      const offDaysCount = primary.cycle === '9&5' ? 5 : 6;
+      const cycleLen = onDays + offDaysCount;
+      for (let d = 0; d < totalDays; d++) {
+        pos = d % cycleLen;
+        const isOff = pos >= onDays;
+        date = new Date(start); date.setDate(start.getDate() + d);
+        if (isOff) offDays.push(date.toLocaleDateString('en-CA',{month:'short',day:'numeric',weekday:'short'}));
+        const isOverlap = pos === onDays - 1 || pos === onDays;
+        cycleHtml += `<div style="text-align:center;padding:4px 6px;border-radius:4px;font-size:10px;background:${isOverlap?'#e9d5ff':isOff?'#f3f4f6':'#FFB6C1'};color:${isOverlap?'#5b21b6':isOff?'#6b7280':'#7b0021'};">
+          <div>${date.toLocaleDateString('en-CA',{weekday:'short'})}</div>
+          <div>${date.getDate()}</div>
+          <div>${isOverlap?'↔':''}${isOff?'OFF':'ON'}</div>
+        </div>`;
+      }
+    }
+    body.innerHTML = `
+      <h3 style="margin:0 0 14px;font-size:15px;">Step 3 — Cycle Breakdown & Off-Day Coverage</h3>
+      <div class="alert alert-info" style="font-size:12px;">Primary flagman: <strong>${primary.name}</strong> · ${primary.cycle} ${primary.ab !== 'Fixed' ? primary.ab+' Cycle' : '(Mon–Fri fixed)'}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;">${cycleHtml}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Legend: <span style="background:#FFB6C1;padding:1px 6px;border-radius:3px;">ON</span> <span style="background:#f3f4f6;padding:1px 6px;border-radius:3px;">OFF</span> <span style="background:#e9d5ff;padding:1px 6px;border-radius:3px;">↔ Overlap/Handoff</span></div>
+      ${offDays.length ? `
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--cn-dark);">⚠ Off-Cycle Days — Coverage Required (${offDays.length} days)</div>
+      <table class="tbl" style="font-size:11px;">
+        <thead><tr><th>Off-Cycle Date</th><th>Shift</th><th>Assign Coverage Flagman</th><th>Type</th><th>Action</th></tr></thead>
+        <tbody>
+          ${offDays.map((day,i)=>`<tr id="offday-row-${i}">
+            <td>${day}</td>
+            <td>Morning</td>
+            <td><select class="form-control" style="font-size:11px;" id="offday-sel-${i}" onchange="updateOffDayType(${i})">
+              <option value="">— Vacant —</option>
+              <option value="Ferreira, Marco|Regular">Ferreira, Marco (Regular)</option>
+              <option value="Kowalski, Piotr|Regular">Kowalski, Piotr (Regular)</option>
+              <option value="Yamamoto, Dean|OT">Yamamoto, Dean (OT)</option>
+              <option value="Varga, Stefan|OT">Varga, Stefan (OT)</option>
+            </select></td>
+            <td id="offday-type-${i}"><span style="color:var(--text-muted);">—</span></td>
+            <td><button class="btn btn-xs btn-approve" onclick="confirmOffDay(${i})">Confirm</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>` : '<div class="alert alert-info" style="font-size:12px;">No off-cycle days during this job span. No additional coverage needed.</div>'}`;
+  } else if (wizardStep === 4) {
+    body.innerHTML = `
+      <h3 style="margin:0 0 14px;font-size:15px;">Step 4 — Confirm Assignment</h3>
+      <div class="card" style="background:#f8f9fa;">
+        <div class="card-body" style="font-size:12px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><strong>Job:</strong> PRJ-720312 — Northgate Utilities</div>
+            <div><strong>Shift:</strong> Morning (Regular)</div>
+            <div><strong>Dates:</strong> Jun 9 – Jun 27, 2026</div>
+            <div><strong>A/A Code:</strong> <span style="background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700;">0100</span> — Regular time</div>
+            <div><strong>Shift Times:</strong> 07:00 – 15:00</div>
+            <div><strong>Flagmen Assigned:</strong> ${selectedFlagmenIds.length ? selectedFlagmenIds.join(', ') : 'None selected'}</div>
+          </div>
+          <div class="alert alert-warning" style="margin-top:12px;font-size:11px;">⚠ Regular hours = 10h/day. Any hours beyond 10h will be automatically recorded as a separate OT entry in the Daily Flagging Record.</div>
+        </div>
+      </div>`;
+  }
+}
+
+// toggleWizFlagman: defined in second script block (more complete)
+
+function updateWizAA() {
+  type = document.getElementById('wiz-type')?.value || 'regular';
+  shift = document.getElementById('wiz-shift')?.value || 'morning';
+  const key = `${type}-${shift}`;
+  const code = aaRules[key] || '0100';
+  const desc = aaDescs[code] || '';
+  const aaEl = document.getElementById('wiz-aa'); if(aaEl) aaEl.value = code;
+  descEl = document.getElementById('wiz-aa-desc'); if(descEl) descEl.textContent = desc;
+}
+
+function updateOffDayType(i) {
+  sel = document.getElementById('offday-sel-'+i);
+  typeEl = document.getElementById('offday-type-'+i);
+  if (!sel || !typeEl) return;
+  const val = sel.value;
+  if (!val) { typeEl.innerHTML = '<span style="color:var(--text-muted);">—</span>'; return; }
+  type = val.split('|')[1];
+  typeEl.innerHTML = `<span class="badge ${type==='Regular'?'badge-inprogress':'badge-approved'}">${type}</span>`;
+}
+
+// confirmOffDay: defined in second script block
+
+function wizardNext() {
+  if (wizardStep === 2 && selectedFlagmenIds.length === 0) { toast('Please select at least one flagman','warning'); return; }
+  if (wizardStep === 4) {
+    toast('Assignment confirmed ✓','success');
+    closeModal('modal-assign-wizard');
+    return;
+  }
+  wizardStep++;
+  renderWizardStep();
+}
+
+function wizardBack() {
+  if (wizardStep > 1) { wizardStep--; renderWizardStep(); }
+}
+
+// ═══════════════════════════════════════════════════════════ FLAGMAN MODALS
+function openAddFlagmanModal(type) {
+  document.getElementById('flagman-modal-title').textContent = type === 'cn' ? 'Add CN Flagman' : 'Add Contracted Flagman';
+  document.getElementById('company-group').style.display = type === 'contracted' ? 'block' : 'none';
+  toggleCycleAB();
+  openModal('modal-add-flagman');
+}
+function openEditFlagmanModal(name) {
+  document.getElementById('flagman-modal-title').textContent = `Edit — ${name}`;
+  document.getElementById('company-group').style.display = 'none';
+  openModal('modal-add-flagman');
+}
+// toggleCycleAB: defined in second script block
+
+// ═══════════════════════════════════════════════════════════ VACATION
+// calcVacDays: defined in second script block
+
+// ═══════════════════════════════════════════════════════════ CHECKOUT
+checkoutRow = null;
+// openCheckoutModal: defined in second script block
+// calcCheckoutHours: defined in second script block
+// confirmCheckout: defined in second script block
+
+// ═══════════════════════════════════════════════════════════ CHAT
+chatData = {
+  'REQ-041': [
+    {from:'requester',name:'R. Kowalczyk',time:'May 30, 10:14 AM',msg:'Hello, we submitted REQ-041 for the Cascade Sub work. Can you confirm receipt?'},
+    {from:'supervisor',name:'Taylor, Sandra',time:'May 30, 11:02 AM',msg:'Confirmed — we have received your request. Under review.'},
+    {from:'requester',name:'R. Kowalczyk',time:'Jun 2, 9:30 AM',msg:'Any update? We need to confirm our crew by Jun 6.'},
+    {from:'supervisor',name:'Taylor, Sandra',time:'Jun 2, 10:15 AM',msg:'We are reviewing availability now. Will confirm by Jun 5.'},
+  ],
+  'REQ-040': [
+    {from:'requester',name:'M. Beauchamp',time:'Jun 1, 8:00 AM',msg:'Hi, submitting REQ-040 for the Wainwright track renewal. Please advise on flagman availability.'},
+    {from:'supervisor',name:'Taylor, Sandra',time:'Jun 1, 9:30 AM',msg:'Received. We will review and get back to you by Jun 3.'},
+  ],
+};
+// openChatThread: defined in second script block
+// sendChatMsg: defined in second script block
+
+// ═══════════════════════════════════════════════════════════ MISC
+function toggleBillingField() {
+  type = document.getElementById('billing-type')?.value;
+  const label = document.getElementById('billing-code-label');
+  input = document.getElementById('billing-code');
+  if (label) label.textContent = type;
+  if (input) input.placeholder = `Enter ${type?.toLowerCase() || 'code'}`;
+}
+// toggleLocateUpload: defined in second script block
+// submitRequest: defined in second script block
+// filterMyReqs: defined in second script block
+
+// ═══════════════════════════════════════════════════════════ INIT
 </script>
-
-<!-- DAY DETAIL MODAL -->
-<div class="modal-overlay" id="modal-day-detail">
-  <div class="modal" style="max-width:800px;width:95%;">
-    <div class="modal-header">
-      <h3 id="day-modal-title">Flagmen on Date</h3>
-      <button class="modal-close" onclick="closeModal('modal-day-detail')">✕</button>
-    </div>
-    <div class="modal-body" id="day-modal-body" style="max-height:420px;overflow-y:auto;"></div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-day-detail')">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT COMPANY MODAL -->
-<div class="modal-overlay" id="modal-edit-company">
-  <div class="modal" style="max-width:480px;width:95%;">
-    <div class="modal-header">
-      <h3>Edit Company</h3>
-      <button class="modal-close" onclick="closeModal('modal-edit-company')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label>Company Name</label><input class="form-control" id="edit-company-name" type="text"></div>
-      <div class="form-group"><label>Type</label><select class="form-control"><option>External</option><option>Internal</option></select></div>
-      <div class="form-group"><label>Primary Subdivision</label><select class="form-control"><option>Coquitlam</option><option>Wainwright</option><option>Edson</option><option>Jasper</option><option>Biggar</option><option>Hope</option><option>Cascade</option></select></div>
-      <div class="form-group"><label>Contact Name</label><input class="form-control" type="text" placeholder="Primary contact"></div>
-      <div class="form-group"><label>Contact Email</label><input class="form-control" type="email" placeholder="email@company.com"></div>
-      <div class="form-group"><label>Status</label><select class="form-control"><option>Active</option><option>Inactive</option><option>Under Review</option></select></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="toast('Company saved','success');closeModal('modal-edit-company')">💾 Save Changes</button>
-      <button class="btn btn-secondary" onclick="closeModal('modal-edit-company')">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<div id="notif-panel" style="display:none;position:fixed;top:56px;right:16px;width:340px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:9999;max-height:420px;overflow-y:auto;">
-  <div style="padding:14px 18px;border-bottom:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center;">
-    <strong style="font-size:14px;">Notifications</strong>
-    <span style="font-size:12px;color:#6b7280;">3 unread</span>
-  </div>
-  <div style="padding:0;">
-    <div style="padding:12px 18px;border-bottom:1px solid #f9fafb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
-      <div style="font-size:13px;font-weight:600;color:#111827;">⚠️ Overlap Alert</div>
-      <div style="font-size:12px;color:#6b7280;margin-top:2px;">Tremblay / Callahan overlap on PRJ-720312 · Jun 4 PM</div>
-      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Today, 8:02 AM</div>
-    </div>
-    <div style="padding:12px 18px;border-bottom:1px solid #f9fafb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
-      <div style="font-size:13px;font-weight:600;color:#111827;">📥 New Request</div>
-      <div style="font-size:12px;color:#6b7280;margin-top:2px;">REQ-042 submitted by Metro Water Auth. — Coquitlam Sub</div>
-      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Today, 7:45 AM</div>
-    </div>
-    <div style="padding:12px 18px;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
-      <div style="font-size:13px;font-weight:600;color:#111827;">⏰ OT Window Closing</div>
-      <div style="font-size:12px;color:#6b7280;margin-top:2px;">OT availability window closes Friday Jun 6 at 5 PM. 8 flagmen have not responded.</div>
-      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Jun 3, 4:00 PM</div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
