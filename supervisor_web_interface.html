@@ -2232,7 +2232,8 @@ function openReviewModal(id) {
   openModal('review-modal');
 }
 
-function approveRequest() {
+function approveRequest(reqId) {
+  reqId = reqId || 'this request';
   if (currentReviewId && reqData[currentReviewId]) {
     reqData[currentReviewId].status = 'approved';
   }
@@ -2643,6 +2644,14 @@ function wizBack() {
 }
 
 function toggleWizFlagman(id, name, cycle, group) {
+  // Support both wizard systems: openInterestModal uses selectedFlagmenIds, openWizard uses wizData
+  if (typeof selectedFlagmenIds !== 'undefined') {
+    const idx = selectedFlagmenIds.indexOf(id);
+    if (idx > -1) selectedFlagmenIds.splice(idx, 1);
+    else selectedFlagmenIds.push(id);
+    renderWizardStep();
+    return;
+  }
   const idx = wizData.selectedFlagmen.indexOf(id);
   if (idx > -1) wizData.selectedFlagmen.splice(idx, 1);
   else wizData.selectedFlagmen.push(id);
@@ -2947,7 +2956,39 @@ function openAssignWizard(jobId) {
   toast('Assign wizard for '+jobId+' opened','success');
 }
 function openJobDetail(jobId) {
-  toast('Job '+jobId+' details opened','success');
+  // Job data lookup
+  const jobs = {
+    'PRJ-720312': { company:'Northgate Utilities', sub:'Coquitlam', mp:'48.2–49.5', shifts:['Morning'], dates:'May 28–Jun 10', days:14, req:1, assigned:'Tremblay, Luc', status:'Active', notes:'⚠ Overlap: Callahan, Brett (B-cycle) overlaps Jun 4 PM shift.' },
+    'PRJ-720415': { company:'Ridgeline Construction', sub:'Wainwright', mp:'112.0–113.4', shifts:['Afternoon'], dates:'Jun 1–14', days:14, req:1, assigned:'Hartley, Marcus', status:'Active', notes:'' },
+    'PRJ-720890': { company:'Westfield Pipeline', sub:'Edson', mp:'220.5–221.0', shifts:['Night'], dates:'Jun 2–16', days:15, req:1, assigned:'Petrov, Daniel', status:'Active', notes:'' },
+    'PRJ-721100': { company:'Apex Energy Corp', sub:'Kamloops', mp:'88.0–89.2', shifts:['Morning'], dates:'Jun 9–20', days:12, req:1, assigned:'—', status:'Unassigned', notes:'' },
+    'PRJ-721250': { company:'Meridian Rail Services', sub:'Cascade', mp:'31.0–32.5', shifts:['Morning','Afternoon'], dates:'Jun 5–18', days:14, req:2, assigned:'Beaumont, Claude · Kowalski, Piotr', status:'Active', notes:'' },
+    'PRJ-721400': { company:'Stonebridge Excavation', sub:'Wainwright', mp:'108.0–110.2', shifts:['Morning','Afternoon','Night'], dates:'Jun 3–21', days:19, req:3, assigned:'Larsson, Erik · Okafor, James · Dubois, Remi', status:'Active', notes:'' },
+    'PRJ-721600': { company:'Summit Rail Services', sub:'Revelstoke', mp:'155.0–156.0', shifts:['Morning'], dates:'Jun 8–15', days:8, req:1, assigned:'—', status:'Unassigned', notes:'' },
+    'PRJ-721750': { company:'Clearwater Land Authority', sub:'Clearwater', mp:'72.5–73.0', shifts:['Night'], dates:'Jun 10–24', days:15, req:1, assigned:'—', status:'Unassigned', notes:'' },
+    'PRJ-721900': { company:'Highpoint Infrastructure', sub:'Cascade', mp:'28.0–30.0', shifts:['Morning','Afternoon'], dates:'Jun 6–19', days:14, req:2, assigned:'Nguyen, Kevin · Marchetti, Giulio', status:'Active', notes:'' },
+    'PRJ-722100': { company:'Pacific Telecom', sub:'Edson', mp:'215.0–216.5', shifts:['Morning'], dates:'Jun 4–11', days:8, req:1, assigned:'Yamamoto, Dean', status:'Active', notes:'' },
+    'PRJ-722300': { company:'Prairie Municipal Works', sub:'Wainwright', mp:'125.0–126.0', shifts:['Afternoon'], dates:'Jun 9–13', days:5, req:1, assigned:'—', status:'Unassigned', notes:'' },
+  };
+  const j = jobs[jobId] || { company:'Unknown', sub:'—', mp:'—', shifts:['—'], dates:'—', days:'—', req:1, assigned:'—', status:'Unknown', notes:'' };
+  const statusColors = { Active:'#16a34a', Unassigned:'#d97706', 'Pending Approval':'#2563eb', Delayed:'#dc2626' };
+  const shiftBadge = s => { const c={Morning:'#2563eb',Afternoon:'#d97706',Night:'#7c3aed'}; return `<span class="badge" style="background:${c[s]||'#6b7280'};color:#fff;margin-right:4px;">${s}</span>`; };
+  document.getElementById('jd-title').textContent = jobId;
+  document.getElementById('jd-status-badge').innerHTML = `<span class="badge" style="background:${statusColors[j.status]||'#6b7280'};color:#fff;">${j.status}</span>`;
+  document.getElementById('jd-job-num').textContent = jobId;
+  document.getElementById('jd-company').textContent = j.company;
+  document.getElementById('jd-subdivision').textContent = j.sub;
+  document.getElementById('jd-mp').textContent = 'MP ' + j.mp;
+  document.getElementById('jd-shifts').innerHTML = j.shifts.map(shiftBadge).join('');
+  document.getElementById('jd-dates').textContent = j.dates;
+  document.getElementById('jd-days').textContent = j.days + ' days';
+  document.getElementById('jd-req').textContent = j.req + ' flagman' + (j.req > 1 ? 'men' : '');
+  document.getElementById('jd-assigned').textContent = j.assigned;
+  const notesEl = document.getElementById('jd-notes');
+  if (j.notes) { notesEl.textContent = j.notes; notesEl.style.display = 'block'; } else { notesEl.style.display = 'none'; }
+  const assignBtn = document.getElementById('jd-assign-btn');
+  if (j.status === 'Unassigned') { assignBtn.style.display = ''; } else { assignBtn.style.display = 'none'; }
+  openModal('modal-job-detail');
 }
 // ===== COMPANY MODAL =====
 function openEditCompanyModal(name) {
@@ -3613,5 +3654,39 @@ function toggleBillingField() {
 
 // ═══════════════════════════════════════════════════════════ INIT
 </script>
+
+<!-- JOB DETAIL MODAL -->
+<div class="modal-overlay" id="modal-job-detail" onclick="if(event.target===this)closeModal('modal-job-detail')">
+  <div class="modal-box" style="max-width:680px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header">
+      <div>
+        <span id="jd-title" style="font-weight:700;font-size:16px;">Job Details</span>
+        <div id="jd-status-badge" style="margin-top:4px;"></div>
+      </div>
+      <button onclick="closeModal('modal-job-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid-2" style="margin-bottom:16px;">
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Job #</label><div id="jd-job-num" style="font-weight:700;font-size:15px;"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Company</label><div id="jd-company" style="font-weight:600;"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Subdivision</label><div id="jd-subdivision"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">MP Range</label><div id="jd-mp"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Shift(s)</label><div id="jd-shifts"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Dates</label><div id="jd-dates"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Duration</label><div id="jd-days"></div></div>
+        <div><label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Flagmen Required</label><div id="jd-req"></div></div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Assigned Flagmen</label>
+        <div id="jd-assigned" style="margin-top:4px;font-weight:600;"></div>
+      </div>
+      <div id="jd-notes" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px;font-size:12px;margin-bottom:12px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-job-detail')">Close</button>
+      <button class="btn btn-primary" id="jd-assign-btn" onclick="closeModal('modal-job-detail');openAssignWizard(document.getElementById('jd-job-num').textContent)">Assign Flagman</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
