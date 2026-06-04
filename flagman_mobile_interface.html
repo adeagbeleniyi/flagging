@@ -2,631 +2,544 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Flagging Scheduling System — Flagman Mobile App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CN Flagging — Flagman Mobile App</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --cn-red: #B5091D;
-    --cn-dark: #1A1A1A;
-    --cn-blue: #005A9C;
-    --cn-light-blue: #E8F1F9;
-    --bg: #F2F3F5;
-    --white: #FFFFFF;
-    --border: #E0E4EA;
-    --text-primary: #1A1A1A;
-    --text-secondary: #5E6778;
-    --text-muted: #9AA3B0;
-    --success: #1E7E34;
-    --success-bg: #D4EDDA;
-    --warning: #856404;
-    --warning-bg: #FFF3CD;
-    --danger: #B5091D;
-    --danger-bg: #F8D7DA;
-    --pink-on: #FFB6C1;
-    --light-blue-shift: #ADD8E6;
-    --dark-blue-shift: #1a3a6b;
-    --orange: #FFA500;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #1A1A1A;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 30px 16px;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-
-  /* ── PHONE FRAME ── */
-  .phone-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .phone-label { color: #aaa; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-  .phone {
-    width: 375px;
-    background: var(--bg);
-    border-radius: 40px;
-    overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0,0,0,.6), 0 0 0 2px #333;
-    position: relative;
-    min-height: 812px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ── STATUS BAR ── */
-  .status-bar {
-    background: var(--cn-dark);
-    color: #fff;
-    padding: 12px 24px 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-  .status-bar .notch {
-    width: 100px; height: 20px; background: var(--cn-dark);
-    border-radius: 0 0 12px 12px; margin: 0 auto;
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  }
-
-  /* ── APP HEADER ── */
-  .app-header {
-    background: var(--cn-dark);
-    padding: 14px 20px 16px;
-    flex-shrink: 0;
-  }
-  .app-header .greeting { color: #aaa; font-size: 12px; }
-  .app-header .name { color: #fff; font-size: 18px; font-weight: 700; margin-top: 2px; }
-  .app-header .sub { color: #888; font-size: 11px; margin-top: 2px; }
-  .header-row { display: flex; align-items: flex-start; justify-content: space-between; }
-  .avatar-circle {
-    width: 40px; height: 40px; background: var(--cn-blue); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0;
-  }
-
-  /* ── SCROLL CONTENT ── */
-  .scroll-content { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-
-  /* ── SECTION LABEL ── */
-  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin-bottom: -6px; }
-
-  /* ── TODAY CARD ── */
-  .today-card {
-    background: var(--cn-blue);
-    border-radius: 14px;
-    padding: 16px;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-  }
-  .today-card::before {
-    content: '';
-    position: absolute; top: -20px; right: -20px;
-    width: 100px; height: 100px;
-    background: rgba(255,255,255,.08);
-    border-radius: 50%;
-  }
-  .today-card .today-label { font-size: 11px; font-weight: 600; opacity: .7; text-transform: uppercase; letter-spacing: .5px; }
-  .today-card .today-job { font-size: 17px; font-weight: 700; margin-top: 4px; }
-  .today-card .today-detail { font-size: 12px; opacity: .85; margin-top: 4px; }
-  .today-card .today-time { font-size: 22px; font-weight: 700; margin-top: 8px; }
-  .today-card .today-location { font-size: 12px; opacity: .8; margin-top: 2px; }
-  .today-card .today-actions { display: flex; gap: 8px; margin-top: 14px; }
-  .today-action-btn {
-    flex: 1; padding: 9px; border-radius: 8px; font-size: 12px; font-weight: 600;
-    border: none; cursor: pointer; text-align: center;
-  }
-  .btn-white { background: #fff; color: var(--cn-blue); }
-  .btn-outline-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); }
-
-  /* ── ALERT CARD ── */
-  .alert-card {
-    background: #FFF3CD; border: 1px solid #FFD700; border-radius: 10px;
-    padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
-  }
-  .alert-card .alert-icon { font-size: 18px; flex-shrink: 0; }
-  .alert-card .alert-text { font-size: 12px; color: #5c3d00; font-weight: 500; line-height: 1.5; }
-  .alert-card .alert-title { font-weight: 700; font-size: 13px; color: #3d2800; margin-bottom: 2px; }
-
-  /* ── OVERTIME TOGGLE CARD ── */
-  .ot-card {
-    background: var(--white); border-radius: 14px; padding: 16px;
-    border: 2px solid var(--border);
-  }
-  .ot-card .ot-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-  .ot-card .ot-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
-  .ot-days { display: flex; flex-direction: column; gap: 8px; }
-  .ot-day-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 12px; border-radius: 8px; background: #f8f9fa; border: 1px solid var(--border);
-  }
-  .ot-day-info { display: flex; flex-direction: column; gap: 2px; }
-  .ot-day-name { font-size: 13px; font-weight: 600; }
-  .ot-day-date { font-size: 11px; color: var(--text-muted); }
-  .toggle-switch { position: relative; width: 44px; height: 24px; }
-  .toggle-switch input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background: #ccc; border-radius: 24px; transition: .3s;
-  }
-  .toggle-slider:before {
-    position: absolute; content: ""; height: 18px; width: 18px;
-    left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s;
-  }
-  input:checked + .toggle-slider { background: var(--cn-blue); }
-  input:checked + .toggle-slider:before { transform: translateX(20px); }
-  .ot-submit-btn {
-    width: 100%; margin-top: 12px; padding: 11px; background: var(--cn-red);
-    color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
-  }
-
-  /* ── UPCOMING JOBS ── */
-  .job-card {
-    background: var(--white); border-radius: 12px; padding: 14px;
-    border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;
-  }
-  .job-card-header { display: flex; align-items: flex-start; justify-content: space-between; }
-  .job-card-title { font-size: 14px; font-weight: 700; }
-  .job-card-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .shift-badge {
-    padding: 3px 9px; border-radius: 10px; font-size: 10px; font-weight: 700;
-    text-transform: uppercase; flex-shrink: 0;
-  }
-  .shift-day { background: #FFB6C1; color: #7a0020; }
-  .shift-night { background: #1a3a6b; color: #fff; }
-  .shift-ot-day { background: #ADD8E6; color: #003366; }
-  .job-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .jd-item { display: flex; flex-direction: column; gap: 1px; }
-  .jd-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: var(--text-muted); }
-  .jd-value { font-size: 12px; font-weight: 500; color: var(--text-primary); }
-  .job-card-actions { display: flex; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border); }
-  .jca-btn {
-    flex: 1; padding: 8px; border-radius: 7px; font-size: 11px; font-weight: 600;
-    cursor: pointer; border: 1px solid var(--border); background: #f8f9fa; color: var(--text-secondary);
-    text-align: center;
-  }
-  .jca-btn.primary { background: var(--cn-blue); color: #fff; border-color: var(--cn-blue); }
-
-  /* ── WEEKLY SCHEDULE VIEW ── */
-  .week-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-  .week-day {
-    flex-shrink: 0; width: 52px; border-radius: 10px; padding: 8px 6px;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    background: var(--white); border: 1px solid var(--border);
-  }
-  .week-day.active { background: var(--cn-blue); border-color: var(--cn-blue); }
-  .week-day.has-job { border-color: #FFB6C1; background: #fff5f7; }
-  .week-day.has-ot { border-color: #ADD8E6; background: #f0f8ff; }
-  .week-day .wd-name { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
-  .week-day.active .wd-name { color: rgba(255,255,255,.7); }
-  .week-day .wd-num { font-size: 16px; font-weight: 700; color: var(--text-primary); }
-  .week-day.active .wd-num { color: #fff; }
-  .week-day .wd-dot { width: 6px; height: 6px; border-radius: 50%; background: #FFB6C1; }
-  .week-day.has-ot .wd-dot { background: #ADD8E6; }
-  .week-day.active .wd-dot { background: rgba(255,255,255,.5); }
-  .week-day .wd-off { font-size: 9px; color: var(--text-muted); }
-
-  /* ── NOTIFICATIONS ── */
-  .notif-item {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 12px; background: var(--white); border-radius: 10px; border: 1px solid var(--border);
-  }
-  .notif-icon { font-size: 20px; flex-shrink: 0; }
-  .notif-content { flex: 1; }
-  .notif-title { font-size: 12px; font-weight: 700; }
-  .notif-body { font-size: 11px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
-  .notif-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-  .notif-unread { width: 8px; height: 8px; background: var(--cn-red); border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    background: var(--white); border-top: 1px solid var(--border);
-    display: flex; padding: 8px 0 20px; flex-shrink: 0;
-  }
-  .nav-tab {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    cursor: pointer; padding: 6px 0;
-  }
-  .nav-tab .nav-icon { font-size: 20px; }
-  .nav-tab .nav-text { font-size: 10px; font-weight: 600; color: var(--text-muted); }
-  .nav-tab.active .nav-text { color: var(--cn-blue); }
-  .nav-tab.active .nav-icon { filter: none; }
-  .nav-badge-dot {
-    position: relative; display: inline-block;
-  }
-  .nav-badge-dot::after {
-    content: ''; position: absolute; top: -2px; right: -4px;
-    width: 8px; height: 8px; background: var(--cn-red); border-radius: 50%;
-    border: 1.5px solid #fff;
-  }
-
-  /* ── SITE INFO SCREEN ── */
-  .site-section { display: flex; flex-direction: column; gap: 6px; }
-  .site-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .site-row:last-child { border-bottom: none; }
-  .site-key { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .4px; flex-shrink: 0; width: 130px; }
-  .site-val { font-size: 12px; font-weight: 500; color: var(--text-primary); text-align: right; flex: 1; }
-
-  /* ── PROFILE CARD ── */
-  .profile-card {
-    background: var(--cn-dark); border-radius: 14px; padding: 18px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .profile-avatar { width: 52px; height: 52px; background: var(--cn-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 700; flex-shrink: 0; }
-  .profile-name { color: #fff; font-size: 16px; font-weight: 700; }
-  .profile-sub { color: #aaa; font-size: 12px; margin-top: 2px; }
-  .profile-badge { display: inline-block; background: var(--cn-red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-top: 4px; }
-  .profile-stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .profile-stat { background: var(--white); border-radius: 10px; padding: 10px; text-align: center; }
-  .profile-stat .ps-val { font-size: 18px; font-weight: 700; color: var(--cn-blue); }
-  .profile-stat .ps-label { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .3px; margin-top: 2px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cn-red:#B5091D;--cn-dark:#1A1A1A;--cn-blue:#005A9C;
+  --cn-light-blue:#E8F1F9;--bg:#F0F2F5;--white:#FFFFFF;
+  --border:#DDE1E7;--text-primary:#1A1A1A;--text-secondary:#5E6778;
+  --text-muted:#9AA3B0;--success:#1E7E34;--success-bg:#D4EDDA;
+  --warning:#856404;--warning-bg:#FFF3CD;--danger:#B5091D;
+  --danger-bg:#F8D7DA;
+}
+body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:30px 20px;gap:24px;flex-wrap:wrap;}
+.phone-frame{width:390px;height:844px;background:var(--cn-dark);border-radius:44px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);flex-shrink:0;position:relative;overflow:hidden;}
+.phone-screen{width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;position:relative;}
+.status-bar{height:44px;background:var(--cn-dark);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;}
+.status-bar .time{color:#fff;font-size:15px;font-weight:600;}
+.status-bar .icons{color:#fff;font-size:12px;display:flex;gap:6px;align-items:center;}
+.app-header{background:var(--cn-dark);padding:14px 20px 16px;flex-shrink:0;}
+.app-header .greeting{color:#aaa;font-size:12px;}
+.app-header .name{color:#fff;font-size:18px;font-weight:700;margin:2px 0;}
+.app-header .meta{color:#aaa;font-size:11px;}
+.app-header .header-row{display:flex;align-items:flex-start;justify-content:space-between;}
+.notif-badge{background:var(--cn-red);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;}
+.bottom-nav{height:72px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:8px;}
+.nav-tab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px;border-radius:8px;}
+.nav-tab .icon{font-size:20px;}
+.nav-tab .label{font-size:10px;font-weight:600;color:var(--text-muted);}
+.nav-tab.active .label{color:var(--cn-blue);}
+.scroll-area{flex:1;overflow-y:auto;padding:16px;}
+.scroll-area::-webkit-scrollbar{display:none;}
+.card{background:var(--white);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.card-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;}
+.checkin-card{background:linear-gradient(135deg,var(--cn-blue),#003d6b);border-radius:14px;padding:18px;margin-bottom:14px;color:#fff;}
+.checkin-status{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;opacity:.8;margin-bottom:4px;}
+.checkin-job{font-size:16px;font-weight:700;margin-bottom:2px;}
+.checkin-sub{font-size:11px;opacity:.75;margin-bottom:14px;}
+.checkin-row{display:flex;gap:10px;}
+.checkin-btn{flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-checkin{background:#1E7E34;color:#fff;}
+.btn-checkout{background:var(--cn-red);color:#fff;}
+.btn-disabled{background:rgba(255,255,255,.2);color:rgba(255,255,255,.5);cursor:not-allowed;}
+.checkin-time{font-size:11px;opacity:.7;margin-top:8px;text-align:center;}
+.shift-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.shift-morning{background:#FFF9C4;color:#7a6000;}
+.shift-afternoon{background:#FFE0B2;color:#7a3500;}
+.shift-night{background:#E8EAF6;color:#283593;}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.detail-row:last-child{border-bottom:none;}
+.detail-label{font-size:11px;color:var(--text-muted);font-weight:500;}
+.detail-value{font-size:12px;font-weight:600;text-align:right;max-width:60%;}
+.mini-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-day{text-align:center;padding:5px 2px;border-radius:8px;font-size:10px;font-weight:600;}
+.cal-day .num{font-size:13px;font-weight:700;}
+.cal-day .dot{width:6px;height:6px;border-radius:50%;margin:2px auto 0;}
+.cal-today{background:var(--cn-blue);color:#fff;border-radius:8px;}
+.cal-on{background:#FFB6C1;}
+.cal-off{background:#f0f0f0;color:#aaa;}
+.cal-vacation{background:#FFA500;color:#fff;}
+.cal-ot{background:#ADD8E6;}
+.interest-card{border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+.interest-card.expressed{border-color:var(--success);background:var(--success-bg);}
+.interest-company{font-size:14px;font-weight:700;}
+.interest-meta{font-size:11px;color:var(--text-muted);margin:3px 0 8px;}
+.interest-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.tag{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.tag-sub{background:var(--cn-light-blue);color:var(--cn-blue);}
+.tag-urgent{background:var(--danger-bg);color:var(--danger);}
+.interest-actions{display:flex;gap:8px;}
+.btn-interest{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;}
+.btn-regular{background:var(--cn-blue);color:#fff;}
+.btn-ot{background:var(--cn-dark);color:#fff;}
+.notif-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.notif-item:last-child{border-bottom:none;}
+.notif-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.notif-icon.red{background:var(--danger-bg);}
+.notif-icon.blue{background:var(--cn-light-blue);}
+.notif-icon.green{background:var(--success-bg);}
+.notif-icon.orange{background:#FFF3CD;}
+.notif-title{font-size:12px;font-weight:700;}
+.notif-body{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.notif-time{font-size:10px;color:var(--text-muted);margin-top:3px;}
+.notif-unread{background:var(--cn-light-blue);border-radius:8px;padding:8px;}
+.profile-header{background:linear-gradient(135deg,var(--cn-dark),#2d2d2d);border-radius:14px;padding:20px;margin-bottom:14px;color:#fff;text-align:center;}
+.profile-avatar{width:64px;height:64px;background:var(--cn-blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto 10px;}
+.profile-name{font-size:18px;font-weight:700;}
+.profile-meta{font-size:12px;color:#aaa;margin-top:3px;}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+.pstat{background:rgba(255,255,255,.1);border-radius:8px;padding:8px;text-align:center;}
+.pstat-val{font-size:18px;font-weight:700;}
+.pstat-label{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;}
+.qual-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.qual-row:last-child{border-bottom:none;}
+.qual-name{font-size:12px;font-weight:600;}
+.qual-dates{font-size:10px;color:var(--text-muted);}
+.qual-status{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.qs-valid{background:var(--success-bg);color:var(--success);}
+.qs-expiring{background:var(--warning-bg);color:var(--warning);}
+.screen-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--border);}
+.app-alert{padding:10px 16px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.app-alert.warning{background:#FFF3CD;color:#856404;}
+.app-alert.info{background:var(--cn-light-blue);color:var(--cn-blue);}
+.filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;white-space:nowrap;cursor:pointer;}
+.filter-chip.active{background:var(--cn-blue);color:#fff;border-color:var(--cn-blue);}
+.mobile-pagination{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;}
+.pg-dot{width:8px;height:8px;border-radius:50%;background:var(--border);}
+.pg-dot.active{background:var(--cn-blue);}
+#m-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--cn-dark);color:#fff;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;display:none;z-index:9999;white-space:nowrap;}
+.screen-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;text-align:center;margin-top:8px;}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN 1: HOME / DASHBOARD
-═══════════════════════════════════════════ -->
-<div class="phone-wrapper">
-  <div class="phone-label">Screen 1 — Home</div>
-  <div class="phone">
-    <div class="status-bar">
-      <span>9:41 AM</span>
-      <span>●●●●◌ WiFi 🔋</span>
-    </div>
+<!-- ══════════ SCREEN 1: HOME / CHECK-IN ══════════ -->
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+<div class="screen-title">Screen 1 — Home &amp; Check-In</div>
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
     <div class="app-header">
       <div class="header-row">
         <div>
           <div class="greeting">Good morning,</div>
-          <div class="name">Wade O'Hearn</div>
-          <div class="sub">BC Flagman · 8&amp;6 Cycle · Seniority #12</div>
+          <div class="name">Daneel Jiawan</div>
+          <div class="meta">Seniority #5 · 5&amp;2 Cycle · BC Region</div>
         </div>
-        <div class="avatar-circle">WO</div>
+        <div class="notif-badge" onclick="mToast('3 unread notifications')">3</div>
       </div>
     </div>
-    <div class="scroll-content">
+    <div class="app-alert info">📅 On cycle. Next off days: Jun 7–8.</div>
+    <div class="scroll-area">
+      <div class="screen-label">Wednesday, Jun 4, 2026</div>
 
-      <!-- TODAY'S JOB -->
-      <div class="section-label">Today's Assignment</div>
-      <div class="today-card">
-        <div class="today-label">📍 Active Job</div>
-        <div class="today-job">Elworthy — Yale FRB</div>
-        <div class="today-detail">Fraser River Bridge · Night Shift · 0600–1700</div>
-        <div class="today-time">Report at 05:45 AM</div>
-        <div class="today-location">📍 B&amp;S Building, North Side FRB</div>
-        <div class="today-actions">
-          <button class="today-action-btn btn-white">📋 Site Info</button>
-          <button class="today-action-btn btn-outline-white">📞 Field Contact</button>
+      <!-- CHECK-IN / CHECK-OUT -->
+      <div class="checkin-card">
+        <div class="checkin-status">🟢 Currently On Shift</div>
+        <div class="checkin-job">Elworthy — Yale Subdivision</div>
+        <div class="checkin-sub">MP 118.0–118.5 · Morning · 06:00–14:00 · A/A Code: <strong>A1</strong></div>
+        <div class="checkin-row">
+          <button class="checkin-btn btn-disabled" disabled>✓ Checked In 06:02 AM</button>
+          <button class="checkin-btn btn-checkout" onclick="mToast('Checked out at 14:00 ✓')">Check Out</button>
+        </div>
+        <div class="checkin-time">Duration so far: 7h 39m · Location: CN Yard Gate, Hope BC</div>
+      </div>
+
+      <!-- TODAY'S DETAILS -->
+      <div class="card">
+        <div class="card-title">📋 Today's Assignment</div>
+        <div class="detail-row"><span class="detail-label">Company</span><span class="detail-value">Elworthy</span></div>
+        <div class="detail-row"><span class="detail-label">Subdivision</span><span class="detail-value">Yale</span></div>
+        <div class="detail-row"><span class="detail-label">MP Range</span><span class="detail-value">118.0 – 118.5</span></div>
+        <div class="detail-row"><span class="detail-label">Meeting Point</span><span class="detail-value" style="color:var(--cn-red);">CN Yard Gate, Hope BC</span></div>
+        <div class="detail-row"><span class="detail-label">Shift</span><span class="detail-value"><span class="shift-badge shift-morning">Morning 06:00–14:00</span></span></div>
+        <div class="detail-row"><span class="detail-label">A/A Code</span><span class="detail-value"><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:monospace;">A1</span></span></div>
+        <div class="detail-row"><span class="detail-label">Field Contact</span><span class="detail-value">Mike Elworthy · 604-555-7788</span></div>
+        <div class="detail-row"><span class="detail-label">Hotel</span><span class="detail-value">Best Western Hope</span></div>
+        <div class="detail-row"><span class="detail-label">Dates</span><span class="detail-value">Jun 1 – Jun 14</span></div>
+      </div>
+
+      <!-- MINI CALENDAR -->
+      <div class="card">
+        <div class="card-title">📅 June 2026 — My Schedule</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Previous month')">‹</button>
+          <span style="font-size:12px;font-weight:700;">June 2026</span>
+          <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Next month')">›</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:9px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="mini-cal">
+          <div class="cal-day cal-on"><div class="num">1</div></div>
+          <div class="cal-day cal-on"><div class="num">2</div></div>
+          <div class="cal-day cal-on"><div class="num">3</div></div>
+          <div class="cal-day cal-today"><div class="num">4</div></div>
+          <div class="cal-day cal-on"><div class="num">5</div></div>
+          <div class="cal-day cal-on"><div class="num">6</div></div>
+          <div class="cal-day cal-off"><div class="num">7</div></div>
+          <div class="cal-day cal-off"><div class="num">8</div></div>
+          <div class="cal-day cal-on"><div class="num">9</div></div>
+          <div class="cal-day cal-on"><div class="num">10</div></div>
+          <div class="cal-day cal-on"><div class="num">11</div></div>
+          <div class="cal-day cal-on"><div class="num">12</div></div>
+          <div class="cal-day cal-on"><div class="num">13</div></div>
+          <div class="cal-day cal-off"><div class="num">14</div></div>
+          <div class="cal-day cal-off"><div class="num">15</div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#FFB6C1;"></div>On Cycle</div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#FFA500;"></div>Vacation</div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#ADD8E6;"></div>OT</div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#e9ecef;"></div>Off</div>
         </div>
       </div>
 
-      <!-- ALERT -->
-      <div class="alert-card">
-        <div class="alert-icon">🔔</div>
-        <div class="alert-text">
-          <div class="alert-title">Job Update — Elworthy</div>
-          Start time changed to 05:45 AM tomorrow. Please review the updated site info.
-        </div>
-      </div>
-
-      <!-- WEEKLY MINI CALENDAR -->
-      <div class="section-label">This Week</div>
-      <div class="week-scroll">
-        <div class="week-day has-job"><div class="wd-name">Mon</div><div class="wd-num">2</div><div class="wd-dot"></div></div>
-        <div class="week-day active has-job"><div class="wd-name">Tue</div><div class="wd-num">3</div><div class="wd-dot"></div></div>
-        <div class="week-day has-job"><div class="wd-name">Wed</div><div class="wd-num">4</div><div class="wd-dot"></div></div>
-        <div class="week-day has-job"><div class="wd-name">Thu</div><div class="wd-num">5</div><div class="wd-dot"></div></div>
-        <div class="week-day has-job"><div class="wd-name">Fri</div><div class="wd-num">6</div><div class="wd-dot"></div></div>
-        <div class="week-day"><div class="wd-name">Sat</div><div class="wd-num">7</div><div class="wd-off">OFF</div></div>
-        <div class="week-day"><div class="wd-name">Sun</div><div class="wd-num">8</div><div class="wd-off">OFF</div></div>
-        <div class="week-day has-job"><div class="wd-name">Mon</div><div class="wd-num">9</div><div class="wd-dot"></div></div>
-        <div class="week-day has-job"><div class="wd-name">Tue</div><div class="wd-num">10</div><div class="wd-dot"></div></div>
-      </div>
-
-      <!-- UPCOMING JOBS -->
-      <div class="section-label">Upcoming Jobs</div>
-      <div class="job-card">
-        <div class="job-card-header">
-          <div>
-            <div class="job-card-title">Elworthy — Yale FRB</div>
-            <div class="job-card-sub">Jun 2 – Jun 14, 2026</div>
+      <!-- UPCOMING -->
+      <div class="card">
+        <div class="card-title">📆 Upcoming Job</div>
+        <div style="border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span class="shift-badge shift-morning">Morning</span>
+            <span style="font-size:10px;color:var(--text-muted);">Jun 9 – Jun 13</span>
           </div>
-          <span class="shift-badge shift-night">Night</span>
-        </div>
-        <div class="job-details-grid">
-          <div class="jd-item"><div class="jd-label">Subdivision</div><div class="jd-value">Yale</div></div>
-          <div class="jd-item"><div class="jd-label">Mileage</div><div class="jd-value">118</div></div>
-          <div class="jd-item"><div class="jd-label">Hours</div><div class="jd-value">0600–1700</div></div>
-          <div class="jd-item"><div class="jd-label">Duration</div><div class="jd-value">14 days</div></div>
-        </div>
-        <div class="job-card-actions">
-          <div class="jca-btn">📋 Site Info</div>
-          <div class="jca-btn">🗺️ Map</div>
-          <div class="jca-btn primary">📞 Contact</div>
+          <div style="font-size:13px;font-weight:700;">Milestone Construction</div>
+          <div style="font-size:11px;color:var(--text-muted);margin:3px 0 8px;">Lillooet Sub · MP 200.8–202.0</div>
+          <div class="detail-row" style="padding:4px 0;"><span class="detail-label">A/A Code</span><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:monospace;">A1</span></div>
         </div>
       </div>
-
     </div>
     <div class="bottom-nav">
-      <div class="nav-tab active"><div class="nav-icon">🏠</div><div class="nav-text">Home</div></div>
-      <div class="nav-tab"><div class="nav-icon">📅</div><div class="nav-text">Schedule</div></div>
-      <div class="nav-tab"><div class="nav-icon nav-badge-dot">✅</div><div class="nav-text">Overtime</div></div>
-      <div class="nav-tab"><div class="nav-icon nav-badge-dot">🔔</div><div class="nav-text">Alerts</div></div>
-      <div class="nav-tab"><div class="nav-icon">👤</div><div class="nav-text">Profile</div></div>
+      <div class="nav-tab active"><div class="icon">🏠</div><div class="label">Home</div></div>
+      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
+      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
+      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
+      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN 2: OVERTIME AVAILABILITY
-═══════════════════════════════════════════ -->
-<div class="phone-wrapper">
-  <div class="phone-label">Screen 2 — Overtime Availability</div>
-  <div class="phone">
-    <div class="status-bar">
-      <span>9:41 AM</span>
-      <span>●●●●◌ WiFi 🔋</span>
-    </div>
+<!-- ══════════ SCREEN 2: AVAILABLE JOBS / SHOW INTEREST ══════════ -->
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+<div class="screen-title">Screen 2 — Jobs &amp; Show Interest</div>
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
     <div class="app-header">
       <div class="header-row">
         <div>
-          <div class="greeting">Overtime Availability</div>
-          <div class="name">Week of Jun 7, 2026</div>
-          <div class="sub">Your off-cycle days — please respond by Friday 5 PM</div>
+          <div class="greeting">Available Jobs</div>
+          <div class="name">Show Interest</div>
+          <div class="meta">3 new jobs open</div>
         </div>
+        <div class="notif-badge" onclick="mToast('3 unread notifications')">3</div>
       </div>
     </div>
-    <div class="scroll-content">
+    <div class="scroll-area">
+      <div class="screen-label">Express Interest in Open Jobs</div>
+      <div class="filter-row">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip" onclick="mToast('Filtered: BC')">BC</div>
+        <div class="filter-chip" onclick="mToast('Filtered: Alberta')">Alberta</div>
+        <div class="filter-chip" onclick="mToast('Filtered: Morning')">Morning</div>
+        <div class="filter-chip" onclick="mToast('Filtered: Night')">Night</div>
+      </div>
 
-      <div class="alert-card" style="background:#E8F1F9;border-color:#b3d4f5;">
-        <div class="alert-icon">ℹ️</div>
-        <div class="alert-text" style="color:#003366;">
-          <div class="alert-title" style="color:#005A9C;">Reminder from Supervisor</div>
-          Please indicate your availability for overtime shifts next week. Toggle ON for days you are available.
+      <!-- JOB 1 — Interest already expressed -->
+      <div class="interest-card expressed">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div class="interest-company">BC Hydro</div>
+          <span style="font-size:10px;font-weight:700;color:var(--success);">✓ Interested</span>
+        </div>
+        <div class="interest-meta">Lillooet Sub · MP 200.8–202.0 · Jun 9–13 · 5 days</div>
+        <div class="interest-tags">
+          <span class="tag tag-sub">Lillooet</span>
+          <span class="tag" style="background:#FFF9C4;color:#7a6000;">Morning</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">5 days</span>
+          <span class="tag tag-urgent">Urgent</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Your interest: <strong style="color:var(--success);">Regular Hours</strong> · Qualifications: TIGS ✓</div>
+        <button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="mToast('Interest withdrawn')">✓ Interested (Regular) — Tap to Withdraw</button>
+      </div>
+
+      <!-- JOB 2 -->
+      <div class="interest-card" id="job2-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div class="interest-company">Parsons Inc.</div>
+          <span style="font-size:10px;color:var(--text-muted);">Posted Jun 3</span>
+        </div>
+        <div class="interest-meta">Bulkley Sub · MP 88.0–89.5 · Jun 16–25 · 10 days</div>
+        <div class="interest-tags">
+          <span class="tag tag-sub">Bulkley</span>
+          <span class="tag" style="background:#FFE0B2;color:#7a3500;">Afternoon</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">10 days</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: TIGS · CROR</div>
+        <div class="interest-actions">
+          <button class="btn-interest btn-regular" onclick="expressInterest('job2-card','Regular Hours')">👋 Regular Hours</button>
+          <button class="btn-interest btn-ot" onclick="expressInterest('job2-card','Overtime')">⏰ Overtime</button>
         </div>
       </div>
 
-      <div class="ot-card">
-        <div class="ot-title">✅ Select Your Available Days</div>
-        <div class="ot-sub">Your off-cycle days for the week of Jun 7</div>
-        <div class="ot-days">
-          <div class="ot-day-row">
-            <div class="ot-day-info">
-              <div class="ot-day-name">Saturday</div>
-              <div class="ot-day-date">June 7, 2026 · Day Shift</div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked>
-              <span class="toggle-slider"></span>
+      <!-- JOB 3 -->
+      <div class="interest-card" id="job3-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div class="interest-company">SIMPCW First Nation</div>
+          <span style="font-size:10px;color:var(--text-muted);">Posted Jun 2</span>
+        </div>
+        <div class="interest-meta">Clearwater Sub · MP 25.1–26.0 · TBD · ~7 days</div>
+        <div class="interest-tags">
+          <span class="tag tag-sub">Clearwater</span>
+          <span class="tag" style="background:#E8EAF6;color:#283593;">Night</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">~7 days</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: TIGS · Form B</div>
+        <div class="interest-actions">
+          <button class="btn-interest btn-regular" onclick="expressInterest('job3-card','Regular Hours')">👋 Regular Hours</button>
+          <button class="btn-interest btn-ot" onclick="expressInterest('job3-card','Overtime')">⏰ Overtime</button>
+        </div>
+      </div>
+
+      <div class="mobile-pagination">
+        <div class="pg-dot active"></div><div class="pg-dot"></div><div class="pg-dot"></div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
+      <div class="nav-tab active"><div class="icon">📋</div><div class="label">Jobs</div></div>
+      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
+      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
+      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ SCREEN 3: OVERTIME AVAILABILITY ══════════ -->
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+<div class="screen-title">Screen 3 — Overtime Availability</div>
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
+    <div class="app-header">
+      <div class="header-row">
+        <div>
+          <div class="greeting">Overtime</div>
+          <div class="name">Availability</div>
+          <div class="meta">Week of Jun 7, 2026</div>
+        </div>
+        <div class="notif-badge" style="background:var(--warning);color:#fff;">!</div>
+      </div>
+    </div>
+    <div class="app-alert warning">🕐 Deadline: <strong>Friday Jun 6 at 5 PM</strong></div>
+    <div class="scroll-area">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Previous week')">‹</button>
+        <span style="font-size:13px;font-weight:700;">Jun 7–8, 2026</span>
+        <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Next week')">›</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📅 Select Your Availability</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f8f9fa;border-radius:10px;">
+            <div><div style="font-size:13px;font-weight:700;">Saturday, Jun 7</div><div style="font-size:11px;color:var(--text-muted);">Off-cycle day</div></div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <span style="font-size:11px;color:var(--text-muted);" id="sat-label">Not Available</span>
+              <div id="sat-toggle" style="width:44px;height:24px;background:#ccc;border-radius:12px;position:relative;cursor:pointer;" onclick="toggleOT('sat')">
+                <div id="sat-knob" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;"></div>
+              </div>
             </label>
           </div>
-          <div class="ot-day-row">
-            <div class="ot-day-info">
-              <div class="ot-day-name">Sunday</div>
-              <div class="ot-day-date">June 8, 2026 · Day Shift</div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox">
-              <span class="toggle-slider"></span>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f8f9fa;border-radius:10px;">
+            <div><div style="font-size:13px;font-weight:700;">Sunday, Jun 8</div><div style="font-size:11px;color:var(--text-muted);">Off-cycle day</div></div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <span style="font-size:11px;color:var(--text-muted);" id="sun-label">Not Available</span>
+              <div id="sun-toggle" style="width:44px;height:24px;background:#ccc;border-radius:12px;position:relative;cursor:pointer;" onclick="toggleOT('sun')">
+                <div id="sun-knob" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;"></div>
+              </div>
             </label>
           </div>
         </div>
-        <button class="ot-submit-btn">Submit Availability</button>
+        <button style="width:100%;margin-top:14px;padding:13px;background:var(--cn-red);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" onclick="mToast('OT availability submitted ✓')">Submit Availability</button>
       </div>
-
-      <div class="section-label">Past Overtime Responses</div>
-      <div class="job-card">
-        <div class="job-card-header">
-          <div>
-            <div class="job-card-title">Week of May 31</div>
-            <div class="job-card-sub">Submitted Thu, May 29 at 3:22 PM</div>
-          </div>
-          <span class="shift-badge shift-ot-day">Submitted</span>
-        </div>
-        <div class="job-details-grid">
-          <div class="jd-item"><div class="jd-label">Saturday May 31</div><div class="jd-value" style="color:var(--success);">✅ Available</div></div>
-          <div class="jd-item"><div class="jd-label">Sunday Jun 1</div><div class="jd-value" style="color:var(--cn-red);">✗ Not Available</div></div>
-        </div>
+      <div class="card">
+        <div class="card-title">📊 Past OT History</div>
+        <div class="detail-row"><span class="detail-label">May 31–Jun 1</span><span class="detail-value" style="color:var(--success);">Both days ✅</span></div>
+        <div class="detail-row"><span class="detail-label">May 24–25</span><span class="detail-value" style="color:var(--success);">Saturday only ✅</span></div>
+        <div class="detail-row"><span class="detail-label">May 17–18</span><span class="detail-value" style="color:var(--text-muted);">Not available</span></div>
+        <div class="detail-row"><span class="detail-label">May 10–11</span><span class="detail-value" style="color:var(--success);">Both days ✅</span></div>
       </div>
-
     </div>
     <div class="bottom-nav">
-      <div class="nav-tab"><div class="nav-icon">🏠</div><div class="nav-text">Home</div></div>
-      <div class="nav-tab"><div class="nav-icon">📅</div><div class="nav-text">Schedule</div></div>
-      <div class="nav-tab active"><div class="nav-icon">✅</div><div class="nav-text">Overtime</div></div>
-      <div class="nav-tab"><div class="nav-icon nav-badge-dot">🔔</div><div class="nav-text">Alerts</div></div>
-      <div class="nav-tab"><div class="nav-icon">👤</div><div class="nav-text">Profile</div></div>
+      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
+      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
+      <div class="nav-tab active"><div class="icon">⏰</div><div class="label">OT</div></div>
+      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
+      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN 3: SITE INFORMATION
-═══════════════════════════════════════════ -->
-<div class="phone-wrapper">
-  <div class="phone-label">Screen 3 — Site Information</div>
-  <div class="phone">
-    <div class="status-bar">
-      <span>9:41 AM</span>
-      <span>●●●●◌ WiFi 🔋</span>
-    </div>
+<!-- ══════════ SCREEN 4: NOTIFICATIONS ══════════ -->
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+<div class="screen-title">Screen 4 — Notifications</div>
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
     <div class="app-header">
       <div class="header-row">
-        <div>
-          <div class="greeting">Site Information</div>
-          <div class="name">Elworthy — Yale FRB</div>
-          <div class="sub">Jun 2 – Jun 14, 2026 · Night Shift</div>
-        </div>
-        <span class="shift-badge shift-night" style="margin-top:4px;">Night</span>
+        <div><div class="greeting">Notifications</div><div class="name">3 Unread</div><div class="meta">Jun 4, 2026</div></div>
+        <button style="background:none;border:none;color:#aaa;font-size:11px;font-weight:600;cursor:pointer;" onclick="mToast('All marked as read')">Mark all read</button>
       </div>
     </div>
-    <div class="scroll-content">
-
-      <div class="section-label">Job Details</div>
-      <div class="job-card">
-        <div class="site-section">
-          <div class="site-row"><div class="site-key">Company</div><div class="site-val">Elworthy</div></div>
-          <div class="site-row"><div class="site-key">Flagging #</div><div class="site-val">CG594003</div></div>
-          <div class="site-row"><div class="site-key">Subdivision</div><div class="site-val">Yale</div></div>
-          <div class="site-row"><div class="site-key">Mileage</div><div class="site-val">118</div></div>
-          <div class="site-row"><div class="site-key">Work Location</div><div class="site-val">Fraser River Bridge</div></div>
-          <div class="site-row"><div class="site-key">Description</div><div class="site-val">Electrical Improvements</div></div>
+    <div class="scroll-area">
+      <div class="filter-row">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip" onclick="mToast('Jobs filter')">Jobs</div>
+        <div class="filter-chip" onclick="mToast('OT filter')">OT</div>
+        <div class="filter-chip" onclick="mToast('Schedule filter')">Schedule</div>
+      </div>
+      <div class="card" style="padding:12px;">
+        <div class="notif-item notif-unread" style="margin-bottom:8px;">
+          <div class="notif-icon red">🔴</div>
+          <div><div class="notif-title">New Job Assignment</div><div class="notif-body">Assigned to Milestone Construction — Lillooet Sub, Jun 9–13.</div><div class="notif-time">Today, 8:30 AM</div></div>
+        </div>
+        <div class="notif-item notif-unread" style="margin-bottom:8px;">
+          <div class="notif-icon orange">⏰</div>
+          <div><div class="notif-title">OT Availability Reminder</div><div class="notif-body">Submit your OT availability for Jun 7–8 by Friday 5 PM.</div><div class="notif-time">Today, 7:00 AM</div></div>
+        </div>
+        <div class="notif-item notif-unread" style="margin-bottom:8px;">
+          <div class="notif-icon blue">📋</div>
+          <div><div class="notif-title">Job Interest Received</div><div class="notif-body">Your interest in BC Hydro (Lillooet) is under supervisor review.</div><div class="notif-time">Yesterday, 4:15 PM</div></div>
+        </div>
+        <div class="notif-item" style="padding:10px;margin-bottom:8px;">
+          <div class="notif-icon green">✅</div>
+          <div><div class="notif-title">Check-Out Confirmed</div><div class="notif-body">Check-out for Elworthy (Yale Sub) on Jun 3 recorded at 14:05.</div><div class="notif-time">Yesterday, 2:05 PM</div></div>
+        </div>
+        <div class="notif-item" style="padding:10px;">
+          <div class="notif-icon blue">📅</div>
+          <div><div class="notif-title">Weekly Schedule Sent</div><div class="notif-body">Your schedule for the week of Jun 2 has been sent by your supervisor.</div><div class="notif-time">Jun 1, 3:00 PM</div></div>
         </div>
       </div>
-
-      <div class="section-label">Reporting Instructions</div>
-      <div class="job-card">
-        <div class="site-section">
-          <div class="site-row"><div class="site-key">Meeting Point</div><div class="site-val">B&amp;S Building, North Side FRB</div></div>
-          <div class="site-row"><div class="site-key">Report Time</div><div class="site-val" style="color:var(--cn-red);font-weight:700;">05:45 AM</div></div>
-          <div class="site-row"><div class="site-key">Hours of Work</div><div class="site-val">0600–1700 (11 hrs)</div></div>
-        </div>
-      </div>
-
-      <div class="section-label">Contacts</div>
-      <div class="job-card">
-        <div class="site-section">
-          <div class="site-row"><div class="site-key">Field Contact</div><div class="site-val">Rob Romaniuk</div></div>
-          <div class="site-row"><div class="site-key">Phone</div><div class="site-val" style="color:var(--cn-blue);">604-671-3427</div></div>
-        </div>
-        <div class="job-card-actions">
-          <div class="jca-btn primary">📞 Call Field Contact</div>
-          <div class="jca-btn">💬 Message</div>
-        </div>
-      </div>
-
-      <div class="section-label">Site Conditions</div>
-      <div class="job-card">
-        <div class="site-section">
-          <div class="site-row"><div class="site-key">Excavation</div><div class="site-val">No</div></div>
-          <div class="site-row"><div class="site-key">Machinery</div><div class="site-val">No</div></div>
-          <div class="site-row"><div class="site-key">Distance to Track</div><div class="site-val">On Track</div></div>
-          <div class="site-row"><div class="site-key">Site Duration</div><div class="site-val">5 Days</div></div>
-        </div>
-      </div>
-
-      <div class="section-label">Accommodation</div>
-      <div class="job-card" style="background:#f0f7ff;border-color:#b3d4f5;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:24px;">🏨</span>
-          <div>
-            <div style="font-size:13px;font-weight:700;">Sandman Inn — Hope, BC</div>
-            <div style="font-size:11px;color:var(--text-muted);">Jun 2 – Jun 6 · Booked by Supervisor</div>
-          </div>
-        </div>
-      </div>
-
     </div>
     <div class="bottom-nav">
-      <div class="nav-tab"><div class="nav-icon">🏠</div><div class="nav-text">Home</div></div>
-      <div class="nav-tab active"><div class="nav-icon">📅</div><div class="nav-text">Schedule</div></div>
-      <div class="nav-tab"><div class="nav-icon">✅</div><div class="nav-text">Overtime</div></div>
-      <div class="nav-tab"><div class="nav-icon">🔔</div><div class="nav-text">Alerts</div></div>
-      <div class="nav-tab"><div class="nav-icon">👤</div><div class="nav-text">Profile</div></div>
+      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
+      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
+      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
+      <div class="nav-tab active"><div class="icon">🔔</div><div class="label">Alerts</div></div>
+      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN 4: NOTIFICATIONS
-═══════════════════════════════════════════ -->
-<div class="phone-wrapper">
-  <div class="phone-label">Screen 4 — Notifications &amp; Profile</div>
-  <div class="phone">
-    <div class="status-bar">
-      <span>9:41 AM</span>
-      <span>●●●●◌ WiFi 🔋</span>
-    </div>
-    <div class="app-header">
-      <div class="header-row">
-        <div>
-          <div class="greeting">Notifications</div>
-          <div class="name">2 Unread</div>
+<!-- ══════════ SCREEN 5: PROFILE ══════════ -->
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+<div class="screen-title">Screen 5 — Profile &amp; Qualifications</div>
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
+    <div class="app-header"><div class="greeting">My Profile</div><div class="name">Daneel Jiawan</div></div>
+    <div class="scroll-area">
+      <div class="profile-header">
+        <div class="profile-avatar">DJ</div>
+        <div class="profile-name">Daneel Jiawan</div>
+        <div class="profile-meta">CN Employee · EMP-0201 · BC Region</div>
+        <div class="profile-meta" style="margin-top:4px;">Seniority #5 · 5&amp;2 Cycle</div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-val">23</div><div class="pstat-label">Jobs YTD</div></div>
+          <div class="pstat"><div class="pstat-val">8</div><div class="pstat-label">OT Days</div></div>
+          <div class="pstat"><div class="pstat-val">2019</div><div class="pstat-label">Hire Year</div></div>
         </div>
       </div>
-    </div>
-    <div class="scroll-content">
-
-      <div class="section-label">New</div>
-      <div class="notif-item">
-        <div class="notif-icon">⚠️</div>
-        <div class="notif-content">
-          <div class="notif-title">Job Update — Elworthy</div>
-          <div class="notif-body">Your report time for tomorrow (Jun 4) has changed to 05:45 AM. Please review the updated site info.</div>
-          <div class="notif-time">Today, 8:14 AM</div>
-        </div>
-        <div class="notif-unread"></div>
+      <div class="card">
+        <div class="card-title">📞 Contact Information</div>
+        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">604-555-0201</span></div>
+        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">d.jiawan@cn.ca</span></div>
+        <div class="detail-row"><span class="detail-label">Address</span><span class="detail-value">456 Rail St, Surrey, BC V3T 1A1</span></div>
       </div>
-      <div class="notif-item">
-        <div class="notif-icon">✅</div>
-        <div class="notif-content">
-          <div class="notif-title">Overtime Reminder</div>
-          <div class="notif-body">Please submit your overtime availability for the week of Jun 7 by Friday at 5 PM.</div>
-          <div class="notif-time">Today, 7:00 AM</div>
-        </div>
-        <div class="notif-unread"></div>
-      </div>
-
-      <div class="section-label">Earlier</div>
-      <div class="notif-item">
-        <div class="notif-icon">📋</div>
-        <div class="notif-content">
-          <div class="notif-title">New Job Assigned — Elworthy</div>
-          <div class="notif-body">You have been assigned to Elworthy (Yale FRB) from Jun 2 to Jun 14. Tap to view site info.</div>
-          <div class="notif-time">May 30, 3:45 PM</div>
+      <div class="card">
+        <div class="card-title">🛡️ Protection Sign-Off</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;">Flagging Protection</span>
+          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;">Working Limits</span>
+          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;">Form B</span>
         </div>
       </div>
-      <div class="notif-item">
-        <div class="notif-icon">🏨</div>
-        <div class="notif-content">
-          <div class="notif-title">Hotel Booked — Sandman Inn</div>
-          <div class="notif-body">Your accommodation at Sandman Inn, Hope BC has been booked for Jun 2–6.</div>
-          <div class="notif-time">May 30, 3:50 PM</div>
+      <div class="card">
+        <div class="card-title">🎓 Qualifications</div>
+        <div class="qual-row">
+          <div><div class="qual-name">TIGS</div><div class="qual-dates">Qualified: Mar 15, 2022 · Expires: Mar 15, 2027</div></div>
+          <span class="qual-status qs-valid">✓ Valid</span>
+        </div>
+        <div class="qual-row">
+          <div><div class="qual-name">CROR</div><div class="qual-dates">Qualified: Jun 1, 2023 · Expires: Jun 1, 2028</div></div>
+          <span class="qual-status qs-valid">✓ Valid</span>
+        </div>
+        <div class="qual-row">
+          <div><div class="qual-name">eRail Safe · ERS-00045</div><div class="qual-dates">Qualified: Jan 10, 2024 · Expires: Jan 10, 2026</div></div>
+          <span class="qual-status qs-expiring">⚠ Expiring</span>
         </div>
       </div>
-
-      <!-- PROFILE SECTION -->
-      <div class="section-label" style="margin-top:8px;">My Profile</div>
-      <div class="profile-card">
-        <div class="profile-avatar">WO</div>
-        <div>
-          <div class="profile-name">Wade O'Hearn</div>
-          <div class="profile-sub">BC Flagman · 8&amp;6 Cycle</div>
-          <div class="profile-badge">Seniority #12</div>
+      <div class="card">
+        <div class="card-title">🏖️ Vacation Balance 2026</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:12px;color:var(--text-muted);">12 of 25 days used</span>
+          <span style="font-size:12px;font-weight:700;color:var(--cn-blue);">13 remaining</span>
         </div>
+        <div style="background:#e9ecef;border-radius:4px;height:8px;"><div style="background:var(--cn-blue);height:8px;border-radius:4px;width:48%;"></div></div>
       </div>
-      <div class="profile-stat-row">
-        <div class="profile-stat">
-          <div class="ps-val">47</div>
-          <div class="ps-label">Jobs This Year</div>
-        </div>
-        <div class="profile-stat">
-          <div class="ps-val">8</div>
-          <div class="ps-label">OT Days Worked</div>
-        </div>
-        <div class="profile-stat">
-          <div class="ps-val">2019</div>
-          <div class="ps-label">Hire Year</div>
-        </div>
-      </div>
-
+      <button style="width:100%;padding:13px;background:var(--danger-bg);color:var(--cn-red);border:1px solid var(--cn-red);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;" onclick="mToast('Logged out')">Log Out</button>
     </div>
     <div class="bottom-nav">
-      <div class="nav-tab"><div class="nav-icon">🏠</div><div class="nav-text">Home</div></div>
-      <div class="nav-tab"><div class="nav-icon">📅</div><div class="nav-text">Schedule</div></div>
-      <div class="nav-tab"><div class="nav-icon">✅</div><div class="nav-text">Overtime</div></div>
-      <div class="nav-tab active"><div class="nav-icon">🔔</div><div class="nav-text">Alerts</div></div>
-      <div class="nav-tab"><div class="nav-icon">👤</div><div class="nav-text">Profile</div></div>
+      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
+      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
+      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
+      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
+      <div class="nav-tab active"><div class="icon">👤</div><div class="label">Profile</div></div>
     </div>
   </div>
 </div>
+</div>
 
+<div id="m-toast"></div>
+<script>
+function mToast(msg) {
+  const t = document.getElementById('m-toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
+const otState = { sat: false, sun: false };
+function toggleOT(day) {
+  otState[day] = !otState[day];
+  const toggle = document.getElementById(day + '-toggle');
+  const knob = document.getElementById(day + '-knob');
+  const label = document.getElementById(day + '-label');
+  if (otState[day]) {
+    toggle.style.background = '#1E7E34';
+    knob.style.left = '22px';
+    label.textContent = 'Available';
+    label.style.color = '#1E7E34';
+  } else {
+    toggle.style.background = '#ccc';
+    knob.style.left = '2px';
+    label.textContent = 'Not Available';
+    label.style.color = 'var(--text-muted)';
+  }
+}
+function expressInterest(cardId, type) {
+  const card = document.getElementById(cardId);
+  card.classList.add('expressed');
+  card.querySelector('.interest-actions').innerHTML = '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="mToast(\'Interest withdrawn\')">✓ Interested (' + type + ') — Tap to Withdraw</button>';
+  mToast('Interest expressed: ' + type + ' ✓');
+}
+</script>
 </body>
 </html>
