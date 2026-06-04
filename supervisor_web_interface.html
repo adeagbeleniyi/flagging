@@ -3707,8 +3707,9 @@ function openEditFlagmanModal(name) {
   if (allSelects[2]) { // Work Cycle
     const cycleMap = {'5&2':'5-2','8&6':'8-6','9&5':'9-5'};
     allSelects[2].value = cycleMap[f.cycle] || '8-6';
-    // Trigger cycle AB toggle
-    if (typeof toggleCycleAB === 'function') toggleCycleAB();
+    // Show/hide cycle AB group directly (avoid calling toggleCycleAB which refs fm-cycle-ab)
+    const cycleAbGroup = document.getElementById('cycle-ab-group');
+    if (cycleAbGroup) cycleAbGroup.style.display = (f.cycle === '8&6' || f.cycle === '9&5') ? 'block' : 'none';
   }
   if (allSelects[3] && f.ab !== 'Fixed') { // Cycle Assignment
     allSelects[3].value = f.ab === 'A' ? 'A Cycle' : 'B Cycle';
