@@ -6,966 +6,638 @@
 <title>CN Flagging — Flagman Mobile App</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --cn-red:#B5091D;--cn-dark:#1A1A1A;--cn-blue:#005A9C;
-  --cn-light-blue:#E8F1F9;--bg:#F0F2F5;--white:#FFFFFF;
-  --border:#DDE1E7;--text-primary:#1A1A1A;--text-secondary:#5E6778;
-  --text-muted:#9AA3B0;--success:#1E7E34;--success-bg:#D4EDDA;
-  --warning:#856404;--warning-bg:#FFF3CD;--danger:#B5091D;
-  --danger-bg:#F8D7DA;
-}
+*{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:30px 20px;gap:24px;flex-wrap:wrap;}
-.phone-frame{width:390px;height:844px;background:var(--cn-dark);border-radius:44px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);flex-shrink:0;position:relative;overflow:hidden;}
-.phone-screen{width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;position:relative;}
-.status-bar{height:44px;background:var(--cn-dark);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;}
-.status-bar .time{color:#fff;font-size:15px;font-weight:600;}
-.status-bar .icons{color:#fff;font-size:12px;display:flex;gap:6px;align-items:center;}
-.app-header{background:var(--cn-dark);padding:14px 20px 16px;flex-shrink:0;}
-.app-header .greeting{color:#aaa;font-size:12px;}
-.app-header .name{color:#fff;font-size:18px;font-weight:700;margin:2px 0;}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.screen-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#aaa;}
+.phone{width:375px;min-height:812px;background:#1a1a1a;border-radius:44px;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);flex-shrink:0;}
+.phone-inner{width:100%;height:100%;background:#f5f6fa;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;}
+.status-bar{height:44px;background:#1a1a1a;display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;}
+.status-bar .t{color:#fff;font-size:15px;font-weight:600;}
+.status-bar .ic{color:#fff;font-size:12px;}
+.app-header{background:#1a1a1a;padding:14px 20px 16px;flex-shrink:0;}
+.app-header .logo-row{display:flex;align-items:center;justify-content:space-between;}
+.logo-badge{background:#B5091D;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;}
+.logo-text{color:#fff;font-size:14px;font-weight:600;margin-left:8px;}
+.notif-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;position:relative;padding:4px;}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#B5091D;border-radius:50%;}
+.app-header .greeting{color:#aaa;font-size:12px;margin-top:10px;}
+.app-header .name{color:#fff;font-size:17px;font-weight:700;margin:2px 0;}
 .app-header .meta{color:#aaa;font-size:11px;}
-.app-header .header-row{display:flex;align-items:flex-start;justify-content:space-between;}
-.notif-badge{background:var(--cn-red);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;}
-.bottom-nav{height:72px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:8px;}
-.nav-tab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px;border-radius:8px;}
-.nav-tab .icon{font-size:20px;}
-.nav-tab .label{font-size:10px;font-weight:600;color:var(--text-muted);}
-.nav-tab.active .label{color:var(--cn-blue);}
-.scroll-area{flex:1;overflow-y:auto;padding:16px;}
-.scroll-area::-webkit-scrollbar{display:none;}
-.card{background:var(--white);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.card-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;}
-.checkin-card{background:linear-gradient(135deg,var(--cn-blue),#003d6b);border-radius:14px;padding:18px;margin-bottom:14px;color:#fff;}
-.checkin-status{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;opacity:.8;margin-bottom:4px;}
-.checkin-job{font-size:16px;font-weight:700;margin-bottom:2px;}
-.checkin-sub{font-size:11px;opacity:.75;margin-bottom:14px;}
-.checkin-row{display:flex;gap:10px;}
-.checkin-btn{flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
-.btn-checkin{background:#1E7E34;color:#fff;}
-.btn-checkout{background:var(--cn-red);color:#fff;}
-.btn-disabled{background:rgba(255,255,255,.2);color:rgba(255,255,255,.5);cursor:not-allowed;}
-.checkin-time{font-size:11px;opacity:.7;margin-top:8px;text-align:center;}
-.shift-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.shift-morning{background:#FFF9C4;color:#7a6000;}
-.shift-afternoon{background:#FFE0B2;color:#7a3500;}
-.shift-night{background:#E8EAF6;color:#283593;}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
-.detail-row:last-child{border-bottom:none;}
-.detail-label{font-size:11px;color:var(--text-muted);font-weight:500;}
-.detail-value{font-size:12px;font-weight:600;text-align:right;max-width:60%;}
-.mini-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.cal-day{text-align:center;padding:5px 2px;border-radius:8px;font-size:10px;font-weight:600;}
-.cal-day .num{font-size:13px;font-weight:700;}
-.cal-day .dot{width:6px;height:6px;border-radius:50%;margin:2px auto 0;}
-.cal-today{background:var(--cn-blue);color:#fff;border-radius:8px;}
-.cal-on{background:#FFB6C1;}
-.cal-off{background:#f0f0f0;color:#aaa;}
-.cal-vacation{background:#FFA500;color:#fff;}
-.cal-ot{background:#ADD8E6;}
-.interest-card{border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;}
-.interest-card.expressed{border-color:var(--success);background:var(--success-bg);}
-.interest-company{font-size:14px;font-weight:700;}
-.interest-meta{font-size:11px;color:var(--text-muted);margin:3px 0 8px;}
-.interest-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
-.tag{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;}
-.tag-sub{background:var(--cn-light-blue);color:var(--cn-blue);}
-.tag-urgent{background:var(--danger-bg);color:var(--danger);}
-.interest-actions{display:flex;gap:8px;}
-.btn-interest{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;}
-.btn-regular{background:var(--cn-blue);color:#fff;}
-.btn-ot{background:var(--cn-dark);color:#fff;}
-.notif-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
-.notif-item:last-child{border-bottom:none;}
-.notif-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.notif-icon.red{background:var(--danger-bg);}
-.notif-icon.blue{background:var(--cn-light-blue);}
-.notif-icon.green{background:var(--success-bg);}
-.notif-icon.orange{background:#FFF3CD;}
-.notif-icon.purple{background:#F3E5F5;}
-.notif-title{font-size:12px;font-weight:700;}
-.notif-body{font-size:11px;color:var(--text-muted);margin-top:2px;}
-.notif-time{font-size:10px;color:var(--text-muted);margin-top:3px;}
-.notif-unread{background:var(--cn-light-blue);border-radius:8px;padding:8px;}
-.profile-header{background:linear-gradient(135deg,var(--cn-dark),#2d2d2d);border-radius:14px;padding:20px;margin-bottom:14px;color:#fff;text-align:center;}
-.profile-avatar{width:64px;height:64px;background:var(--cn-blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto 10px;}
-.profile-name{font-size:18px;font-weight:700;}
-.profile-meta{font-size:12px;color:#aaa;margin-top:3px;}
-.profile-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
-.pstat{background:rgba(255,255,255,.1);border-radius:8px;padding:8px;text-align:center;}
-.pstat-val{font-size:18px;font-weight:700;}
-.pstat-label{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;}
-.qual-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
-.qual-row:last-child{border-bottom:none;}
-.qual-name{font-size:12px;font-weight:600;}
-.qual-dates{font-size:10px;color:var(--text-muted);}
-.qual-status{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;}
-.qs-valid{background:var(--success-bg);color:var(--success);}
-.qs-expiring{background:var(--warning-bg);color:var(--warning);}
-.screen-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--border);}
-.app-alert{padding:10px 16px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;}
-.app-alert.warning{background:#FFF3CD;color:#856404;}
-.app-alert.info{background:var(--cn-light-blue);color:var(--cn-blue);}
-.filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;}
-.filter-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;white-space:nowrap;cursor:pointer;}
-.filter-chip.active{background:var(--cn-blue);color:#fff;border-color:var(--cn-blue);}
-.mobile-pagination{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;}
-.pg-dot{width:8px;height:8px;border-radius:50%;background:var(--border);}
-.pg-dot.active{background:var(--cn-blue);}
-#m-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--cn-dark);color:#fff;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;display:none;z-index:9999;white-space:nowrap;}
-.screen-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;text-align:center;margin-top:8px;}
-/* Tab bar inside a screen */
-.inner-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:14px;}
-.inner-tab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;}
-.inner-tab.active{color:var(--cn-blue);border-bottom-color:var(--cn-blue);}
-/* Week nav bar */
-.week-nav{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
-.week-nav button{background:none;border:none;font-size:18px;cursor:pointer;color:var(--cn-dark);padding:0 4px;}
-.week-nav .wlabel{font-size:13px;font-weight:700;color:var(--cn-dark);}
+.scroll{flex:1;overflow-y:auto;background:#f5f6fa;}
+.scroll::-webkit-scrollbar{display:none;}
+.bottom-nav{height:68px;background:#fff;border-top:1px solid #dde1e7;display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:6px;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px;}
+.nav-item .ni{font-size:20px;}
+.nav-item .nl{font-size:10px;font-weight:600;color:#9aa3b0;}
+.nav-item.active .nl{color:#005A9C;}
+.sec{padding:16px;}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.card-title{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:10px;}
+.row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #eee;}
+.row:last-child{border-bottom:none;}
+.rl{font-size:11px;color:#9aa3b0;font-weight:500;}
+.rv{font-size:12px;font-weight:600;text-align:right;}
+/* Checkin card */
+.ci-card{background:linear-gradient(135deg,#005A9C,#003d6b);border-radius:14px;padding:18px;margin-bottom:12px;color:#fff;}
+.ci-job{font-size:15px;font-weight:700;margin-bottom:2px;}
+.ci-sub{font-size:11px;opacity:.75;margin-bottom:14px;}
+.ci-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.ci-cell label{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;}
+.ci-cell span{display:block;font-size:13px;font-weight:600;color:#fff;margin-top:2px;}
+.ci-btns{display:flex;gap:10px;}
+.ci-btn{flex:1;padding:11px;border-radius:10px;font-size:13px;font-weight:700;border:none;cursor:pointer;}
+.ci-in{background:#4caf50;color:#fff;}
+.ci-out{background:#B5091D;color:#fff;}
+.ci-done{background:rgba(255,255,255,.2);color:rgba(255,255,255,.7);cursor:default;}
+.ci-timer{font-size:11px;color:rgba(255,255,255,.65);text-align:center;margin-top:8px;}
+/* Overlap card */
+.ov-card{background:linear-gradient(135deg,#7b1fa2,#4a148c);border-radius:14px;padding:16px;margin-bottom:12px;color:#fff;}
+.ov-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.ov-desc{font-size:12px;color:rgba(255,255,255,.85);line-height:1.5;}
+.ov-detail{background:rgba(255,255,255,.15);border-radius:8px;padding:10px;margin-top:10px;}
+.ov-row{display:flex;justify-content:space-between;padding:3px 0;font-size:12px;}
+/* Alert banners */
+.alert{margin-bottom:12px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;display:flex;align-items:flex-start;gap:8px;}
+.alert-amber{background:#fff8e1;color:#e65100;border-left:3px solid #e65100;}
+.alert-blue{background:#e3f2fd;color:#1565c0;border-left:3px solid #1565c0;}
+.alert-red{background:#ffebee;color:#c62828;border-left:3px solid #c62828;}
+.alert-purple{background:#f3e5f5;color:#6a1b9a;border-left:3px solid #6a1b9a;}
+.alert-green{background:#e8f5e9;color:#2e7d32;border-left:3px solid #2e7d32;}
+/* Hours bar */
+.hbar-wrap{margin:8px 0;}
+.hbar-lbl{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;}
+.hbar{height:6px;background:#eee;border-radius:3px;overflow:hidden;}
+.hbar-fill{height:100%;border-radius:3px;}
+.fill-g{background:#4caf50;} .fill-a{background:#ff9800;} .fill-r{background:#f44336;}
+/* Mini calendar */
+.mcal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+.mcal-hdr{font-size:9px;font-weight:700;color:#9aa3b0;padding:3px 0;}
+.mcal-day{font-size:12px;font-weight:600;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:auto;}
+.d-on{background:#e8f5e9;color:#2e7d32;}
+.d-off{background:#f0f0f0;color:#aaa;}
+.d-today{background:#B5091D;color:#fff;}
+.d-ovl{background:#f3e5f5;color:#7b1fa2;font-size:9px;}
+.d-vac{background:#ff9800;color:#fff;}
+.d-empty{color:#ddd;}
+/* Badges */
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.b-green{background:#e8f5e9;color:#2e7d32;} .b-blue{background:#e3f2fd;color:#1565c0;}
+.b-amber{background:#fff8e1;color:#e65100;} .b-red{background:#ffebee;color:#c62828;}
+.b-purple{background:#f3e5f5;color:#6a1b9a;} .b-grey{background:#f5f5f5;color:#616161;}
+.b-dark{background:#1a1a1a;color:#fff;}
+/* Shift badges */
+.sm{background:#fff8e1;color:#e65100;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.sa{background:#fff3e0;color:#bf360c;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.sn{background:#e8eaf6;color:#283593;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+/* Toggle */
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.tslider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:24px;transition:.3s;}
+.tslider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+input:checked+.tslider{background:#005A9C;}
+input:checked+.tslider:before{transform:translateX(20px);}
 /* OT day row */
-.ot-day-row{background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:10px;}
-.ot-day-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
-.ot-day-title{font-size:13px;font-weight:700;}
-.ot-day-sub{font-size:11px;color:var(--text-muted);}
-.ot-shift-sel{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
-.ot-shift-sel label{font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;}
+.ot-row{background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:10px;}
+.ot-row-hdr{display:flex;justify-content:space-between;align-items:center;}
+.ot-row-title{font-size:13px;font-weight:700;color:#1a1a1a;}
+.ot-row-sub{font-size:11px;color:#9aa3b0;margin-top:2px;}
+.shift-pref-area{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #eee;}
+.shift-pref-lbl{font-size:11px;font-weight:600;color:#9aa3b0;margin-bottom:6px;}
 .shift-opts{display:flex;gap:6px;flex-wrap:wrap;}
-.shift-opt{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;}
-.shift-opt.selected{background:var(--cn-blue);color:#fff;border-color:var(--cn-blue);}
-/* Completed job row */
-.completed-row{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff;}
-.completed-company{font-size:13px;font-weight:700;}
-.completed-meta{font-size:11px;color:var(--text-muted);margin:3px 0 6px;}
-.completed-chips{display:flex;gap:6px;flex-wrap:wrap;}
-/* Upcoming job row */
-.upcoming-row{border:1px solid var(--cn-light-blue);border-radius:10px;padding:12px;margin-bottom:10px;background:#f0f7ff;}
-/* Vac entry row */
-.vac-entry{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.sopt{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1.5px solid #ddd;background:#fff;cursor:pointer;transition:all .2s;}
+.sopt.sel-m{background:#fff8e1;border-color:#e65100;color:#e65100;}
+.sopt.sel-a{background:#fff3e0;border-color:#bf360c;color:#bf360c;}
+.sopt.sel-n{background:#e8eaf6;border-color:#283593;color:#283593;}
+.sopt.sel-np{background:#e8f5e9;border-color:#2e7d32;color:#2e7d32;}
+/* Week nav */
+.week-nav{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.wn-btn{background:none;border:1px solid #ddd;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#333;}
+.wn-lbl{font-size:13px;font-weight:700;color:#1a1a1a;}
+/* Filter chips */
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid #eee;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #ddd;background:#fff;color:#555;white-space:nowrap;}
+.chip.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+/* Notif */
+.ni-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f0f0f0;}
+.ni-item:last-child{border-bottom:none;}
+.ni-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ni-body{flex:1;}
+.ni-title{font-size:13px;font-weight:600;color:#1a1a1a;}
+.ni-desc{font-size:12px;color:#666;margin-top:2px;line-height:1.4;}
+.ni-time{font-size:11px;color:#aaa;margin-top:4px;}
+.ni-unread{width:8px;height:8px;background:#B5091D;border-radius:50%;margin-top:5px;flex-shrink:0;}
+/* Profile */
+.prof-hdr{background:linear-gradient(135deg,#1a1a1a,#333);color:#fff;padding:24px 20px;text-align:center;}
+.prof-av{width:64px;height:64px;background:#B5091D;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto 12px;}
+.prof-name{font-size:18px;font-weight:700;}
+.prof-sub{font-size:12px;color:#aaa;margin-top:4px;}
+.prof-badges{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.prof-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.qual-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;}
+.qual-row:last-child{border-bottom:none;}
+.qual-name{font-size:13px;font-weight:500;color:#333;}
+.qual-dates{font-size:11px;color:#888;margin-top:2px;}
+.qs-valid{background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.qs-expiring{background:#fff8e1;color:#e65100;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.qs-expired{background:#ffebee;color:#c62828;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.vac-entry{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;}
 .vac-entry:last-child{border-bottom:none;}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.btn-full{width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:700;text-align:center;}
+.btn-red{background:#B5091D;color:#fff;}
+.btn-blue{background:#005A9C;color:#fff;}
 </style>
 </head>
 <body>
 
-<!-- ══════════ SCREEN 1: HOME / CHECK-IN ══════════ -->
-<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-<div class="screen-title">Screen 1 — Home &amp; Check-In</div>
-<div class="phone-frame">
-  <div class="phone-screen">
-    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
-    <div class="app-header">
-      <div class="header-row">
-        <div>
-          <div class="greeting">Good morning,</div>
-          <div class="name">Luc Tremblay</div>
-          <div class="meta">Seniority #5 · 5&amp;2 Cycle · BC Region</div>
+<!-- ===== SCREEN 1: HOME ===== -->
+<div class="phone-wrap">
+  <div class="screen-title">Screen 1 — Home &amp; Check-In</div>
+  <div class="phone">
+    <div class="phone-inner">
+      <div class="status-bar"><span class="t">9:41 AM</span><span class="ic">📶 🔋</span></div>
+      <div class="app-header">
+        <div class="logo-row">
+          <div style="display:flex;align-items:center"><span class="logo-badge">CN</span><span class="logo-text">Flagging</span></div>
+          <button class="notif-btn">🔔<span class="notif-dot"></span></button>
         </div>
-        <div class="notif-badge" onclick="mToast('4 unread notifications')">4</div>
+        <div class="greeting">Good morning,</div>
+        <div class="name">Luc Tremblay</div>
+        <div class="meta">8&amp;6 · Cycle A · On Cycle Day 3 of 8 · Seniority #7 · BC Region</div>
       </div>
-    </div>
-    <div class="app-alert info">📅 On cycle. Next off days: Jun 7–8.</div>
-    <div class="scroll-area">
-      <div class="screen-label">Wednesday, Jun 4, 2026</div>
+      <div class="scroll">
+        <div class="sec">
 
-      <!-- CHECK-IN / CHECK-OUT -->
-      <div class="checkin-card">
-        <div class="checkin-status">🟢 Currently On Shift</div>
-        <div class="checkin-job">Northgate Utilities — Yale Sub</div>
-        <div class="checkin-sub">MP 118.0–118.5 · Morning · 06:00–14:00 · A/A: <strong>0100</strong></div>
-        <div class="checkin-row">
-          <button class="checkin-btn btn-disabled" disabled>✓ Checked In 06:02 AM</button>
-          <button class="checkin-btn btn-checkout" onclick="mToast('Checked out at 14:00 ✓')">Check Out</button>
-        </div>
-        <div class="checkin-time">Duration so far: 7h 39m · CN Yard Gate, Hope BC</div>
-      </div>
-
-      <!-- TODAY'S DETAILS -->
-      <div class="card">
-        <div class="card-title">📋 Today's Assignment</div>
-        <div class="detail-row"><span class="detail-label">Company</span><span class="detail-value">Northgate Utilities</span></div>
-        <div class="detail-row"><span class="detail-label">Subdivision</span><span class="detail-value">Yale</span></div>
-        <div class="detail-row"><span class="detail-label">MP Range</span><span class="detail-value">118.0 – 118.5</span></div>
-        <div class="detail-row"><span class="detail-label">Meeting Point</span><span class="detail-value" style="color:var(--cn-red);">CN Yard Gate, Hope BC</span></div>
-        <div class="detail-row"><span class="detail-label">Shift</span><span class="detail-value"><span class="shift-badge shift-morning">Morning 06:00–14:00</span></span></div>
-        <div class="detail-row"><span class="detail-label">A/A Code</span><span class="detail-value"><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:monospace;">0100</span></span></div>
-        <div class="detail-row"><span class="detail-label">Field Contact</span><span class="detail-value">R. Kowalczyk · 604-555-7788</span></div>
-        <div class="detail-row"><span class="detail-label">Hotel</span><span class="detail-value">Best Western Hope</span></div>
-        <div class="detail-row"><span class="detail-label">Dates</span><span class="detail-value">Jun 1 – Jun 14</span></div>
-      </div>
-
-      <!-- MINI CALENDAR -->
-      <div class="card">
-        <div class="card-title">📅 June 2026 — My Schedule</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Previous month')">‹</button>
-          <span style="font-size:12px;font-weight:700;">June 2026</span>
-          <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Next month')">›</button>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:9px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">
-          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-        </div>
-        <div class="mini-cal">
-          <div class="cal-day cal-on"><div class="num">1</div></div>
-          <div class="cal-day cal-on"><div class="num">2</div></div>
-          <div class="cal-day cal-on"><div class="num">3</div></div>
-          <div class="cal-day cal-today"><div class="num">4</div></div>
-          <div class="cal-day cal-on"><div class="num">5</div></div>
-          <div class="cal-day cal-on"><div class="num">6</div></div>
-          <div class="cal-day cal-off"><div class="num">7</div></div>
-          <div class="cal-day cal-off"><div class="num">8</div></div>
-          <div class="cal-day cal-on"><div class="num">9</div></div>
-          <div class="cal-day cal-on"><div class="num">10</div></div>
-          <div class="cal-day cal-on"><div class="num">11</div></div>
-          <div class="cal-day cal-on"><div class="num">12</div></div>
-          <div class="cal-day cal-on"><div class="num">13</div></div>
-          <div class="cal-day cal-off"><div class="num">14</div></div>
-          <div class="cal-day cal-off"><div class="num">15</div></div>
-          <div class="cal-day cal-on"><div class="num">16</div></div>
-          <div class="cal-day cal-on"><div class="num">17</div></div>
-          <div class="cal-day cal-on"><div class="num">18</div></div>
-          <div class="cal-day cal-on"><div class="num">19</div></div>
-          <div class="cal-day cal-on"><div class="num">20</div></div>
-          <div class="cal-day cal-off"><div class="num">21</div></div>
-          <div class="cal-day cal-off"><div class="num">22</div></div>
-          <div class="cal-day cal-on"><div class="num">23</div></div>
-          <div class="cal-day cal-on"><div class="num">24</div></div>
-          <div class="cal-day cal-on"><div class="num">25</div></div>
-          <div class="cal-day cal-on"><div class="num">26</div></div>
-          <div class="cal-day cal-on"><div class="num">27</div></div>
-          <div class="cal-day cal-off"><div class="num">28</div></div>
-          <div class="cal-day cal-off"><div class="num">29</div></div>
-          <div class="cal-day cal-on"><div class="num">30</div></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#FFB6C1;"></div>On Cycle</div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#FFA500;"></div>Vacation</div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#ADD8E6;"></div>OT</div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#e9ecef;"></div>Off</div>
-        </div>
-      </div>
-
-      <!-- UPCOMING -->
-      <div class="card">
-        <div class="card-title">📆 Next Assignment</div>
-        <div style="border:1px solid var(--border);border-radius:10px;padding:12px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span class="shift-badge shift-morning">Morning</span>
-            <span style="font-size:10px;color:var(--text-muted);">Jun 16 – Jun 20</span>
+          <!-- Overlap Alert -->
+          <div class="ov-card">
+            <div class="ov-title">🔄 Handoff Overlap — Jun 8–9</div>
+            <div class="ov-desc">Your on-cycle ends Jun 9. Remi Dubois (Cycle B) arrives Jun 8 for handoff. You will work a partial shift Jun 9 for handoff completion.</div>
+            <div class="ov-detail">
+              <div class="ov-row"><span>Your last full day:</span><span>Jun 8 · Morning</span></div>
+              <div class="ov-row"><span>Your overlap (Jun 9):</span><span>~4h · Recorded as Overlap</span></div>
+              <div class="ov-row"><span>Incoming flagman:</span><span>Dubois, Remi (Cycle B)</span></div>
+              <div class="ov-row"><span>Dubois overlap (Jun 8):</span><span>~4h · Recorded as Overlap</span></div>
+            </div>
           </div>
-          <div style="font-size:13px;font-weight:700;">Ridgeline Construction</div>
-          <div style="font-size:11px;color:var(--text-muted);margin:3px 0 8px;">Clearwater Sub · MP 25.1–26.0</div>
-          <div class="detail-row" style="padding:4px 0;"><span class="detail-label">A/A Code</span><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:monospace;">0100</span></div>
+
+          <!-- Check-in card -->
+          <div class="ci-card">
+            <div class="ci-job">Northgate Utilities — Cascade Sub</div>
+            <div class="ci-sub">MP 142.3–145.8 · Morning Shift · A/A 0100</div>
+            <div class="ci-grid">
+              <div class="ci-cell"><label>Report Time</label><span style="color:#ffd54f">06:30</span></div>
+              <div class="ci-cell"><label>End Time</label><span>16:30</span></div>
+              <div class="ci-cell"><label>Job #</label><span>PRJ-720312</span></div>
+              <div class="ci-cell"><label>Regular Hours</label><span>10h max</span></div>
+            </div>
+            <div class="ci-btns">
+              <button class="ci-btn ci-in" id="ci-btn" onclick="doCheckIn()">✅ Check In</button>
+              <button class="ci-btn ci-out" id="co-btn" onclick="doCheckOut()">Check Out</button>
+            </div>
+            <div class="ci-timer" id="ci-timer"></div>
+          </div>
+
+          <!-- 14-day hours -->
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span class="card-title" style="margin:0">14-Day Work Hours</span>
+              <span class="badge b-green">56 / 135h</span>
+            </div>
+            <div class="hbar-wrap">
+              <div class="hbar-lbl"><span>Used: 56h</span><span>Remaining: 79h</span></div>
+              <div class="hbar"><div class="hbar-fill fill-g" style="width:41%"></div></div>
+            </div>
+            <div style="font-size:11px;color:#888;margin-top:6px">Window: May 22 – Jun 4 · Resets Jun 5</div>
+          </div>
+
+          <!-- Mini calendar -->
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <span class="card-title" style="margin:0">June 2026</span>
+              <div style="display:flex;gap:6px">
+                <button style="background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:13px">‹</button>
+                <button style="background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:13px">›</button>
+              </div>
+            </div>
+            <div class="mcal">
+              <div class="mcal-hdr">S</div><div class="mcal-hdr">M</div><div class="mcal-hdr">T</div><div class="mcal-hdr">W</div><div class="mcal-hdr">T</div><div class="mcal-hdr">F</div><div class="mcal-hdr">S</div>
+              <div class="mcal-day d-empty"></div><div class="mcal-day d-on">2</div><div class="mcal-day d-on">3</div><div class="mcal-day d-today">4</div><div class="mcal-day d-on">5</div><div class="mcal-day d-on">6</div><div class="mcal-day d-on">7</div>
+              <div class="mcal-day d-on">8</div><div class="mcal-day d-ovl">9↔</div><div class="mcal-day d-off">10</div><div class="mcal-day d-off">11</div><div class="mcal-day d-off">12</div><div class="mcal-day d-off">13</div><div class="mcal-day d-off">14</div>
+              <div class="mcal-day d-on">16</div><div class="mcal-day d-on">17</div><div class="mcal-day d-on">18</div><div class="mcal-day d-on">19</div><div class="mcal-day d-on">20</div><div class="mcal-day d-on">21</div><div class="mcal-day d-on">22</div>
+              <div class="mcal-day d-on">23</div><div class="mcal-day d-ovl">24↔</div><div class="mcal-day d-off">25</div><div class="mcal-day d-off">26</div><div class="mcal-day d-off">27</div><div class="mcal-day d-off">28</div><div class="mcal-day d-off">29</div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#666"><div style="width:10px;height:10px;background:#e8f5e9;border-radius:2px"></div>On Cycle</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#666"><div style="width:10px;height:10px;background:#f0f0f0;border-radius:2px"></div>Off Cycle</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#666"><div style="width:10px;height:10px;background:#f3e5f5;border-radius:2px"></div>Overlap</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#666"><div style="width:10px;height:10px;background:#B5091D;border-radius:2px"></div>Today</div>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
-    <div class="bottom-nav">
-      <div class="nav-tab active"><div class="icon">🏠</div><div class="label">Home</div></div>
-      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
-      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
-      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
-      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="ni">🏠</div><div class="nl">Home</div></div>
+        <div class="nav-item"><div class="ni">⏰</div><div class="nl">Overtime</div></div>
+        <div class="nav-item"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+        <div class="nav-item"><div class="ni">👤</div><div class="nl">Profile</div></div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 
-<!-- ══════════ SCREEN 2: JOBS TAB (Open / Upcoming / Completed) ══════════ -->
-<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-<div class="screen-title">Screen 2 — Jobs (Open · Upcoming · Completed)</div>
-<div class="phone-frame">
-  <div class="phone-screen">
-    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
-    <div class="app-header">
-      <div class="header-row">
-        <div>
-          <div class="greeting">Jobs</div>
-          <div class="name" id="jobs-screen-title">Open Jobs</div>
-          <div class="meta" id="jobs-screen-meta">Browse &amp; show interest</div>
+<!-- ===== SCREEN 2: OVERTIME ===== -->
+<div class="phone-wrap">
+  <div class="screen-title">Screen 2 — Overtime Availability</div>
+  <div class="phone">
+    <div class="phone-inner">
+      <div class="status-bar"><span class="t">9:41 AM</span><span class="ic">📶 🔋</span></div>
+      <div class="app-header">
+        <div class="logo-row">
+          <div style="display:flex;align-items:center"><span class="logo-badge">CN</span><span class="logo-text">Flagging</span></div>
+          <button class="notif-btn">🔔</button>
         </div>
-        <div class="notif-badge" onclick="mToast('4 unread notifications')">4</div>
+        <div class="name" style="margin-top:10px">Overtime Availability</div>
+        <div class="meta">Indicate your availability for off-cycle days</div>
       </div>
-    </div>
-    <div style="padding:0 16px;background:var(--white);border-bottom:1px solid var(--border);">
-      <div class="inner-tabs">
-        <div class="inner-tab active" id="jtab-open" onclick="switchJobTab('open')">Open Jobs</div>
-        <div class="inner-tab" id="jtab-upcoming" onclick="switchJobTab('upcoming')">Upcoming</div>
-        <div class="inner-tab" id="jtab-completed" onclick="switchJobTab('completed')">Completed</div>
-      </div>
-    </div>
+      <div class="scroll">
+        <div class="sec">
 
-    <!-- OPEN JOBS TAB -->
-    <div id="jobs-open" class="scroll-area">
-      <!-- Week navigation -->
-      <div class="week-nav">
-        <button onclick="shiftJobWeek(-1)">‹</button>
-        <span class="wlabel" id="job-week-label">Week of Jun 1, 2026</span>
-        <button onclick="shiftJobWeek(1)">›</button>
-      </div>
-      <div class="filter-row">
-        <div class="filter-chip active" onclick="mToast('All jobs')">All</div>
-        <div class="filter-chip" onclick="mToast('BC jobs')">BC</div>
-        <div class="filter-chip" onclick="mToast('Alberta jobs')">Alberta</div>
-        <div class="filter-chip" onclick="mToast('Morning')">Morning</div>
-        <div class="filter-chip" onclick="mToast('Night')">Night</div>
-      </div>
-      <div id="open-jobs-list"></div>
-      <div class="mobile-pagination" id="open-jobs-pg"></div>
-    </div>
+          <div class="week-nav">
+            <button class="wn-btn" onclick="shiftOT(-1)">‹ Prev</button>
+            <span class="wn-lbl" id="ot-lbl">Jun 9–14, 2026</span>
+            <button class="wn-btn" onclick="shiftOT(1)">Next ›</button>
+          </div>
 
-    <!-- UPCOMING JOBS TAB -->
-    <div id="jobs-upcoming" class="scroll-area" style="display:none;">
-      <div class="screen-label">My Assigned Future Jobs</div>
-      <div class="upcoming-row">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span class="shift-badge shift-morning">Morning</span>
-          <span style="font-size:10px;color:var(--text-muted);">Jun 16 – Jun 20 · 5 days</span>
-        </div>
-        <div style="font-size:13px;font-weight:700;">Ridgeline Construction</div>
-        <div style="font-size:11px;color:var(--text-muted);margin:3px 0 6px;">Clearwater Sub · MP 25.1–26.0 · Meeting: Clearwater Station</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="tag tag-sub">Clearwater</span>
-          <span style="background:#FFF9C4;color:#7a6000;" class="tag">Morning</span>
-          <span style="background:#D4EDDA;color:#1E7E34;" class="tag">5 days</span>
-        </div>
-        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">A/A Code: <span style="font-family:monospace;font-weight:700;color:var(--cn-dark);">0100</span></div>
-      </div>
-      <div class="upcoming-row">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span class="shift-badge shift-afternoon">Afternoon</span>
-          <span style="font-size:10px;color:var(--text-muted);">Jun 23 – Jun 27 · 5 days</span>
-        </div>
-        <div style="font-size:13px;font-weight:700;">CN Track Renewal</div>
-        <div style="font-size:11px;color:var(--text-muted);margin:3px 0 6px;">Wainwright Sub · MP 44.0–45.5 · Meeting: Wainwright Yard</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="tag tag-sub">Wainwright</span>
-          <span style="background:#FFE0B2;color:#7a3500;" class="tag">Afternoon</span>
-          <span style="background:#D4EDDA;color:#1E7E34;" class="tag">5 days</span>
-        </div>
-        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">A/A Code: <span style="font-family:monospace;font-weight:700;color:var(--cn-dark);">0210</span></div>
-      </div>
-      <div class="upcoming-row">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span class="shift-badge shift-morning">Morning</span>
-          <span style="font-size:10px;color:var(--text-muted);">Jul 7 – Jul 11 · 5 days</span>
-        </div>
-        <div style="font-size:13px;font-weight:700;">Westfield Pipeline</div>
-        <div style="font-size:11px;color:var(--text-muted);margin:3px 0 6px;">Edson Sub · MP 110.0–111.2 · Meeting: Edson Yard Gate</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="tag tag-sub">Edson</span>
-          <span style="background:#FFF9C4;color:#7a6000;" class="tag">Morning</span>
-          <span style="background:#D4EDDA;color:#1E7E34;" class="tag">5 days</span>
-        </div>
-        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">A/A Code: <span style="font-family:monospace;font-weight:700;color:var(--cn-dark);">0100</span></div>
-      </div>
-    </div>
+          <div id="ot-content"></div>
 
-    <!-- COMPLETED JOBS TAB -->
-    <div id="jobs-completed" class="scroll-area" style="display:none;">
-      <div class="screen-label">My Completed Jobs — 2026</div>
-      <div class="filter-row">
-        <div class="filter-chip active">All</div>
-        <div class="filter-chip" onclick="mToast('Morning filter')">Morning</div>
-        <div class="filter-chip" onclick="mToast('Afternoon filter')">Afternoon</div>
-        <div class="filter-chip" onclick="mToast('Night filter')">Night</div>
-      </div>
-      <div class="completed-row">
-        <div class="completed-company">Northgate Utilities</div>
-        <div class="completed-meta">Yale Sub · MP 118.0–118.5 · Jun 1–14, 2026 · 14 days</div>
-        <div class="completed-chips">
-          <span class="tag shift-morning">Morning</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
-          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0100</span>
-        </div>
-      </div>
-      <div class="completed-row">
-        <div class="completed-company">Ironwood Track Services</div>
-        <div class="completed-meta">Cascade Sub · MP 88.5–89.0 · May 19–23, 2026 · 5 days</div>
-        <div class="completed-chips">
-          <span class="tag shift-afternoon">Afternoon</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
-          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0210</span>
-        </div>
-      </div>
-      <div class="completed-row">
-        <div class="completed-company">Apex Energy Corp</div>
-        <div class="completed-meta">Edson Sub · MP 110.0–111.2 · May 5–9, 2026 · 5 days</div>
-        <div class="completed-chips">
-          <span class="tag shift-morning">Morning</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
-          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0100</span>
-        </div>
-      </div>
-      <div class="completed-row">
-        <div class="completed-company">Prairie Municipal Works</div>
-        <div class="completed-meta">Wainwright Sub · MP 44.0–45.0 · Apr 21–25, 2026 · 5 days</div>
-        <div class="completed-chips">
-          <span class="tag shift-night">Night</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
-          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0220</span>
-        </div>
-      </div>
-      <div class="completed-row">
-        <div class="completed-company">Highpoint Infrastructure</div>
-        <div class="completed-meta">Bulkley Sub · MP 88.0–89.5 · Apr 7–11, 2026 · 5 days</div>
-        <div class="completed-chips">
-          <span class="tag shift-morning">Morning</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
-          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0100</span>
-        </div>
-      </div>
-      <div class="mobile-pagination">
-        <div class="pg-dot active"></div><div class="pg-dot"></div><div class="pg-dot"></div>
-      </div>
-    </div>
+          <!-- History -->
+          <div class="card">
+            <div class="card-title">📋 Past Responses</div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:12px">
+                <thead><tr style="background:#f5f5f5">
+                  <th style="padding:6px 8px;text-align:left;color:#888;font-weight:600">Period</th>
+                  <th style="padding:6px 8px;text-align:left;color:#888;font-weight:600">Days</th>
+                  <th style="padding:6px 8px;text-align:left;color:#888;font-weight:600">Shift Pref</th>
+                  <th style="padding:6px 8px;text-align:left;color:#888;font-weight:600">Result</th>
+                </tr></thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">May 26–31</td><td style="padding:6px 8px">Both</td><td style="padding:6px 8px">Morning</td><td style="padding:6px 8px"><span class="badge b-green">Assigned</span></td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">May 19–24</td><td style="padding:6px 8px">Sat only</td><td style="padding:6px 8px">Afternoon</td><td style="padding:6px 8px"><span class="badge b-blue">Noted</span></td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">May 12–17</td><td style="padding:6px 8px">Both</td><td style="padding:6px 8px">No Pref</td><td style="padding:6px 8px"><span class="badge b-amber">Not used</span></td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">May 5–10</td><td style="padding:6px 8px">Sun only</td><td style="padding:6px 8px">Night</td><td style="padding:6px 8px"><span class="badge b-green">Assigned</span></td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">Apr 28–May 3</td><td style="padding:6px 8px">Both</td><td style="padding:6px 8px">Morning</td><td style="padding:6px 8px"><span class="badge b-green">Assigned</span></td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">Apr 21–26</td><td style="padding:6px 8px">Sat only</td><td style="padding:6px 8px">Afternoon</td><td style="padding:6px 8px"><span class="badge b-blue">Noted</span></td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 8px">Apr 14–19</td><td style="padding:6px 8px">None</td><td style="padding:6px 8px">—</td><td style="padding:6px 8px"><span class="badge b-grey">Not avail.</span></td></tr>
+                  <tr><td style="padding:6px 8px">Apr 7–12</td><td style="padding:6px 8px">Both</td><td style="padding:6px 8px">Morning</td><td style="padding:6px 8px"><span class="badge b-green">Assigned</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-    <div class="bottom-nav">
-      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
-      <div class="nav-tab active"><div class="icon">📋</div><div class="label">Jobs</div></div>
-      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
-      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
-      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="ni">🏠</div><div class="nl">Home</div></div>
+        <div class="nav-item active"><div class="ni">⏰</div><div class="nl">Overtime</div></div>
+        <div class="nav-item"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+        <div class="nav-item"><div class="ni">👤</div><div class="nl">Profile</div></div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 
-<!-- ══════════ SCREEN 3: OVERTIME AVAILABILITY ══════════ -->
-<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-<div class="screen-title">Screen 3 — Overtime Availability</div>
-<div class="phone-frame">
-  <div class="phone-screen">
-    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
-    <div class="app-header">
-      <div class="header-row">
-        <div>
-          <div class="greeting">Overtime</div>
-          <div class="name">Availability</div>
-          <div class="meta" id="ot-week-meta">Week of Jun 7, 2026</div>
+<!-- ===== SCREEN 3: NOTIFICATIONS ===== -->
+<div class="phone-wrap">
+  <div class="screen-title">Screen 3 — Notifications</div>
+  <div class="phone">
+    <div class="phone-inner">
+      <div class="status-bar"><span class="t">9:41 AM</span><span class="ic">📶 🔋</span></div>
+      <div class="app-header">
+        <div class="logo-row">
+          <div style="display:flex;align-items:center"><span class="logo-badge">CN</span><span class="logo-text">Flagging</span></div>
+          <span style="font-size:11px;color:#aaa;cursor:pointer">Mark all read</span>
         </div>
-        <div class="notif-badge" style="background:var(--warning);color:var(--cn-dark);">!</div>
+        <div class="name" style="margin-top:10px">Notifications</div>
+        <div class="meta">5 unread · Jun 4, 2026</div>
       </div>
-    </div>
-    <div class="app-alert warning" id="ot-deadline-banner">🕐 Deadline: <strong>Friday Jun 6 at 5 PM</strong></div>
-    <div class="scroll-area">
-      <!-- Week navigation -->
-      <div class="week-nav">
-        <button onclick="shiftOTWeek(-1)">‹</button>
-        <span class="wlabel" id="ot-week-label">Jun 7–8, 2026</span>
-        <button onclick="shiftOTWeek(1)">›</button>
+      <div class="chips">
+        <div class="chip active">All (8)</div>
+        <div class="chip">Jobs</div>
+        <div class="chip">Overlap</div>
+        <div class="chip">Overtime</div>
+        <div class="chip">Vacation</div>
+        <div class="chip">Schedule</div>
       </div>
+      <div class="scroll">
+        <div class="sec">
 
-      <!-- Day availability cards -->
-      <div class="card">
-        <div class="card-title">📅 Select Your Availability</div>
-        <div id="ot-days-container"></div>
-        <button style="width:100%;margin-top:14px;padding:13px;background:var(--cn-red);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" onclick="mToast('OT availability submitted ✓')">Submit Availability</button>
-      </div>
+          <!-- Overlap — top priority -->
+          <div class="card" style="border-left:3px solid #7b1fa2">
+            <div class="ni-item" style="border:none;padding:0">
+              <div class="ni-icon" style="background:#f3e5f5">🔄</div>
+              <div class="ni-body">
+                <div class="ni-title">Handoff Overlap — Jun 8–9</div>
+                <div class="ni-desc">Remi Dubois (Cycle B) arrives Jun 8 for overlap. Your partial shift Jun 9 (~4h) has been recorded in the Daily Flagging Record as Overlap hours.</div>
+                <div class="ni-time">Today · 08:15 AM</div>
+              </div>
+              <div class="ni-unread"></div>
+            </div>
+          </div>
 
-      <!-- History -->
-      <div class="card">
-        <div class="card-title">📊 My OT History</div>
-        <div class="detail-row"><span class="detail-label">Jun 7–8</span><span class="detail-value" style="color:var(--text-muted);">Pending submission</span></div>
-        <div class="detail-row"><span class="detail-label">May 31–Jun 1</span><span class="detail-value" style="color:var(--success);">Both days — Morning ✅</span></div>
-        <div class="detail-row"><span class="detail-label">May 24–25</span><span class="detail-value" style="color:var(--success);">Saturday — Afternoon ✅</span></div>
-        <div class="detail-row"><span class="detail-label">May 17–18</span><span class="detail-value" style="color:var(--text-muted);">Not available</span></div>
-        <div class="detail-row"><span class="detail-label">May 10–11</span><span class="detail-value" style="color:var(--success);">Both days — Morning ✅</span></div>
-        <div class="detail-row"><span class="detail-label">May 3–4</span><span class="detail-value" style="color:var(--success);">Sunday — Night ✅</span></div>
-        <div class="detail-row"><span class="detail-label">Apr 26–27</span><span class="detail-value" style="color:var(--text-muted);">Not available</span></div>
-        <div class="detail-row"><span class="detail-label">Apr 19–20</span><span class="detail-value" style="color:var(--success);">Both days — Morning ✅</span></div>
+          <div class="card">
+            <div class="ni-item">
+              <div class="ni-icon" style="background:#e3f2fd">📋</div>
+              <div class="ni-body">
+                <div class="ni-title">New Job Assignment</div>
+                <div class="ni-desc">Assigned to Northgate Utilities — Cascade Sub (Jun 4–8). Morning shift, 06:30 start. A/A Code: 0100.</div>
+                <div class="ni-time">Today · 07:45 AM</div>
+              </div>
+              <div class="ni-unread"></div>
+            </div>
+            <div class="ni-item">
+              <div class="ni-icon" style="background:#fff8e1">⏰</div>
+              <div class="ni-body">
+                <div class="ni-title">Overtime Availability Reminder</div>
+                <div class="ni-desc">Your off-cycle period Jun 9–14 is coming up. Submit your OT availability by Jun 6 at 5 PM.</div>
+                <div class="ni-time">Yesterday · 4:30 PM</div>
+              </div>
+              <div class="ni-unread"></div>
+            </div>
+            <div class="ni-item">
+              <div class="ni-icon" style="background:#f3e5f5">🏖️</div>
+              <div class="ni-body">
+                <div class="ni-title">Vacation Scheduled</div>
+                <div class="ni-desc">Your supervisor has scheduled vacation: Sep 7–11, 2026 (5 days). Balance: 15 used / 10 remaining.</div>
+                <div class="ni-time">Jun 2 · 2:10 PM</div>
+              </div>
+              <div class="ni-unread"></div>
+            </div>
+            <div class="ni-item">
+              <div class="ni-icon" style="background:#e8f5e9">✅</div>
+              <div class="ni-body">
+                <div class="ni-title">Check-Out Confirmed</div>
+                <div class="ni-desc">Jun 3 check-out at 16:45. Total: 10.75h. Regular: 10h (A/A 0100) · OT: 0.75h (A/A 0204) — two rows in Daily Flagging Record.</div>
+                <div class="ni-time">Jun 3 · 4:45 PM</div>
+              </div>
+            </div>
+            <div class="ni-item">
+              <div class="ni-icon" style="background:#ffebee">⚠️</div>
+              <div class="ni-body">
+                <div class="ni-title">Qualification Expiring Soon</div>
+                <div class="ni-desc">Your CROR qualification expires Jul 15, 2026 (41 days). Contact your supervisor to arrange renewal.</div>
+                <div class="ni-time">Jun 1 · 9:00 AM</div>
+              </div>
+            </div>
+            <div class="ni-item" style="border:none">
+              <div class="ni-icon" style="background:#e3f2fd">📅</div>
+              <div class="ni-body">
+                <div class="ni-title">Schedule Updated</div>
+                <div class="ni-desc">Your weekly schedule for Jun 9–14 has been updated. You are off-cycle. OT availability window is open.</div>
+                <div class="ni-time">May 31 · 11:30 AM</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
-    </div>
-    <div class="bottom-nav">
-      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
-      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
-      <div class="nav-tab active"><div class="icon">⏰</div><div class="label">OT</div></div>
-      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
-      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="ni">🏠</div><div class="nl">Home</div></div>
+        <div class="nav-item"><div class="ni">⏰</div><div class="nl">Overtime</div></div>
+        <div class="nav-item active"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+        <div class="nav-item"><div class="ni">👤</div><div class="nl">Profile</div></div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 
-<!-- ══════════ SCREEN 4: NOTIFICATIONS ══════════ -->
-<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-<div class="screen-title">Screen 4 — Notifications</div>
-<div class="phone-frame">
-  <div class="phone-screen">
-    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
-    <div class="app-header">
-      <div class="header-row">
-        <div><div class="greeting">Notifications</div><div class="name">4 Unread</div><div class="meta">Jun 4, 2026</div></div>
-        <button style="background:none;border:none;color:#aaa;font-size:11px;font-weight:600;cursor:pointer;" onclick="mToast('All marked as read')">Mark all read</button>
-      </div>
-    </div>
-    <div class="scroll-area">
-      <div class="filter-row">
-        <div class="filter-chip active">All</div>
-        <div class="filter-chip" onclick="mToast('Jobs filter')">Jobs</div>
-        <div class="filter-chip" onclick="mToast('OT filter')">OT</div>
-        <div class="filter-chip" onclick="mToast('Vacation filter')">Vacation</div>
-        <div class="filter-chip" onclick="mToast('Schedule filter')">Schedule</div>
-      </div>
-      <div class="card" style="padding:12px;">
-        <!-- Vacation notification — NEW -->
-        <div class="notif-item notif-unread" style="margin-bottom:8px;">
-          <div class="notif-icon purple">🏖️</div>
-          <div>
-            <div class="notif-title">Vacation Scheduled</div>
-            <div class="notif-body">Your supervisor has scheduled vacation for you: <strong>Sep 7–11, 2026</strong> (5 days). Balance: 15 used / 10 remaining.</div>
-            <div class="notif-time">Today, 9:00 AM</div>
+<!-- ===== SCREEN 4: PROFILE ===== -->
+<div class="phone-wrap">
+  <div class="screen-title">Screen 4 — Profile</div>
+  <div class="phone">
+    <div class="phone-inner">
+      <div class="status-bar"><span class="t">9:41 AM</span><span class="ic">📶 🔋</span></div>
+      <div class="scroll" style="background:#fff">
+
+        <div class="prof-hdr">
+          <div class="prof-av">LT</div>
+          <div class="prof-name">Luc Tremblay</div>
+          <div class="prof-sub">Employee ID: CN-4471 · BC Region</div>
+          <div class="prof-badges">
+            <span class="prof-badge" style="background:rgba(255,255,255,.15);color:#fff">8&amp;6 · Cycle A</span>
+            <span class="prof-badge" style="background:#B5091D;color:#fff">Seniority #7</span>
+            <span class="prof-badge" style="background:rgba(255,255,255,.15);color:#fff">CN Employee</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px">
+            <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:20px;font-weight:700">23</div><div style="font-size:9px;color:#aaa;text-transform:uppercase">Jobs 2026</div></div>
+            <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:20px;font-weight:700">8</div><div style="font-size:9px;color:#aaa;text-transform:uppercase">OT Days</div></div>
+            <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:20px;font-weight:700">2019</div><div style="font-size:9px;color:#aaa;text-transform:uppercase">Hire Year</div></div>
           </div>
         </div>
-        <div class="notif-item notif-unread" style="margin-bottom:8px;">
-          <div class="notif-icon red">🔴</div>
-          <div><div class="notif-title">New Job Assignment</div><div class="notif-body">Assigned to Ridgeline Construction — Clearwater Sub, Jun 16–20.</div><div class="notif-time">Today, 8:30 AM</div></div>
-        </div>
-        <div class="notif-item notif-unread" style="margin-bottom:8px;">
-          <div class="notif-icon orange">⏰</div>
-          <div><div class="notif-title">OT Availability Reminder</div><div class="notif-body">Submit your OT availability for Jun 7–8 by Friday 5 PM.</div><div class="notif-time">Today, 7:00 AM</div></div>
-        </div>
-        <div class="notif-item notif-unread" style="margin-bottom:8px;">
-          <div class="notif-icon blue">📋</div>
-          <div><div class="notif-title">Job Interest Received</div><div class="notif-body">Your interest in Northgate Utilities (Cascade Sub) is under supervisor review.</div><div class="notif-time">Yesterday, 4:15 PM</div></div>
-        </div>
-        <div class="notif-item" style="padding:10px;margin-bottom:8px;">
-          <div class="notif-icon green">✅</div>
-          <div><div class="notif-title">Check-Out Confirmed</div><div class="notif-body">Check-out for Northgate Utilities (Yale Sub) on Jun 3 recorded at 14:05.</div><div class="notif-time">Yesterday, 2:05 PM</div></div>
-        </div>
-        <div class="notif-item" style="padding:10px;">
-          <div class="notif-icon blue">📅</div>
-          <div><div class="notif-title">Weekly Schedule Sent</div><div class="notif-body">Your schedule for the week of Jun 2 has been sent by your supervisor.</div><div class="notif-time">Jun 1, 3:00 PM</div></div>
+
+        <div style="padding:16px">
+
+          <!-- Qualifications -->
+          <div class="card">
+            <div class="card-title">Qualifications</div>
+            <div class="qual-row">
+              <div><div class="qual-name">TIGS</div><div class="qual-dates">Obtained: Mar 12, 2020 · Expires: Mar 12, 2027</div></div>
+              <span class="qs-valid">Valid</span>
+            </div>
+            <div class="qual-row">
+              <div><div class="qual-name">CROR</div><div class="qual-dates">Obtained: Jan 8, 2021 · Expires: Jul 15, 2026</div></div>
+              <span class="qs-expiring">Expiring</span>
+            </div>
+            <div class="qual-row">
+              <div><div class="qual-name">eRail Safe · #ERS-44712</div><div class="qual-dates">Obtained: Jun 5, 2022 · Expires: Jun 5, 2025</div></div>
+              <span class="qs-expired">Expired</span>
+            </div>
+          </div>
+
+          <!-- Protection sign-off -->
+          <div class="card">
+            <div class="card-title">Protection Sign-Off</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="badge b-blue">Flagging Protection</span>
+              <span class="badge b-blue">Foul Protection</span>
+              <span class="badge b-blue">Working Limits</span>
+            </div>
+          </div>
+
+          <!-- Vacation -->
+          <div class="card">
+            <div class="card-title">My Vacation — 2026</div>
+            <div class="hbar-wrap">
+              <div class="hbar-lbl"><span>Used: 15 days</span><span>Remaining: 10 days</span></div>
+              <div class="hbar"><div class="hbar-fill fill-a" style="width:60%"></div></div>
+            </div>
+            <div style="font-size:11px;color:#888;margin-bottom:10px">Entitlement: 25 days / year</div>
+            <div class="vac-entry">
+              <div><div style="font-size:13px;font-weight:500">Jun 2 – Jun 8, 2026</div><div style="font-size:11px;color:#888">5 working days</div></div>
+              <span class="badge b-green">Active</span>
+            </div>
+            <div class="vac-entry">
+              <div><div style="font-size:13px;font-weight:500">Sep 7 – Sep 11, 2026</div><div style="font-size:11px;color:#888">5 working days</div></div>
+              <span class="badge b-blue">Upcoming</span>
+            </div>
+            <div style="font-size:11px;color:#888;margin-top:8px;padding:8px;background:#f5f5f5;border-radius:6px">📌 Vacation is scheduled by your supervisor. Contact your supervisor to request changes.</div>
+          </div>
+
+          <!-- Contact -->
+          <div class="card">
+            <div class="card-title">Contact Information</div>
+            <div style="font-size:13px;color:#555;line-height:1.9">
+              📞 (604) 555-0147<br>
+              ✉️ l.tremblay@cn.ca<br>
+              📍 1482 Riverside Dr, Hope, BC V0X 1L0
+            </div>
+          </div>
+
+          <button class="btn btn-red btn-full" style="margin-bottom:24px">Log Out</button>
+
         </div>
       </div>
-    </div>
-    <div class="bottom-nav">
-      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
-      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
-      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
-      <div class="nav-tab active"><div class="icon">🔔</div><div class="label">Alerts</div></div>
-      <div class="nav-tab"><div class="icon">👤</div><div class="label">Profile</div></div>
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="ni">🏠</div><div class="nl">Home</div></div>
+        <div class="nav-item"><div class="ni">⏰</div><div class="nl">Overtime</div></div>
+        <div class="nav-item"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+        <div class="nav-item active"><div class="ni">👤</div><div class="nl">Profile</div></div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 
-<!-- ══════════ SCREEN 5: PROFILE ══════════ -->
-<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-<div class="screen-title">Screen 5 — Profile &amp; Qualifications</div>
-<div class="phone-frame">
-  <div class="phone-screen">
-    <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
-    <div class="app-header"><div class="greeting">My Profile</div><div class="name">Luc Tremblay</div></div>
-    <div class="scroll-area">
-      <div class="profile-header">
-        <div class="profile-avatar">LT</div>
-        <div class="profile-name">Luc Tremblay</div>
-        <div class="profile-meta">CN Employee · EMP-0201 · BC Region</div>
-        <div class="profile-meta" style="margin-top:4px;">Seniority #5 · 5&amp;2 Cycle</div>
-        <div class="profile-stats">
-          <div class="pstat"><div class="pstat-val">23</div><div class="pstat-label">Jobs YTD</div></div>
-          <div class="pstat"><div class="pstat-val">8</div><div class="pstat-label">OT Days</div></div>
-          <div class="pstat"><div class="pstat-val">2019</div><div class="pstat-label">Hire Year</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">📞 Contact Information</div>
-        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">604-555-0201</span></div>
-        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">l.tremblay@cn.ca</span></div>
-        <div class="detail-row"><span class="detail-label">Address</span><span class="detail-value">456 Rail St, Surrey, BC V3T 1A1</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">🛡️ Protection Sign-Off</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;">Flagging Protection</span>
-          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;">Working Limits</span>
-          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;">Form B</span>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">🎓 Qualifications</div>
-        <div class="qual-row">
-          <div><div class="qual-name">TIGS</div><div class="qual-dates">Qualified: Mar 15, 2022 · Expires: Mar 15, 2027</div></div>
-          <span class="qual-status qs-valid">✓ Valid</span>
-        </div>
-        <div class="qual-row">
-          <div><div class="qual-name">CROR</div><div class="qual-dates">Qualified: Jun 1, 2023 · Expires: Jun 1, 2028</div></div>
-          <span class="qual-status qs-valid">✓ Valid</span>
-        </div>
-        <div class="qual-row">
-          <div><div class="qual-name">eRail Safe · ERS-00045</div><div class="qual-dates">Qualified: Jan 10, 2024 · Expires: Jan 10, 2026</div></div>
-          <span class="qual-status qs-expiring">⚠ Expiring</span>
-        </div>
-      </div>
-      <!-- VACATION — read-only view -->
-      <div class="card">
-        <div class="card-title">🏖️ My Vacation — 2026</div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-          <span style="font-size:12px;color:var(--text-muted);">15 of 25 days used</span>
-          <span style="font-size:12px;font-weight:700;color:var(--cn-blue);">10 remaining</span>
-        </div>
-        <div style="background:#e9ecef;border-radius:4px;height:8px;margin-bottom:14px;"><div style="background:var(--cn-blue);height:8px;border-radius:4px;width:60%;"></div></div>
-        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Booked Vacation</div>
-        <div class="vac-entry">
-          <div>
-            <div style="font-size:12px;font-weight:700;">Jun 2 – Jun 8, 2026</div>
-            <div style="font-size:10px;color:var(--text-muted);">5 days · Approved</div>
-          </div>
-          <span style="background:var(--success-bg);color:var(--success);padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;">Active</span>
-        </div>
-        <div class="vac-entry">
-          <div>
-            <div style="font-size:12px;font-weight:700;">Sep 7 – Sep 11, 2026</div>
-            <div style="font-size:10px;color:var(--text-muted);">5 days · Approved</div>
-          </div>
-          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;">Upcoming</span>
-        </div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:10px;text-align:center;">Vacation is scheduled by your supervisor. Contact your supervisor to request changes.</div>
-      </div>
-      <button style="width:100%;padding:13px;background:var(--danger-bg);color:var(--cn-red);border:1px solid var(--cn-red);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;" onclick="mToast('Logged out')">Log Out</button>
-    </div>
-    <div class="bottom-nav">
-      <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
-      <div class="nav-tab"><div class="icon">📋</div><div class="label">Jobs</div></div>
-      <div class="nav-tab"><div class="icon">⏰</div><div class="label">OT</div></div>
-      <div class="nav-tab"><div class="icon">🔔</div><div class="label">Alerts</div></div>
-      <div class="nav-tab active"><div class="icon">👤</div><div class="label">Profile</div></div>
-    </div>
-  </div>
-</div>
-</div>
-
-<div id="m-toast"></div>
 <script>
-// ── TOAST ──
-function mToast(msg) {
-  const t = document.getElementById('m-toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2500);
+// ===== CHECK-IN =====
+let checkedIn = false;
+let timerInterval = null;
+let startTime = null;
+function doCheckIn() {
+  if (checkedIn) return;
+  checkedIn = true;
+  startTime = new Date();
+  document.getElementById('ci-btn').textContent = '✓ Checked In ' + startTime.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  document.getElementById('ci-btn').className = 'ci-btn ci-done';
+  document.getElementById('ci-timer').textContent = '⏱ On shift: 0h 00m · Regular hours: 10h max';
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((new Date() - startTime) / 60000);
+    const h = Math.floor(elapsed / 60), m = elapsed % 60;
+    const regular = Math.min(elapsed, 600);
+    const ot = Math.max(0, elapsed - 600);
+    let txt = `⏱ On shift: ${h}h ${String(m).padStart(2,'0')}m · Regular: ${Math.floor(regular/60)}h ${regular%60}m`;
+    if (ot > 0) txt += ` · OT: ${Math.floor(ot/60)}h ${ot%60}m (A/A 0204)`;
+    document.getElementById('ci-timer').textContent = txt;
+  }, 1000);
+}
+function doCheckOut() {
+  if (!checkedIn) { alert('Please check in first.'); return; }
+  clearInterval(timerInterval);
+  const now = new Date();
+  document.getElementById('co-btn').textContent = '✓ Checked Out ' + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  document.getElementById('co-btn').className = 'ci-btn ci-done';
+  document.getElementById('ci-timer').textContent = '✅ Shift complete. Daily Flagging Record updated.';
 }
 
-// ── FLAGMAN STATE (simulated for Luc Tremblay) ──
-// cycleStatus: 'on' = active cycle day, 'off' = off-cycle, 'vacation' = vacation
-const flagmanState = {
-  cycleStatus: 'on',
-  hours14day: 56,   // 56h used — 79h remaining, well within 135h cap
-  cap14day: 135,
-  vacationDates: ['2026-06-02','2026-06-03','2026-06-04','2026-06-05',
-                  '2026-06-06','2026-06-07','2026-06-08',
-                  '2026-09-07','2026-09-08','2026-09-09','2026-09-10','2026-09-11'],
-};
-
-// ── JOBS TAB ──
-// shifts: array of shift keys e.g. ['morning'] or ['morning','afternoon','night']
-// pendingType: 'Regular Hours' | 'Overtime' | null
-// regularInterest: shift key of expressed regular interest, or null
-// otInterest: {shift, hours} or null
-// pendingOTShift: shift key chosen for OT, waiting for hours input
-// job fields: regularInterest (shift|null), otInterest ({shift,hours}|null), pendingType, pendingOTShift
-function mkJob(id,company,sub,mp,dates,days,shifts,req,urgent,hoursEst) {
-  return {id,company,sub,mp,dates,days,shifts,req,urgent,hoursEst:hoursEst||days*8,
-          regularInterest:null,otInterest:null,pendingType:null,pendingOTShift:null,interest:null};
-}
-const jobWeeks = [
-  { label:'Week of May 25, 2026', jobs:[
-    mkJob('jw0a','Summit Rail Services','Edson Sub','MP 110.0–111.2','May 27–29',3,['morning'],'TIGS',false),
-    mkJob('jw0b','Highpoint Infrastructure','Cascade Sub','MP 55.0–56.0','May 26–30',5,['morning','afternoon','night'],'TIGS · Form B',false),
-  ]},
-  { label:'Week of Jun 1, 2026', jobs:[
-    mkJob('jw1a','Northgate Utilities','Cascade Sub','MP 88.5–89.0','Jun 9–13',5,['morning','afternoon'],'TIGS',true,40),
-    mkJob('jw1b','Ironwood Track Services','Bulkley Sub','MP 88.0–89.5','Jun 16–25',10,['afternoon'],'TIGS · CROR',false,80),
-    mkJob('jw1c','Clearwater Land Authority','Clearwater Sub','MP 25.1–26.0','TBD',7,['morning','afternoon','night'],'TIGS · Form B',false,56),
-    mkJob('jw1d','Prairie Municipal Works','Wainwright Sub','MP 55.0–56.2','Jun 10–12',3,['morning'],'TIGS',false,24),
-  ]},
-  { label:'Week of Jun 8, 2026', jobs:[
-    mkJob('jw2a','Westfield Pipeline','Edson Sub','MP 44.0–45.5','Jun 16–20',5,['morning','night'],'TIGS · CROR',false),
-    mkJob('jw2b','Apex Energy Corp','Wainwright Sub','MP 100.0–101.0','Jun 17–21',5,['afternoon'],'TIGS',false),
-  ]},
-  { label:'Week of Jun 15, 2026', jobs:[
-    mkJob('jw3a','Meridian Rail Services','Lillooet Sub','MP 200.8–202.0','Jun 23–27',5,['morning','afternoon','night'],'TIGS · CROR',false),
-    mkJob('jw3b','Stonebridge Excavation','Yale Sub','MP 120.0–121.0','Jun 23–30',8,['night'],'TIGS · Form B',true),
-  ]},
-  { label:'Week of Jun 22, 2026', jobs:[
-    mkJob('jw4a','Ridgeline Construction','Bulkley Sub','MP 90.0–91.5','Jun 29–Jul 3',5,['morning','afternoon'],'TIGS',false),
-  ]},
-  { label:'Week of Jun 29, 2026', jobs:[
-    mkJob('jw5a','Northgate Utilities','Cascade Sub','MP 92.0–93.0','Jul 7–11',5,['afternoon','night'],'TIGS · CROR',false),
-    mkJob('jw5b','CN Track Renewal','Wainwright Sub','MP 44.0–45.5','Jul 7–11',5,['morning'],'TIGS',false),
-  ]},
-  { label:'Week of Jul 6, 2026', jobs:[
-    mkJob('jw6a','Westfield Pipeline','Edson Sub','MP 112.0–113.0','Jul 13–17',5,['morning','afternoon','night'],'TIGS · CROR',false),
-  ]},
-];
-let jobWeekIdx = 1;
-function shiftJobWeek(dir) {
-  jobWeekIdx = Math.max(0, Math.min(jobWeeks.length - 1, jobWeekIdx + dir));
-  renderOpenJobs();
-}
-function renderOpenJobs() {
-  const week = jobWeeks[jobWeekIdx];
-  document.getElementById('job-week-label').textContent = week.label;
-  const shiftColors = { morning:'#FFF9C4', afternoon:'#FFE0B2', night:'#E8EAF6' };
-  const shiftText = { morning:'#7a6000', afternoon:'#7a3500', night:'#283593' };
-  const shiftLabel = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
-  const fs = flagmanState;
-  const hoursLeft = fs.cap14day - fs.hours14day;
-  // 135h cap banner
-  let capHtml = '<div style="background:' + (hoursLeft < 20 ? '#FFF3CD' : '#E8F1F9') + ';border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;font-weight:600;color:' + (hoursLeft < 20 ? '#856404' : 'var(--cn-blue)') + ';">';
-  capHtml += '⏱ 14-day hours: ' + fs.hours14day + ' / ' + fs.cap14day + ' used &nbsp;·&nbsp; <strong>' + hoursLeft + 'h remaining</strong>';
-  capHtml += (hoursLeft < 20 ? ' ⚠ Approaching limit' : '') + '</div>';
-  let html = capHtml;
-  if (week.jobs.length === 0) {
-    html += '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">No open jobs this week.</div>';
-  } else {
-    week.jobs.forEach(j => {
-      // 135h cap check: advisory only — do NOT block, just warn
-      const wouldBreach = j.hoursEst > hoursLeft;
-      const daysCanWork = hoursLeft > 0 ? Math.floor(hoursLeft / 8) : 0;
-      // OT eligibility:
-      // - on active cycle day: can do Regular; can do OT only if regularInterest already expressed
-      // - off-cycle or vacation: OT only (no Regular)
-      const isOffOrVac = (fs.cycleStatus === 'off' || fs.cycleStatus === 'vacation');
-      const canRegular = !isOffOrVac;  // never block, just advise
-      const canOT = (isOffOrVac || j.regularInterest !== null);  // never block, just advise
-      const hasRegular = j.regularInterest !== null;
-      const hasOT = j.otInterest !== null;
-      html += '<div class="interest-card' + (hasRegular || hasOT ? ' expressed' : '') + '" id="' + j.id + '">';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">';
-      html += '<div class="interest-company">' + j.company + '</div>';
-      if (j.urgent) html += '<span style="font-size:10px;font-weight:700;color:var(--danger);">🔴 Urgent</span>';
-      else html += '<span style="font-size:10px;color:var(--text-muted);">Open</span>';
-      html += '</div>';
-      html += '<div class="interest-meta">' + j.sub + ' · ' + j.mp + ' · ' + j.dates + ' · ' + j.days + ' days</div>';
-      html += '<div class="interest-tags">';
-      html += '<span class="tag tag-sub">' + j.sub.split(' ')[0] + '</span>';
-      j.shifts.forEach(sh => {
-        html += '<span class="tag" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';">' + shiftLabel[sh] + '</span>';
-      });
-      html += '<span class="tag" style="background:#D4EDDA;color:#1E7E34;">' + j.days + ' days</span>';
-      html += '</div>';
-      html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Required: ' + j.req + ' &nbsp;·&nbsp; Est. ' + j.hoursEst + 'h</div>';
-      // 135h advisory (soft warning — does not block)
-      if (wouldBreach && !hasRegular && !hasOT) {
-        html += '<div style="background:#FFF3CD;border:1px solid #ffc107;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;color:#856404;margin-bottom:8px;">⚠ This job requires ~' + j.hoursEst + 'h but you have only <strong>' + hoursLeft + 'h</strong> remaining in your 14-day window. You can work approximately <strong>' + daysCanWork + ' day' + (daysCanWork !== 1 ? 's' : '') + '</strong> before reaching the 135h limit. Your supervisor will be notified.</div>';
-      }
-      if (j.pendingOTShift) {
-        // OT hours input step
-        html += '<div style="background:#f0f7ff;border-radius:10px;padding:12px;border:1px solid var(--cn-light-blue);">';
-        html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">How many OT hours for ' + shiftLabel[j.pendingOTShift] + '?</div>';
-        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">';
-        [2,3,4,5,6,7,8].forEach(h => {
-          html += '<div class="shift-opt" onclick="confirmOTHours(\'' + j.id + '\',' + h + ')">' + h + 'h</div>';
-        });
-        html += '</div>';
-        html += '<button style="width:100%;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--text-muted);" onclick="cancelPending(\'' + j.id + '\')">' + '← Back</button>';
-        html += '</div>';
-      } else if (j.pendingType) {
-        // Shift selection step
-        const availShifts = j.pendingType === 'Overtime' && hasRegular
-          ? j.shifts.filter(s => s !== j.regularInterest)  // OT on a different shift
-          : j.shifts;
-        html += '<div style="background:#f0f7ff;border-radius:10px;padding:12px;border:1px solid var(--cn-light-blue);">';
-        html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">Select shift for ' + j.pendingType + ':</div>';
-        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">';
-        availShifts.forEach(sh => {
-          html += '<div class="shift-opt" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';border:none;" onclick="pickShiftForType(\'' + j.id + '\',\'' + sh + '\')">'
-            + shiftLabel[sh] + '</div>';
-        });
-        html += '</div>';
-        html += '<button style="width:100%;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--text-muted);" onclick="cancelPending(\'' + j.id + '\')">' + '← Back</button>';
-        html += '</div>';
-      } else {
-        // Normal action buttons
-        if (hasRegular) {
-          html += '<div style="background:var(--success-bg);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;color:var(--success);margin-bottom:8px;">✓ Regular: ' + shiftLabel[j.regularInterest] + ' &nbsp;<button style="background:none;border:none;color:var(--cn-red);font-size:10px;font-weight:700;cursor:pointer;" onclick="withdrawRegular(\'' + j.id + '\')">[Withdraw]</button></div>';
-        }
-        if (hasOT) {
-          html += '<div style="background:#E8EAF6;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;color:#283593;margin-bottom:8px;">⏰ OT: ' + shiftLabel[j.otInterest.shift] + ' · ' + j.otInterest.hours + 'h &nbsp;<button style="background:none;border:none;color:var(--cn-red);font-size:10px;font-weight:700;cursor:pointer;" onclick="withdrawOT(\'' + j.id + '\')">[Withdraw]</button></div>';
-        }
-        html += '<div class="interest-actions">';
-        if (canRegular && !hasRegular) {
-          html += '<button class="btn-interest btn-regular" onclick="expressJobInterest(\'' + j.id + '\',\'Regular Hours\')">' + '👋 Regular Hours</button>';
-        } else if (!canRegular && !isOffOrVac && !hasRegular) {
-          html += '<button class="btn-interest" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#e9ecef;color:#aaa;cursor:not-allowed;">Regular (Active Cycle)</button>';
-        }
-        if (canOT && !hasOT) {
-          html += '<button class="btn-interest btn-ot" onclick="expressJobInterest(\'' + j.id + '\',\'Overtime\')">' + '⏰ Overtime</button>';
-        } else if (!canOT && !hasOT && !isOffOrVac) {
-          html += '<button class="btn-interest" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#e9ecef;color:#aaa;cursor:not-allowed;" title="Express regular interest first">⏰ OT (after Regular)</button>';
-        } else if (!canOT && !hasOT && isOffOrVac) {
-          html += '<button class="btn-interest btn-ot" onclick="expressJobInterest(\'' + j.id + '\',\'Overtime\')">' + '⏰ Overtime</button>';
-        }
-        html += '</div>';
-      }
-      html += '</div>';
-    });
-  }
-  document.getElementById('open-jobs-list').innerHTML = html;
-  let pgHtml = '';
-  jobWeeks.forEach((_, i) => { pgHtml += '<div class="pg-dot' + (i === jobWeekIdx ? ' active' : '') + '"></div>'; });
-  document.getElementById('open-jobs-pg').innerHTML = pgHtml;
-}
-function findJob(jobId) {
-  for (let w of jobWeeks) {
-    const j = w.jobs.find(x => x.id === jobId);
-    if (j) return j;
-  }
-  return null;
-}
-const shiftLabelMap = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
-function expressJobInterest(jobId, type) {
-  const j = findJob(jobId);
-  if (!j) return;
-  j.pendingType = type;
-  j.pendingOTShift = null;
-  if (j.shifts.length === 1) {
-    // single shift — go straight to OT hours picker if OT, else confirm immediately
-    if (type === 'Overtime') {
-      j.pendingOTShift = j.shifts[0];
-    } else {
-      j.regularInterest = j.shifts[0];
-      j.pendingType = null;
-      mToast('Regular interest: ' + shiftLabelMap[j.shifts[0]] + ' ✓');
-    }
-  }
-  // multi-shift: show shift picker (handled in renderOpenJobs)
-  renderOpenJobs();
-}
-function pickShiftForType(jobId, shift) {
-  const j = findJob(jobId);
-  if (!j) return;
-  if (j.pendingType === 'Overtime') {
-    j.pendingOTShift = shift;
-    // show hours picker next
-  } else {
-    j.regularInterest = shift;
-    j.pendingType = null;
-    mToast('Regular interest: ' + shiftLabelMap[shift] + ' ✓');
-  }
-  renderOpenJobs();
-}
-function confirmOTHours(jobId, hours) {
-  const j = findJob(jobId);
-  if (!j) return;
-  j.otInterest = { shift: j.pendingOTShift, hours: hours };
-  j.pendingType = null;
-  j.pendingOTShift = null;
-  // update 14-day hours
-  flagmanState.hours14day += hours;
-  renderOpenJobs();
-  mToast('OT interest: ' + shiftLabelMap[j.otInterest.shift] + ' · ' + hours + 'h ✓');
-}
-function cancelPending(jobId) {
-  const j = findJob(jobId);
-  if (j) { j.pendingType = null; j.pendingOTShift = null; }
-  renderOpenJobs();
-}
-function withdrawRegular(jobId) {
-  const j = findJob(jobId);
-  if (j) { j.regularInterest = null; j.otInterest = null; }
-  renderOpenJobs();
-  mToast('Regular interest withdrawn');
-}
-function withdrawOT(jobId) {
-  const j = findJob(jobId);
-  if (j) {
-    if (j.otInterest) flagmanState.hours14day -= j.otInterest.hours;
-    j.otInterest = null;
-  }
-  renderOpenJobs();
-  mToast('OT interest withdrawn');
-}
-function withdrawInterest(jobId) { withdrawRegular(jobId); }
-function confirmJobInterest(jobId, shift) { pickShiftForType(jobId, shift); }
-function switchJobTab(tab) {
-  ['open','upcoming','completed'].forEach(t => {
-    document.getElementById('jobs-' + t).style.display = t === tab ? 'flex' : 'none';
-    document.getElementById('jtab-' + t).classList.toggle('active', t === tab);
-  });
-  // fix flex direction for scroll areas
-  document.getElementById('jobs-' + tab).style.flexDirection = 'column';
-  const titles = { open:'Open Jobs', upcoming:'Upcoming Jobs', completed:'Completed Jobs' };
-  const metas = { open:'Browse & show interest', upcoming:'Your assigned future jobs', completed:'Your job history' };
-  document.getElementById('jobs-screen-title').textContent = titles[tab];
-  document.getElementById('jobs-screen-meta').textContent = metas[tab];
-}
-
-// ── OT WEEK NAVIGATION ──
+// ===== OVERTIME WEEKS =====
 const otWeeks = [
-  { label:'Apr 19–20, 2026', meta:'Week of Apr 19, 2026', deadline:'Deadline passed', days:['Sunday, Apr 19','Monday, Apr 20'] },
-  { label:'Apr 26–27, 2026', meta:'Week of Apr 26, 2026', deadline:'Deadline passed', days:['Saturday, Apr 26','Sunday, Apr 27'] },
-  { label:'May 3–4, 2026',   meta:'Week of May 3, 2026',  deadline:'Deadline passed', days:['Saturday, May 3','Sunday, May 4'] },
-  { label:'May 10–11, 2026', meta:'Week of May 10, 2026', deadline:'Deadline passed', days:['Saturday, May 10','Sunday, May 11'] },
-  { label:'May 17–18, 2026', meta:'Week of May 17, 2026', deadline:'Deadline passed', days:['Saturday, May 17','Sunday, May 18'] },
-  { label:'May 24–25, 2026', meta:'Week of May 24, 2026', deadline:'Deadline passed', days:['Saturday, May 24','Sunday, May 25'] },
-  { label:'May 31–Jun 1, 2026', meta:'Week of May 31, 2026', deadline:'Deadline passed', days:['Saturday, May 31','Sunday, Jun 1'] },
-  { label:'Jun 7–8, 2026',   meta:'Week of Jun 7, 2026',  deadline:'Deadline: Friday Jun 6 at 5 PM', days:['Saturday, Jun 7','Sunday, Jun 8'] },
-  { label:'Jun 14–15, 2026', meta:'Week of Jun 14, 2026', deadline:'Deadline: Friday Jun 13 at 5 PM', days:['Saturday, Jun 14','Sunday, Jun 15'] },
-  { label:'Jun 21–22, 2026', meta:'Week of Jun 21, 2026', deadline:'Deadline: Friday Jun 20 at 5 PM', days:['Saturday, Jun 21','Sunday, Jun 22'] },
-  { label:'Jun 28–29, 2026', meta:'Week of Jun 28, 2026', deadline:'Deadline: Friday Jun 27 at 5 PM', days:['Saturday, Jun 28','Sunday, Jun 29'] },
-];
-let otWeekIdx = 7;
-const otState = {};
-function shiftOTWeek(dir) {
-  otWeekIdx = Math.max(0, Math.min(otWeeks.length - 1, otWeekIdx + dir));
-  renderOTWeek();
-}
-function renderOTWeek() {
-  const w = otWeeks[otWeekIdx];
-  document.getElementById('ot-week-label').textContent = w.label;
-  document.getElementById('ot-week-meta').textContent = w.meta;
-  const banner = document.getElementById('ot-deadline-banner');
-  const isPast = otWeekIdx < 7;
-  banner.textContent = isPast ? '✅ This period has closed.' : '🕐 ' + w.deadline;
-  banner.className = 'app-alert ' + (isPast ? 'info' : 'warning');
-  let html = '';
-  w.days.forEach((dayName, i) => {
-    const key = otWeekIdx + '_' + i;
-    if (!otState[key]) otState[key] = { on: false, shift: null };
-    const s = otState[key];
-    html += '<div class="ot-day-row" id="otrow_' + key + '">';
-    html += '<div class="ot-day-header">';
-    html += '<div><div class="ot-day-title">' + dayName + '</div><div class="ot-day-sub">Off-cycle day</div></div>';
-    html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">';
-    html += '<span style="font-size:11px;color:' + (s.on ? 'var(--success)' : 'var(--text-muted)') + ';" id="otlbl_' + key + '">' + (s.on ? 'Available' : 'Not Available') + '</span>';
-    html += '<div id="ottog_' + key + '" style="width:44px;height:24px;background:' + (s.on ? '#1E7E34' : '#ccc') + ';border-radius:12px;position:relative;cursor:pointer;" onclick="toggleOTDay(\'' + key + '\')">';
-    html += '<div id="otknob_' + key + '" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:' + (s.on ? '22px' : '2px') + ';transition:left .2s;"></div>';
-    html += '</div></label></div>';
-    // Shift selector — shown when toggled on
-    html += '<div class="ot-shift-sel" id="otshift_' + key + '" style="display:' + (s.on ? 'block' : 'none') + ';">';
-    html += '<label>Preferred Shift</label>';
-    html += '<div class="shift-opts">';
-    ['Morning','Afternoon','Night','No Preference'].forEach(sh => {
-      html += '<div class="shift-opt' + (s.shift === sh ? ' selected' : '') + '" onclick="selectOTShift(\'' + key + '\',\'' + sh + '\')">' + sh + '</div>';
-    });
-    html += '</div></div>';
-    html += '</div>';
-  });
-  document.getElementById('ot-days-container').innerHTML = html;
-}
-function toggleOTDay(key) {
-  otState[key].on = !otState[key].on;
-  if (!otState[key].on) otState[key].shift = null;
-  renderOTWeek();
-}
-function selectOTShift(key, shift) {
-  otState[key].shift = shift;
-  renderOTWeek();
-  mToast('Shift preference: ' + shift);
-}
-
-// ── INTEREST (legacy) ──
-function expressInterest(cardId, type) {
-  const card = document.getElementById(cardId);
-  if (card) {
-    card.classList.add('expressed');
-    card.querySelector('.interest-actions').innerHTML = '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="mToast(\'Interest withdrawn\')">✓ Interested (' + type + ') — Tap to Withdraw</button>';
+  { label: 'Apr 7–12, 2026', closed: true },
+  { label: 'Apr 14–19, 2026', closed: true },
+  { label: 'Apr 21–26, 2026', closed: true },
+  { label: 'Apr 28–May 3, 2026', closed: true },
+  { label: 'May 5–10, 2026', closed: true },
+  { label: 'May 12–17, 2026', closed: true },
+  { label: 'May 19–24, 2026', closed: true },
+  { label: 'May 26–31, 2026', closed: true },
+  {
+    label: 'Jun 9–14, 2026', closed: false, deadline: 'Jun 6 at 5 PM',
+    days: [
+      { date: 'Mon Jun 9', label: 'Off-Cycle Day 1', id: 'w8d1' },
+      { date: 'Tue Jun 10', label: 'Off-Cycle Day 2', id: 'w8d2' },
+      { date: 'Wed Jun 11', label: 'Off-Cycle Day 3', id: 'w8d3' },
+      { date: 'Thu Jun 12', label: 'Off-Cycle Day 4', id: 'w8d4' },
+      { date: 'Fri Jun 13', label: 'Off-Cycle Day 5', id: 'w8d5' },
+      { date: 'Sat Jun 14', label: 'Off-Cycle Day 6', id: 'w8d6' },
+    ]
+  },
+  {
+    label: 'Jun 23–28, 2026', closed: false, deadline: 'Jun 20 at 5 PM',
+    days: [
+      { date: 'Mon Jun 23', label: 'Off-Cycle Day 1', id: 'w9d1' },
+      { date: 'Tue Jun 24', label: 'Off-Cycle Day 2', id: 'w9d2' },
+      { date: 'Wed Jun 25', label: 'Off-Cycle Day 3', id: 'w9d3' },
+      { date: 'Thu Jun 26', label: 'Off-Cycle Day 4', id: 'w9d4' },
+      { date: 'Fri Jun 27', label: 'Off-Cycle Day 5', id: 'w9d5' },
+      { date: 'Sat Jun 28', label: 'Off-Cycle Day 6', id: 'w9d6' },
+    ]
+  },
+  {
+    label: 'Jul 7–12, 2026', closed: false, deadline: 'Jul 4 at 5 PM',
+    days: [
+      { date: 'Mon Jul 7', label: 'Off-Cycle Day 1', id: 'w10d1' },
+      { date: 'Tue Jul 8', label: 'Off-Cycle Day 2', id: 'w10d2' },
+      { date: 'Wed Jul 9', label: 'Off-Cycle Day 3', id: 'w10d3' },
+      { date: 'Thu Jul 10', label: 'Off-Cycle Day 4', id: 'w10d4' },
+      { date: 'Fri Jul 11', label: 'Off-Cycle Day 5', id: 'w10d5' },
+      { date: 'Sat Jul 12', label: 'Off-Cycle Day 6', id: 'w10d6' },
+    ]
   }
-  mToast('Interest expressed: ' + type + ' ✓');
+];
+let otIdx = 8;
+
+function renderOT() {
+  const w = otWeeks[otIdx];
+  document.getElementById('ot-lbl').textContent = w.label;
+  const c = document.getElementById('ot-content');
+  if (w.closed) {
+    c.innerHTML = `<div class="alert alert-blue"><span>🔒</span><span>This period is closed. Responses are no longer accepted.</span></div>`;
+    return;
+  }
+  let html = `<div class="alert alert-amber"><span>⏰</span><span>Deadline: <strong>${w.deadline}</strong>. Toggle days you are available.</span></div><div class="card">`;
+  w.days.forEach(d => {
+    html += `<div class="ot-row">
+      <div class="ot-row-hdr">
+        <div><div class="ot-row-title">${d.date}</div><div class="ot-row-sub">${d.label}</div></div>
+        <label class="toggle"><input type="checkbox" id="tog-${d.id}" onchange="toggleOTDay('${d.id}')"><span class="tslider"></span></label>
+      </div>
+      <div class="shift-pref-area" id="pref-${d.id}">
+        <div class="shift-pref-lbl">Preferred shift:</div>
+        <div class="shift-opts">
+          <button class="sopt" onclick="selShift(this,'m','${d.id}')">Morning</button>
+          <button class="sopt" onclick="selShift(this,'a','${d.id}')">Afternoon</button>
+          <button class="sopt" onclick="selShift(this,'n','${d.id}')">Night</button>
+          <button class="sopt" onclick="selShift(this,'np','${d.id}')">No Pref</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div><button class="btn btn-red btn-full" onclick="alert('✅ OT availability submitted!')">Submit Availability</button>`;
+  c.innerHTML = html;
 }
 
-// ── INIT ──
-renderOpenJobs();
-renderOTWeek();
+function toggleOTDay(id) {
+  const cb = document.getElementById('tog-' + id);
+  const pref = document.getElementById('pref-' + id);
+  pref.style.display = cb.checked ? 'block' : 'none';
+  if (!cb.checked) {
+    pref.querySelectorAll('.sopt').forEach(b => b.className = 'sopt');
+  }
+}
+
+function selShift(btn, shift, id) {
+  const pref = document.getElementById('pref-' + id);
+  pref.querySelectorAll('.sopt').forEach(b => b.className = 'sopt');
+  btn.className = `sopt sel-${shift}`;
+}
+
+function shiftOT(dir) {
+  otIdx = Math.max(0, Math.min(otWeeks.length - 1, otIdx + dir));
+  renderOT();
+}
+
+renderOT();
 </script>
 </body>
 </html>
