@@ -63,7 +63,7 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 .cal-off{background:#f0f0f0;color:#aaa;}
 .cal-vacation{background:#FFA500;color:#fff;}
 .cal-ot{background:#ADD8E6;}
-.interest-card{border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+.interest-card{border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;}
 .interest-card.expressed{border-color:var(--success);background:var(--success-bg);}
 .interest-company{font-size:14px;font-weight:700;}
 .interest-meta{font-size:11px;color:var(--text-muted);margin:3px 0 8px;}
@@ -82,6 +82,7 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 .notif-icon.blue{background:var(--cn-light-blue);}
 .notif-icon.green{background:var(--success-bg);}
 .notif-icon.orange{background:#FFF3CD;}
+.notif-icon.purple{background:#F3E5F5;}
 .notif-title{font-size:12px;font-weight:700;}
 .notif-body{font-size:11px;color:var(--text-muted);margin-top:2px;}
 .notif-time{font-size:10px;color:var(--text-muted);margin-top:3px;}
@@ -113,6 +114,34 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 .pg-dot.active{background:var(--cn-blue);}
 #m-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--cn-dark);color:#fff;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;display:none;z-index:9999;white-space:nowrap;}
 .screen-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;text-align:center;margin-top:8px;}
+/* Tab bar inside a screen */
+.inner-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:14px;}
+.inner-tab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;}
+.inner-tab.active{color:var(--cn-blue);border-bottom-color:var(--cn-blue);}
+/* Week nav bar */
+.week-nav{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.week-nav button{background:none;border:none;font-size:18px;cursor:pointer;color:var(--cn-dark);padding:0 4px;}
+.week-nav .wlabel{font-size:13px;font-weight:700;color:var(--cn-dark);}
+/* OT day row */
+.ot-day-row{background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:10px;}
+.ot-day-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
+.ot-day-title{font-size:13px;font-weight:700;}
+.ot-day-sub{font-size:11px;color:var(--text-muted);}
+.ot-shift-sel{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.ot-shift-sel label{font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;}
+.shift-opts{display:flex;gap:6px;flex-wrap:wrap;}
+.shift-opt{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;}
+.shift-opt.selected{background:var(--cn-blue);color:#fff;border-color:var(--cn-blue);}
+/* Completed job row */
+.completed-row{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff;}
+.completed-company{font-size:13px;font-weight:700;}
+.completed-meta{font-size:11px;color:var(--text-muted);margin:3px 0 6px;}
+.completed-chips{display:flex;gap:6px;flex-wrap:wrap;}
+/* Upcoming job row */
+.upcoming-row{border:1px solid var(--cn-light-blue);border-radius:10px;padding:12px;margin-bottom:10px;background:#f0f7ff;}
+/* Vac entry row */
+.vac-entry{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.vac-entry:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
@@ -127,10 +156,10 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
       <div class="header-row">
         <div>
           <div class="greeting">Good morning,</div>
-          <div class="name">Daneel Jiawan</div>
+          <div class="name">Luc Tremblay</div>
           <div class="meta">Seniority #5 · 5&amp;2 Cycle · BC Region</div>
         </div>
-        <div class="notif-badge" onclick="mToast('3 unread notifications')">3</div>
+        <div class="notif-badge" onclick="mToast('4 unread notifications')">4</div>
       </div>
     </div>
     <div class="app-alert info">📅 On cycle. Next off days: Jun 7–8.</div>
@@ -140,25 +169,25 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
       <!-- CHECK-IN / CHECK-OUT -->
       <div class="checkin-card">
         <div class="checkin-status">🟢 Currently On Shift</div>
-        <div class="checkin-job">Elworthy — Yale Subdivision</div>
-        <div class="checkin-sub">MP 118.0–118.5 · Morning · 06:00–14:00 · A/A Code: <strong>A1</strong></div>
+        <div class="checkin-job">Northgate Utilities — Yale Sub</div>
+        <div class="checkin-sub">MP 118.0–118.5 · Morning · 06:00–14:00 · A/A: <strong>0100</strong></div>
         <div class="checkin-row">
           <button class="checkin-btn btn-disabled" disabled>✓ Checked In 06:02 AM</button>
           <button class="checkin-btn btn-checkout" onclick="mToast('Checked out at 14:00 ✓')">Check Out</button>
         </div>
-        <div class="checkin-time">Duration so far: 7h 39m · Location: CN Yard Gate, Hope BC</div>
+        <div class="checkin-time">Duration so far: 7h 39m · CN Yard Gate, Hope BC</div>
       </div>
 
       <!-- TODAY'S DETAILS -->
       <div class="card">
         <div class="card-title">📋 Today's Assignment</div>
-        <div class="detail-row"><span class="detail-label">Company</span><span class="detail-value">Elworthy</span></div>
+        <div class="detail-row"><span class="detail-label">Company</span><span class="detail-value">Northgate Utilities</span></div>
         <div class="detail-row"><span class="detail-label">Subdivision</span><span class="detail-value">Yale</span></div>
         <div class="detail-row"><span class="detail-label">MP Range</span><span class="detail-value">118.0 – 118.5</span></div>
         <div class="detail-row"><span class="detail-label">Meeting Point</span><span class="detail-value" style="color:var(--cn-red);">CN Yard Gate, Hope BC</span></div>
         <div class="detail-row"><span class="detail-label">Shift</span><span class="detail-value"><span class="shift-badge shift-morning">Morning 06:00–14:00</span></span></div>
-        <div class="detail-row"><span class="detail-label">A/A Code</span><span class="detail-value"><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:monospace;">A1</span></span></div>
-        <div class="detail-row"><span class="detail-label">Field Contact</span><span class="detail-value">Mike Elworthy · 604-555-7788</span></div>
+        <div class="detail-row"><span class="detail-label">A/A Code</span><span class="detail-value"><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:monospace;">0100</span></span></div>
+        <div class="detail-row"><span class="detail-label">Field Contact</span><span class="detail-value">R. Kowalczyk · 604-555-7788</span></div>
         <div class="detail-row"><span class="detail-label">Hotel</span><span class="detail-value">Best Western Hope</span></div>
         <div class="detail-row"><span class="detail-label">Dates</span><span class="detail-value">Jun 1 – Jun 14</span></div>
       </div>
@@ -190,6 +219,21 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
           <div class="cal-day cal-on"><div class="num">13</div></div>
           <div class="cal-day cal-off"><div class="num">14</div></div>
           <div class="cal-day cal-off"><div class="num">15</div></div>
+          <div class="cal-day cal-on"><div class="num">16</div></div>
+          <div class="cal-day cal-on"><div class="num">17</div></div>
+          <div class="cal-day cal-on"><div class="num">18</div></div>
+          <div class="cal-day cal-on"><div class="num">19</div></div>
+          <div class="cal-day cal-on"><div class="num">20</div></div>
+          <div class="cal-day cal-off"><div class="num">21</div></div>
+          <div class="cal-day cal-off"><div class="num">22</div></div>
+          <div class="cal-day cal-on"><div class="num">23</div></div>
+          <div class="cal-day cal-on"><div class="num">24</div></div>
+          <div class="cal-day cal-on"><div class="num">25</div></div>
+          <div class="cal-day cal-on"><div class="num">26</div></div>
+          <div class="cal-day cal-on"><div class="num">27</div></div>
+          <div class="cal-day cal-off"><div class="num">28</div></div>
+          <div class="cal-day cal-off"><div class="num">29</div></div>
+          <div class="cal-day cal-on"><div class="num">30</div></div>
         </div>
         <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:4px;font-size:10px;"><div style="width:10px;height:10px;border-radius:2px;background:#FFB6C1;"></div>On Cycle</div>
@@ -201,15 +245,15 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 
       <!-- UPCOMING -->
       <div class="card">
-        <div class="card-title">📆 Upcoming Job</div>
+        <div class="card-title">📆 Next Assignment</div>
         <div style="border:1px solid var(--border);border-radius:10px;padding:12px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <span class="shift-badge shift-morning">Morning</span>
-            <span style="font-size:10px;color:var(--text-muted);">Jun 9 – Jun 13</span>
+            <span style="font-size:10px;color:var(--text-muted);">Jun 16 – Jun 20</span>
           </div>
-          <div style="font-size:13px;font-weight:700;">Milestone Construction</div>
-          <div style="font-size:11px;color:var(--text-muted);margin:3px 0 8px;">Lillooet Sub · MP 200.8–202.0</div>
-          <div class="detail-row" style="padding:4px 0;"><span class="detail-label">A/A Code</span><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:monospace;">A1</span></div>
+          <div style="font-size:13px;font-weight:700;">Ridgeline Construction</div>
+          <div style="font-size:11px;color:var(--text-muted);margin:3px 0 8px;">Clearwater Sub · MP 25.1–26.0</div>
+          <div class="detail-row" style="padding:4px 0;"><span class="detail-label">A/A Code</span><span style="background:var(--cn-dark);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:monospace;">0100</span></div>
         </div>
       </div>
     </div>
@@ -224,91 +268,155 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 </div>
 </div>
 
-<!-- ══════════ SCREEN 2: AVAILABLE JOBS / SHOW INTEREST ══════════ -->
+<!-- ══════════ SCREEN 2: JOBS TAB (Open / Upcoming / Completed) ══════════ -->
 <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-<div class="screen-title">Screen 2 — Jobs &amp; Show Interest</div>
+<div class="screen-title">Screen 2 — Jobs (Open · Upcoming · Completed)</div>
 <div class="phone-frame">
   <div class="phone-screen">
     <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
     <div class="app-header">
       <div class="header-row">
         <div>
-          <div class="greeting">Available Jobs</div>
-          <div class="name">Show Interest</div>
-          <div class="meta">3 new jobs open</div>
+          <div class="greeting">Jobs</div>
+          <div class="name" id="jobs-screen-title">Open Jobs</div>
+          <div class="meta" id="jobs-screen-meta">Browse &amp; show interest</div>
         </div>
-        <div class="notif-badge" onclick="mToast('3 unread notifications')">3</div>
+        <div class="notif-badge" onclick="mToast('4 unread notifications')">4</div>
       </div>
     </div>
-    <div class="scroll-area">
-      <div class="screen-label">Express Interest in Open Jobs</div>
+    <div style="padding:0 16px;background:var(--white);border-bottom:1px solid var(--border);">
+      <div class="inner-tabs">
+        <div class="inner-tab active" id="jtab-open" onclick="switchJobTab('open')">Open Jobs</div>
+        <div class="inner-tab" id="jtab-upcoming" onclick="switchJobTab('upcoming')">Upcoming</div>
+        <div class="inner-tab" id="jtab-completed" onclick="switchJobTab('completed')">Completed</div>
+      </div>
+    </div>
+
+    <!-- OPEN JOBS TAB -->
+    <div id="jobs-open" class="scroll-area">
+      <!-- Week navigation -->
+      <div class="week-nav">
+        <button onclick="shiftJobWeek(-1)">‹</button>
+        <span class="wlabel" id="job-week-label">Week of Jun 1, 2026</span>
+        <button onclick="shiftJobWeek(1)">›</button>
+      </div>
+      <div class="filter-row">
+        <div class="filter-chip active" onclick="mToast('All jobs')">All</div>
+        <div class="filter-chip" onclick="mToast('BC jobs')">BC</div>
+        <div class="filter-chip" onclick="mToast('Alberta jobs')">Alberta</div>
+        <div class="filter-chip" onclick="mToast('Morning')">Morning</div>
+        <div class="filter-chip" onclick="mToast('Night')">Night</div>
+      </div>
+      <div id="open-jobs-list"></div>
+      <div class="mobile-pagination" id="open-jobs-pg"></div>
+    </div>
+
+    <!-- UPCOMING JOBS TAB -->
+    <div id="jobs-upcoming" class="scroll-area" style="display:none;">
+      <div class="screen-label">My Assigned Future Jobs</div>
+      <div class="upcoming-row">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="shift-badge shift-morning">Morning</span>
+          <span style="font-size:10px;color:var(--text-muted);">Jun 16 – Jun 20 · 5 days</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;">Ridgeline Construction</div>
+        <div style="font-size:11px;color:var(--text-muted);margin:3px 0 6px;">Clearwater Sub · MP 25.1–26.0 · Meeting: Clearwater Station</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="tag tag-sub">Clearwater</span>
+          <span style="background:#FFF9C4;color:#7a6000;" class="tag">Morning</span>
+          <span style="background:#D4EDDA;color:#1E7E34;" class="tag">5 days</span>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">A/A Code: <span style="font-family:monospace;font-weight:700;color:var(--cn-dark);">0100</span></div>
+      </div>
+      <div class="upcoming-row">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="shift-badge shift-afternoon">Afternoon</span>
+          <span style="font-size:10px;color:var(--text-muted);">Jun 23 – Jun 27 · 5 days</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;">CN Track Renewal</div>
+        <div style="font-size:11px;color:var(--text-muted);margin:3px 0 6px;">Wainwright Sub · MP 44.0–45.5 · Meeting: Wainwright Yard</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="tag tag-sub">Wainwright</span>
+          <span style="background:#FFE0B2;color:#7a3500;" class="tag">Afternoon</span>
+          <span style="background:#D4EDDA;color:#1E7E34;" class="tag">5 days</span>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">A/A Code: <span style="font-family:monospace;font-weight:700;color:var(--cn-dark);">0210</span></div>
+      </div>
+      <div class="upcoming-row">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="shift-badge shift-morning">Morning</span>
+          <span style="font-size:10px;color:var(--text-muted);">Jul 7 – Jul 11 · 5 days</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;">Westfield Pipeline</div>
+        <div style="font-size:11px;color:var(--text-muted);margin:3px 0 6px;">Edson Sub · MP 110.0–111.2 · Meeting: Edson Yard Gate</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="tag tag-sub">Edson</span>
+          <span style="background:#FFF9C4;color:#7a6000;" class="tag">Morning</span>
+          <span style="background:#D4EDDA;color:#1E7E34;" class="tag">5 days</span>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">A/A Code: <span style="font-family:monospace;font-weight:700;color:var(--cn-dark);">0100</span></div>
+      </div>
+    </div>
+
+    <!-- COMPLETED JOBS TAB -->
+    <div id="jobs-completed" class="scroll-area" style="display:none;">
+      <div class="screen-label">My Completed Jobs — 2026</div>
       <div class="filter-row">
         <div class="filter-chip active">All</div>
-        <div class="filter-chip" onclick="mToast('Filtered: BC')">BC</div>
-        <div class="filter-chip" onclick="mToast('Filtered: Alberta')">Alberta</div>
-        <div class="filter-chip" onclick="mToast('Filtered: Morning')">Morning</div>
-        <div class="filter-chip" onclick="mToast('Filtered: Night')">Night</div>
+        <div class="filter-chip" onclick="mToast('Morning filter')">Morning</div>
+        <div class="filter-chip" onclick="mToast('Afternoon filter')">Afternoon</div>
+        <div class="filter-chip" onclick="mToast('Night filter')">Night</div>
       </div>
-
-      <!-- JOB 1 — Interest already expressed -->
-      <div class="interest-card expressed">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <div class="interest-company">BC Hydro</div>
-          <span style="font-size:10px;font-weight:700;color:var(--success);">✓ Interested</span>
-        </div>
-        <div class="interest-meta">Lillooet Sub · MP 200.8–202.0 · Jun 9–13 · 5 days</div>
-        <div class="interest-tags">
-          <span class="tag tag-sub">Lillooet</span>
-          <span class="tag" style="background:#FFF9C4;color:#7a6000;">Morning</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">5 days</span>
-          <span class="tag tag-urgent">Urgent</span>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Your interest: <strong style="color:var(--success);">Regular Hours</strong> · Qualifications: TIGS ✓</div>
-        <button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="mToast('Interest withdrawn')">✓ Interested (Regular) — Tap to Withdraw</button>
-      </div>
-
-      <!-- JOB 2 -->
-      <div class="interest-card" id="job2-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <div class="interest-company">Parsons Inc.</div>
-          <span style="font-size:10px;color:var(--text-muted);">Posted Jun 3</span>
-        </div>
-        <div class="interest-meta">Bulkley Sub · MP 88.0–89.5 · Jun 16–25 · 10 days</div>
-        <div class="interest-tags">
-          <span class="tag tag-sub">Bulkley</span>
-          <span class="tag" style="background:#FFE0B2;color:#7a3500;">Afternoon</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">10 days</span>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: TIGS · CROR</div>
-        <div class="interest-actions">
-          <button class="btn-interest btn-regular" onclick="expressInterest('job2-card','Regular Hours')">👋 Regular Hours</button>
-          <button class="btn-interest btn-ot" onclick="expressInterest('job2-card','Overtime')">⏰ Overtime</button>
+      <div class="completed-row">
+        <div class="completed-company">Northgate Utilities</div>
+        <div class="completed-meta">Yale Sub · MP 118.0–118.5 · Jun 1–14, 2026 · 14 days</div>
+        <div class="completed-chips">
+          <span class="tag shift-morning">Morning</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
+          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0100</span>
         </div>
       </div>
-
-      <!-- JOB 3 -->
-      <div class="interest-card" id="job3-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <div class="interest-company">SIMPCW First Nation</div>
-          <span style="font-size:10px;color:var(--text-muted);">Posted Jun 2</span>
-        </div>
-        <div class="interest-meta">Clearwater Sub · MP 25.1–26.0 · TBD · ~7 days</div>
-        <div class="interest-tags">
-          <span class="tag tag-sub">Clearwater</span>
-          <span class="tag" style="background:#E8EAF6;color:#283593;">Night</span>
-          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">~7 days</span>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: TIGS · Form B</div>
-        <div class="interest-actions">
-          <button class="btn-interest btn-regular" onclick="expressInterest('job3-card','Regular Hours')">👋 Regular Hours</button>
-          <button class="btn-interest btn-ot" onclick="expressInterest('job3-card','Overtime')">⏰ Overtime</button>
+      <div class="completed-row">
+        <div class="completed-company">Ironwood Track Services</div>
+        <div class="completed-meta">Cascade Sub · MP 88.5–89.0 · May 19–23, 2026 · 5 days</div>
+        <div class="completed-chips">
+          <span class="tag shift-afternoon">Afternoon</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
+          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0210</span>
         </div>
       </div>
-
+      <div class="completed-row">
+        <div class="completed-company">Apex Energy Corp</div>
+        <div class="completed-meta">Edson Sub · MP 110.0–111.2 · May 5–9, 2026 · 5 days</div>
+        <div class="completed-chips">
+          <span class="tag shift-morning">Morning</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
+          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0100</span>
+        </div>
+      </div>
+      <div class="completed-row">
+        <div class="completed-company">Prairie Municipal Works</div>
+        <div class="completed-meta">Wainwright Sub · MP 44.0–45.0 · Apr 21–25, 2026 · 5 days</div>
+        <div class="completed-chips">
+          <span class="tag shift-night">Night</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
+          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0220</span>
+        </div>
+      </div>
+      <div class="completed-row">
+        <div class="completed-company">Highpoint Infrastructure</div>
+        <div class="completed-meta">Bulkley Sub · MP 88.0–89.5 · Apr 7–11, 2026 · 5 days</div>
+        <div class="completed-chips">
+          <span class="tag shift-morning">Morning</span>
+          <span class="tag" style="background:#D4EDDA;color:#1E7E34;">Completed</span>
+          <span class="tag" style="background:#f0f0f0;color:#555;font-family:monospace;">0100</span>
+        </div>
+      </div>
       <div class="mobile-pagination">
         <div class="pg-dot active"></div><div class="pg-dot"></div><div class="pg-dot"></div>
       </div>
     </div>
+
     <div class="bottom-nav">
       <div class="nav-tab"><div class="icon">🏠</div><div class="label">Home</div></div>
       <div class="nav-tab active"><div class="icon">📋</div><div class="label">Jobs</div></div>
@@ -331,48 +439,38 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
         <div>
           <div class="greeting">Overtime</div>
           <div class="name">Availability</div>
-          <div class="meta">Week of Jun 7, 2026</div>
+          <div class="meta" id="ot-week-meta">Week of Jun 7, 2026</div>
         </div>
-        <div class="notif-badge" style="background:var(--warning);color:#fff;">!</div>
+        <div class="notif-badge" style="background:var(--warning);color:var(--cn-dark);">!</div>
       </div>
     </div>
-    <div class="app-alert warning">🕐 Deadline: <strong>Friday Jun 6 at 5 PM</strong></div>
+    <div class="app-alert warning" id="ot-deadline-banner">🕐 Deadline: <strong>Friday Jun 6 at 5 PM</strong></div>
     <div class="scroll-area">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Previous week')">‹</button>
-        <span style="font-size:13px;font-weight:700;">Jun 7–8, 2026</span>
-        <button style="background:none;border:none;font-size:16px;cursor:pointer;" onclick="mToast('Next week')">›</button>
+      <!-- Week navigation -->
+      <div class="week-nav">
+        <button onclick="shiftOTWeek(-1)">‹</button>
+        <span class="wlabel" id="ot-week-label">Jun 7–8, 2026</span>
+        <button onclick="shiftOTWeek(1)">›</button>
       </div>
+
+      <!-- Day availability cards -->
       <div class="card">
         <div class="card-title">📅 Select Your Availability</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f8f9fa;border-radius:10px;">
-            <div><div style="font-size:13px;font-weight:700;">Saturday, Jun 7</div><div style="font-size:11px;color:var(--text-muted);">Off-cycle day</div></div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-              <span style="font-size:11px;color:var(--text-muted);" id="sat-label">Not Available</span>
-              <div id="sat-toggle" style="width:44px;height:24px;background:#ccc;border-radius:12px;position:relative;cursor:pointer;" onclick="toggleOT('sat')">
-                <div id="sat-knob" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;"></div>
-              </div>
-            </label>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f8f9fa;border-radius:10px;">
-            <div><div style="font-size:13px;font-weight:700;">Sunday, Jun 8</div><div style="font-size:11px;color:var(--text-muted);">Off-cycle day</div></div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-              <span style="font-size:11px;color:var(--text-muted);" id="sun-label">Not Available</span>
-              <div id="sun-toggle" style="width:44px;height:24px;background:#ccc;border-radius:12px;position:relative;cursor:pointer;" onclick="toggleOT('sun')">
-                <div id="sun-knob" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;"></div>
-              </div>
-            </label>
-          </div>
-        </div>
+        <div id="ot-days-container"></div>
         <button style="width:100%;margin-top:14px;padding:13px;background:var(--cn-red);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" onclick="mToast('OT availability submitted ✓')">Submit Availability</button>
       </div>
+
+      <!-- History -->
       <div class="card">
-        <div class="card-title">📊 Past OT History</div>
-        <div class="detail-row"><span class="detail-label">May 31–Jun 1</span><span class="detail-value" style="color:var(--success);">Both days ✅</span></div>
-        <div class="detail-row"><span class="detail-label">May 24–25</span><span class="detail-value" style="color:var(--success);">Saturday only ✅</span></div>
+        <div class="card-title">📊 My OT History</div>
+        <div class="detail-row"><span class="detail-label">Jun 7–8</span><span class="detail-value" style="color:var(--text-muted);">Pending submission</span></div>
+        <div class="detail-row"><span class="detail-label">May 31–Jun 1</span><span class="detail-value" style="color:var(--success);">Both days — Morning ✅</span></div>
+        <div class="detail-row"><span class="detail-label">May 24–25</span><span class="detail-value" style="color:var(--success);">Saturday — Afternoon ✅</span></div>
         <div class="detail-row"><span class="detail-label">May 17–18</span><span class="detail-value" style="color:var(--text-muted);">Not available</span></div>
-        <div class="detail-row"><span class="detail-label">May 10–11</span><span class="detail-value" style="color:var(--success);">Both days ✅</span></div>
+        <div class="detail-row"><span class="detail-label">May 10–11</span><span class="detail-value" style="color:var(--success);">Both days — Morning ✅</span></div>
+        <div class="detail-row"><span class="detail-label">May 3–4</span><span class="detail-value" style="color:var(--success);">Sunday — Night ✅</span></div>
+        <div class="detail-row"><span class="detail-label">Apr 26–27</span><span class="detail-value" style="color:var(--text-muted);">Not available</span></div>
+        <div class="detail-row"><span class="detail-label">Apr 19–20</span><span class="detail-value" style="color:var(--success);">Both days — Morning ✅</span></div>
       </div>
     </div>
     <div class="bottom-nav">
@@ -394,7 +492,7 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
     <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
     <div class="app-header">
       <div class="header-row">
-        <div><div class="greeting">Notifications</div><div class="name">3 Unread</div><div class="meta">Jun 4, 2026</div></div>
+        <div><div class="greeting">Notifications</div><div class="name">4 Unread</div><div class="meta">Jun 4, 2026</div></div>
         <button style="background:none;border:none;color:#aaa;font-size:11px;font-weight:600;cursor:pointer;" onclick="mToast('All marked as read')">Mark all read</button>
       </div>
     </div>
@@ -403,12 +501,22 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
         <div class="filter-chip active">All</div>
         <div class="filter-chip" onclick="mToast('Jobs filter')">Jobs</div>
         <div class="filter-chip" onclick="mToast('OT filter')">OT</div>
+        <div class="filter-chip" onclick="mToast('Vacation filter')">Vacation</div>
         <div class="filter-chip" onclick="mToast('Schedule filter')">Schedule</div>
       </div>
       <div class="card" style="padding:12px;">
+        <!-- Vacation notification — NEW -->
+        <div class="notif-item notif-unread" style="margin-bottom:8px;">
+          <div class="notif-icon purple">🏖️</div>
+          <div>
+            <div class="notif-title">Vacation Scheduled</div>
+            <div class="notif-body">Your supervisor has scheduled vacation for you: <strong>Sep 7–11, 2026</strong> (5 days). Balance: 15 used / 10 remaining.</div>
+            <div class="notif-time">Today, 9:00 AM</div>
+          </div>
+        </div>
         <div class="notif-item notif-unread" style="margin-bottom:8px;">
           <div class="notif-icon red">🔴</div>
-          <div><div class="notif-title">New Job Assignment</div><div class="notif-body">Assigned to Milestone Construction — Lillooet Sub, Jun 9–13.</div><div class="notif-time">Today, 8:30 AM</div></div>
+          <div><div class="notif-title">New Job Assignment</div><div class="notif-body">Assigned to Ridgeline Construction — Clearwater Sub, Jun 16–20.</div><div class="notif-time">Today, 8:30 AM</div></div>
         </div>
         <div class="notif-item notif-unread" style="margin-bottom:8px;">
           <div class="notif-icon orange">⏰</div>
@@ -416,11 +524,11 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
         </div>
         <div class="notif-item notif-unread" style="margin-bottom:8px;">
           <div class="notif-icon blue">📋</div>
-          <div><div class="notif-title">Job Interest Received</div><div class="notif-body">Your interest in BC Hydro (Lillooet) is under supervisor review.</div><div class="notif-time">Yesterday, 4:15 PM</div></div>
+          <div><div class="notif-title">Job Interest Received</div><div class="notif-body">Your interest in Northgate Utilities (Cascade Sub) is under supervisor review.</div><div class="notif-time">Yesterday, 4:15 PM</div></div>
         </div>
         <div class="notif-item" style="padding:10px;margin-bottom:8px;">
           <div class="notif-icon green">✅</div>
-          <div><div class="notif-title">Check-Out Confirmed</div><div class="notif-body">Check-out for Elworthy (Yale Sub) on Jun 3 recorded at 14:05.</div><div class="notif-time">Yesterday, 2:05 PM</div></div>
+          <div><div class="notif-title">Check-Out Confirmed</div><div class="notif-body">Check-out for Northgate Utilities (Yale Sub) on Jun 3 recorded at 14:05.</div><div class="notif-time">Yesterday, 2:05 PM</div></div>
         </div>
         <div class="notif-item" style="padding:10px;">
           <div class="notif-icon blue">📅</div>
@@ -445,11 +553,11 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 <div class="phone-frame">
   <div class="phone-screen">
     <div class="status-bar"><span class="time">9:41 AM</span><div class="icons"><span>📶</span><span>🔋</span></div></div>
-    <div class="app-header"><div class="greeting">My Profile</div><div class="name">Daneel Jiawan</div></div>
+    <div class="app-header"><div class="greeting">My Profile</div><div class="name">Luc Tremblay</div></div>
     <div class="scroll-area">
       <div class="profile-header">
-        <div class="profile-avatar">DJ</div>
-        <div class="profile-name">Daneel Jiawan</div>
+        <div class="profile-avatar">LT</div>
+        <div class="profile-name">Luc Tremblay</div>
         <div class="profile-meta">CN Employee · EMP-0201 · BC Region</div>
         <div class="profile-meta" style="margin-top:4px;">Seniority #5 · 5&amp;2 Cycle</div>
         <div class="profile-stats">
@@ -461,7 +569,7 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
       <div class="card">
         <div class="card-title">📞 Contact Information</div>
         <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">604-555-0201</span></div>
-        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">d.jiawan@cn.ca</span></div>
+        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">l.tremblay@cn.ca</span></div>
         <div class="detail-row"><span class="detail-label">Address</span><span class="detail-value">456 Rail St, Surrey, BC V3T 1A1</span></div>
       </div>
       <div class="card">
@@ -487,13 +595,30 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
           <span class="qual-status qs-expiring">⚠ Expiring</span>
         </div>
       </div>
+      <!-- VACATION — read-only view -->
       <div class="card">
-        <div class="card-title">🏖️ Vacation Balance 2026</div>
+        <div class="card-title">🏖️ My Vacation — 2026</div>
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-          <span style="font-size:12px;color:var(--text-muted);">12 of 25 days used</span>
-          <span style="font-size:12px;font-weight:700;color:var(--cn-blue);">13 remaining</span>
+          <span style="font-size:12px;color:var(--text-muted);">15 of 25 days used</span>
+          <span style="font-size:12px;font-weight:700;color:var(--cn-blue);">10 remaining</span>
         </div>
-        <div style="background:#e9ecef;border-radius:4px;height:8px;"><div style="background:var(--cn-blue);height:8px;border-radius:4px;width:48%;"></div></div>
+        <div style="background:#e9ecef;border-radius:4px;height:8px;margin-bottom:14px;"><div style="background:var(--cn-blue);height:8px;border-radius:4px;width:60%;"></div></div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Booked Vacation</div>
+        <div class="vac-entry">
+          <div>
+            <div style="font-size:12px;font-weight:700;">Jun 2 – Jun 8, 2026</div>
+            <div style="font-size:10px;color:var(--text-muted);">5 days · Approved</div>
+          </div>
+          <span style="background:var(--success-bg);color:var(--success);padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;">Active</span>
+        </div>
+        <div class="vac-entry">
+          <div>
+            <div style="font-size:12px;font-weight:700;">Sep 7 – Sep 11, 2026</div>
+            <div style="font-size:10px;color:var(--text-muted);">5 days · Approved</div>
+          </div>
+          <span style="background:var(--cn-light-blue);color:var(--cn-blue);padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;">Upcoming</span>
+        </div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:10px;text-align:center;">Vacation is scheduled by your supervisor. Contact your supervisor to request changes.</div>
       </div>
       <button style="width:100%;padding:13px;background:var(--danger-bg);color:var(--cn-red);border:1px solid var(--cn-red);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;" onclick="mToast('Logged out')">Log Out</button>
     </div>
@@ -510,36 +635,198 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 
 <div id="m-toast"></div>
 <script>
+// ── TOAST ──
 function mToast(msg) {
   const t = document.getElementById('m-toast');
   t.textContent = msg;
   t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 2500);
 }
-const otState = { sat: false, sun: false };
-function toggleOT(day) {
-  otState[day] = !otState[day];
-  const toggle = document.getElementById(day + '-toggle');
-  const knob = document.getElementById(day + '-knob');
-  const label = document.getElementById(day + '-label');
-  if (otState[day]) {
-    toggle.style.background = '#1E7E34';
-    knob.style.left = '22px';
-    label.textContent = 'Available';
-    label.style.color = '#1E7E34';
-  } else {
-    toggle.style.background = '#ccc';
-    knob.style.left = '2px';
-    label.textContent = 'Not Available';
-    label.style.color = 'var(--text-muted)';
-  }
+
+// ── JOBS TAB ──
+const jobWeeks = [
+  { label:'Week of May 25, 2026', jobs:[
+    { id:'jw0a', company:'Summit Rail Services', sub:'Edson Sub', mp:'MP 110.0–111.2', dates:'May 27–29', days:3, shift:'morning', req:'TIGS', urgent:false, interest:null },
+    { id:'jw0b', company:'Highpoint Infrastructure', sub:'Cascade Sub', mp:'MP 55.0–56.0', dates:'May 26–30', days:5, shift:'night', req:'TIGS · Form B', urgent:false, interest:null },
+  ]},
+  { label:'Week of Jun 1, 2026', jobs:[
+    { id:'jw1a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 88.5–89.0', dates:'Jun 9–13', days:5, shift:'morning', req:'TIGS', urgent:true, interest:null },
+    { id:'jw1b', company:'Ironwood Track Services', sub:'Bulkley Sub', mp:'MP 88.0–89.5', dates:'Jun 16–25', days:10, shift:'afternoon', req:'TIGS · CROR', urgent:false, interest:null },
+    { id:'jw1c', company:'Clearwater Land Authority', sub:'Clearwater Sub', mp:'MP 25.1–26.0', dates:'TBD', days:7, shift:'night', req:'TIGS · Form B', urgent:false, interest:null },
+  ]},
+  { label:'Week of Jun 8, 2026', jobs:[
+    { id:'jw2a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 44.0–45.5', dates:'Jun 16–20', days:5, shift:'morning', req:'TIGS · CROR', urgent:false, interest:null },
+    { id:'jw2b', company:'Apex Energy Corp', sub:'Wainwright Sub', mp:'MP 100.0–101.0', dates:'Jun 17–21', days:5, shift:'afternoon', req:'TIGS', urgent:false, interest:null },
+  ]},
+  { label:'Week of Jun 15, 2026', jobs:[
+    { id:'jw3a', company:'Meridian Rail Services', sub:'Lillooet Sub', mp:'MP 200.8–202.0', dates:'Jun 23–27', days:5, shift:'morning', req:'TIGS · CROR', urgent:false, interest:null },
+    { id:'jw3b', company:'Stonebridge Excavation', sub:'Yale Sub', mp:'MP 120.0–121.0', dates:'Jun 23–30', days:8, shift:'night', req:'TIGS · Form B', urgent:true, interest:null },
+  ]},
+  { label:'Week of Jun 22, 2026', jobs:[
+    { id:'jw4a', company:'Ridgeline Construction', sub:'Bulkley Sub', mp:'MP 90.0–91.5', dates:'Jun 29–Jul 3', days:5, shift:'morning', req:'TIGS', urgent:false, interest:null },
+  ]},
+  { label:'Week of Jun 29, 2026', jobs:[
+    { id:'jw5a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 92.0–93.0', dates:'Jul 7–11', days:5, shift:'afternoon', req:'TIGS · CROR', urgent:false, interest:null },
+    { id:'jw5b', company:'CN Track Renewal', sub:'Wainwright Sub', mp:'MP 44.0–45.5', dates:'Jul 7–11', days:5, shift:'morning', req:'TIGS', urgent:false, interest:null },
+  ]},
+  { label:'Week of Jul 6, 2026', jobs:[
+    { id:'jw6a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 112.0–113.0', dates:'Jul 13–17', days:5, shift:'morning', req:'TIGS · CROR', urgent:false, interest:null },
+  ]},
+];
+let jobWeekIdx = 1;
+function shiftJobWeek(dir) {
+  jobWeekIdx = Math.max(0, Math.min(jobWeeks.length - 1, jobWeekIdx + dir));
+  renderOpenJobs();
 }
-function expressInterest(cardId, type) {
-  const card = document.getElementById(cardId);
-  card.classList.add('expressed');
-  card.querySelector('.interest-actions').innerHTML = '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="mToast(\'Interest withdrawn\')">✓ Interested (' + type + ') — Tap to Withdraw</button>';
+function renderOpenJobs() {
+  const week = jobWeeks[jobWeekIdx];
+  document.getElementById('job-week-label').textContent = week.label;
+  const shiftColors = { morning:'#FFF9C4', afternoon:'#FFE0B2', night:'#E8EAF6' };
+  const shiftText = { morning:'#7a6000', afternoon:'#7a3500', night:'#283593' };
+  const shiftLabel = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
+  let html = '';
+  if (week.jobs.length === 0) {
+    html = '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">No open jobs this week.</div>';
+  } else {
+    week.jobs.forEach(j => {
+      const expressed = j.interest !== null;
+      html += '<div class="interest-card' + (expressed ? ' expressed' : '') + '" id="' + j.id + '">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">';
+      html += '<div class="interest-company">' + j.company + '</div>';
+      if (j.urgent) html += '<span style="font-size:10px;font-weight:700;color:var(--danger);">🔴 Urgent</span>';
+      else html += '<span style="font-size:10px;color:var(--text-muted);">Open</span>';
+      html += '</div>';
+      html += '<div class="interest-meta">' + j.sub + ' · ' + j.mp + ' · ' + j.dates + ' · ' + j.days + ' days</div>';
+      html += '<div class="interest-tags">';
+      html += '<span class="tag tag-sub">' + j.sub.split(' ')[0] + '</span>';
+      html += '<span class="tag" style="background:' + shiftColors[j.shift] + ';color:' + shiftText[j.shift] + ';">' + shiftLabel[j.shift] + '</span>';
+      html += '<span class="tag" style="background:#D4EDDA;color:#1E7E34;">' + j.days + ' days</span>';
+      html += '</div>';
+      html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: ' + j.req + '</div>';
+      if (expressed) {
+        html += '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="withdrawInterest(\'' + j.id + '\',\'' + jobWeekIdx + '\')">✓ Interested (' + j.interest + ') — Tap to Withdraw</button>';
+      } else {
+        html += '<div class="interest-actions">';
+        html += '<button class="btn-interest btn-regular" onclick="expressJobInterest(\'' + j.id + '\',\'Regular Hours\')">👋 Regular Hours</button>';
+        html += '<button class="btn-interest btn-ot" onclick="expressJobInterest(\'' + j.id + '\',\'Overtime\')">⏰ Overtime</button>';
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+  }
+  document.getElementById('open-jobs-list').innerHTML = html;
+  // pagination dots
+  let pgHtml = '';
+  jobWeeks.forEach((_, i) => { pgHtml += '<div class="pg-dot' + (i === jobWeekIdx ? ' active' : '') + '"></div>'; });
+  document.getElementById('open-jobs-pg').innerHTML = pgHtml;
+}
+function expressJobInterest(jobId, type) {
+  // find the job across all weeks
+  for (let w of jobWeeks) {
+    const j = w.jobs.find(x => x.id === jobId);
+    if (j) { j.interest = type; break; }
+  }
+  renderOpenJobs();
   mToast('Interest expressed: ' + type + ' ✓');
 }
+function withdrawInterest(jobId) {
+  for (let w of jobWeeks) {
+    const j = w.jobs.find(x => x.id === jobId);
+    if (j) { j.interest = null; break; }
+  }
+  renderOpenJobs();
+  mToast('Interest withdrawn');
+}
+function switchJobTab(tab) {
+  ['open','upcoming','completed'].forEach(t => {
+    document.getElementById('jobs-' + t).style.display = t === tab ? 'flex' : 'none';
+    document.getElementById('jtab-' + t).classList.toggle('active', t === tab);
+  });
+  // fix flex direction for scroll areas
+  document.getElementById('jobs-' + tab).style.flexDirection = 'column';
+  const titles = { open:'Open Jobs', upcoming:'Upcoming Jobs', completed:'Completed Jobs' };
+  const metas = { open:'Browse & show interest', upcoming:'Your assigned future jobs', completed:'Your job history' };
+  document.getElementById('jobs-screen-title').textContent = titles[tab];
+  document.getElementById('jobs-screen-meta').textContent = metas[tab];
+}
+
+// ── OT WEEK NAVIGATION ──
+const otWeeks = [
+  { label:'Apr 19–20, 2026', meta:'Week of Apr 19, 2026', deadline:'Deadline passed', days:['Sunday, Apr 19','Monday, Apr 20'] },
+  { label:'Apr 26–27, 2026', meta:'Week of Apr 26, 2026', deadline:'Deadline passed', days:['Saturday, Apr 26','Sunday, Apr 27'] },
+  { label:'May 3–4, 2026',   meta:'Week of May 3, 2026',  deadline:'Deadline passed', days:['Saturday, May 3','Sunday, May 4'] },
+  { label:'May 10–11, 2026', meta:'Week of May 10, 2026', deadline:'Deadline passed', days:['Saturday, May 10','Sunday, May 11'] },
+  { label:'May 17–18, 2026', meta:'Week of May 17, 2026', deadline:'Deadline passed', days:['Saturday, May 17','Sunday, May 18'] },
+  { label:'May 24–25, 2026', meta:'Week of May 24, 2026', deadline:'Deadline passed', days:['Saturday, May 24','Sunday, May 25'] },
+  { label:'May 31–Jun 1, 2026', meta:'Week of May 31, 2026', deadline:'Deadline passed', days:['Saturday, May 31','Sunday, Jun 1'] },
+  { label:'Jun 7–8, 2026',   meta:'Week of Jun 7, 2026',  deadline:'Deadline: Friday Jun 6 at 5 PM', days:['Saturday, Jun 7','Sunday, Jun 8'] },
+  { label:'Jun 14–15, 2026', meta:'Week of Jun 14, 2026', deadline:'Deadline: Friday Jun 13 at 5 PM', days:['Saturday, Jun 14','Sunday, Jun 15'] },
+  { label:'Jun 21–22, 2026', meta:'Week of Jun 21, 2026', deadline:'Deadline: Friday Jun 20 at 5 PM', days:['Saturday, Jun 21','Sunday, Jun 22'] },
+  { label:'Jun 28–29, 2026', meta:'Week of Jun 28, 2026', deadline:'Deadline: Friday Jun 27 at 5 PM', days:['Saturday, Jun 28','Sunday, Jun 29'] },
+];
+let otWeekIdx = 7;
+const otState = {};
+function shiftOTWeek(dir) {
+  otWeekIdx = Math.max(0, Math.min(otWeeks.length - 1, otWeekIdx + dir));
+  renderOTWeek();
+}
+function renderOTWeek() {
+  const w = otWeeks[otWeekIdx];
+  document.getElementById('ot-week-label').textContent = w.label;
+  document.getElementById('ot-week-meta').textContent = w.meta;
+  const banner = document.getElementById('ot-deadline-banner');
+  const isPast = otWeekIdx < 7;
+  banner.textContent = isPast ? '✅ This period has closed.' : '🕐 ' + w.deadline;
+  banner.className = 'app-alert ' + (isPast ? 'info' : 'warning');
+  let html = '';
+  w.days.forEach((dayName, i) => {
+    const key = otWeekIdx + '_' + i;
+    if (!otState[key]) otState[key] = { on: false, shift: null };
+    const s = otState[key];
+    html += '<div class="ot-day-row" id="otrow_' + key + '">';
+    html += '<div class="ot-day-header">';
+    html += '<div><div class="ot-day-title">' + dayName + '</div><div class="ot-day-sub">Off-cycle day</div></div>';
+    html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">';
+    html += '<span style="font-size:11px;color:' + (s.on ? 'var(--success)' : 'var(--text-muted)') + ';" id="otlbl_' + key + '">' + (s.on ? 'Available' : 'Not Available') + '</span>';
+    html += '<div id="ottog_' + key + '" style="width:44px;height:24px;background:' + (s.on ? '#1E7E34' : '#ccc') + ';border-radius:12px;position:relative;cursor:pointer;" onclick="toggleOTDay(\'' + key + '\')">';
+    html += '<div id="otknob_' + key + '" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:' + (s.on ? '22px' : '2px') + ';transition:left .2s;"></div>';
+    html += '</div></label></div>';
+    // Shift selector — shown when toggled on
+    html += '<div class="ot-shift-sel" id="otshift_' + key + '" style="display:' + (s.on ? 'block' : 'none') + ';">';
+    html += '<label>Preferred Shift</label>';
+    html += '<div class="shift-opts">';
+    ['Morning','Afternoon','Night','No Preference'].forEach(sh => {
+      html += '<div class="shift-opt' + (s.shift === sh ? ' selected' : '') + '" onclick="selectOTShift(\'' + key + '\',\'' + sh + '\')">' + sh + '</div>';
+    });
+    html += '</div></div>';
+    html += '</div>';
+  });
+  document.getElementById('ot-days-container').innerHTML = html;
+}
+function toggleOTDay(key) {
+  otState[key].on = !otState[key].on;
+  if (!otState[key].on) otState[key].shift = null;
+  renderOTWeek();
+}
+function selectOTShift(key, shift) {
+  otState[key].shift = shift;
+  renderOTWeek();
+  mToast('Shift preference: ' + shift);
+}
+
+// ── INTEREST (legacy) ──
+function expressInterest(cardId, type) {
+  const card = document.getElementById(cardId);
+  if (card) {
+    card.classList.add('expressed');
+    card.querySelector('.interest-actions').innerHTML = '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="mToast(\'Interest withdrawn\')">✓ Interested (' + type + ') — Tap to Withdraw</button>';
+  }
+  mToast('Interest expressed: ' + type + ' ✓');
+}
+
+// ── INIT ──
+renderOpenJobs();
+renderOTWeek();
 </script>
 </body>
 </html>
