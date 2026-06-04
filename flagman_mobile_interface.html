@@ -643,36 +643,55 @@ function mToast(msg) {
   setTimeout(() => t.style.display = 'none', 2500);
 }
 
+// ── FLAGMAN STATE (simulated for Luc Tremblay) ──
+// cycleStatus: 'on' = active cycle day, 'off' = off-cycle, 'vacation' = vacation
+const flagmanState = {
+  cycleStatus: 'on',
+  hours14day: 102,
+  cap14day: 135,
+  vacationDates: ['2026-06-02','2026-06-03','2026-06-04','2026-06-05',
+                  '2026-06-06','2026-06-07','2026-06-08',
+                  '2026-09-07','2026-09-08','2026-09-09','2026-09-10','2026-09-11'],
+};
+
 // ── JOBS TAB ──
 // shifts: array of shift keys e.g. ['morning'] or ['morning','afternoon','night']
-// pendingType: tracks if user clicked Regular/OT but hasn't picked shift yet
+// pendingType: 'Regular Hours' | 'Overtime' | null
+// regularInterest: shift key of expressed regular interest, or null
+// otInterest: {shift, hours} or null
+// pendingOTShift: shift key chosen for OT, waiting for hours input
+// job fields: regularInterest (shift|null), otInterest ({shift,hours}|null), pendingType, pendingOTShift
+function mkJob(id,company,sub,mp,dates,days,shifts,req,urgent,hoursEst) {
+  return {id,company,sub,mp,dates,days,shifts,req,urgent,hoursEst:hoursEst||days*8,
+          regularInterest:null,otInterest:null,pendingType:null,pendingOTShift:null,interest:null};
+}
 const jobWeeks = [
   { label:'Week of May 25, 2026', jobs:[
-    { id:'jw0a', company:'Summit Rail Services', sub:'Edson Sub', mp:'MP 110.0–111.2', dates:'May 27–29', days:3, shifts:['morning'], req:'TIGS', urgent:false, interest:null, pendingType:null },
-    { id:'jw0b', company:'Highpoint Infrastructure', sub:'Cascade Sub', mp:'MP 55.0–56.0', dates:'May 26–30', days:5, shifts:['morning','afternoon','night'], req:'TIGS · Form B', urgent:false, interest:null, pendingType:null },
+    mkJob('jw0a','Summit Rail Services','Edson Sub','MP 110.0–111.2','May 27–29',3,['morning'],'TIGS',false),
+    mkJob('jw0b','Highpoint Infrastructure','Cascade Sub','MP 55.0–56.0','May 26–30',5,['morning','afternoon','night'],'TIGS · Form B',false),
   ]},
   { label:'Week of Jun 1, 2026', jobs:[
-    { id:'jw1a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 88.5–89.0', dates:'Jun 9–13', days:5, shifts:['morning','afternoon'], req:'TIGS', urgent:true, interest:null, pendingType:null },
-    { id:'jw1b', company:'Ironwood Track Services', sub:'Bulkley Sub', mp:'MP 88.0–89.5', dates:'Jun 16–25', days:10, shifts:['afternoon'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
-    { id:'jw1c', company:'Clearwater Land Authority', sub:'Clearwater Sub', mp:'MP 25.1–26.0', dates:'TBD', days:7, shifts:['morning','afternoon','night'], req:'TIGS · Form B', urgent:false, interest:null, pendingType:null },
+    mkJob('jw1a','Northgate Utilities','Cascade Sub','MP 88.5–89.0','Jun 9–13',5,['morning','afternoon'],'TIGS',true),
+    mkJob('jw1b','Ironwood Track Services','Bulkley Sub','MP 88.0–89.5','Jun 16–25',10,['afternoon'],'TIGS · CROR',false),
+    mkJob('jw1c','Clearwater Land Authority','Clearwater Sub','MP 25.1–26.0','TBD',7,['morning','afternoon','night'],'TIGS · Form B',false),
   ]},
   { label:'Week of Jun 8, 2026', jobs:[
-    { id:'jw2a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 44.0–45.5', dates:'Jun 16–20', days:5, shifts:['morning','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
-    { id:'jw2b', company:'Apex Energy Corp', sub:'Wainwright Sub', mp:'MP 100.0–101.0', dates:'Jun 17–21', days:5, shifts:['afternoon'], req:'TIGS', urgent:false, interest:null, pendingType:null },
+    mkJob('jw2a','Westfield Pipeline','Edson Sub','MP 44.0–45.5','Jun 16–20',5,['morning','night'],'TIGS · CROR',false),
+    mkJob('jw2b','Apex Energy Corp','Wainwright Sub','MP 100.0–101.0','Jun 17–21',5,['afternoon'],'TIGS',false),
   ]},
   { label:'Week of Jun 15, 2026', jobs:[
-    { id:'jw3a', company:'Meridian Rail Services', sub:'Lillooet Sub', mp:'MP 200.8–202.0', dates:'Jun 23–27', days:5, shifts:['morning','afternoon','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
-    { id:'jw3b', company:'Stonebridge Excavation', sub:'Yale Sub', mp:'MP 120.0–121.0', dates:'Jun 23–30', days:8, shifts:['night'], req:'TIGS · Form B', urgent:true, interest:null, pendingType:null },
+    mkJob('jw3a','Meridian Rail Services','Lillooet Sub','MP 200.8–202.0','Jun 23–27',5,['morning','afternoon','night'],'TIGS · CROR',false),
+    mkJob('jw3b','Stonebridge Excavation','Yale Sub','MP 120.0–121.0','Jun 23–30',8,['night'],'TIGS · Form B',true),
   ]},
   { label:'Week of Jun 22, 2026', jobs:[
-    { id:'jw4a', company:'Ridgeline Construction', sub:'Bulkley Sub', mp:'MP 90.0–91.5', dates:'Jun 29–Jul 3', days:5, shifts:['morning','afternoon'], req:'TIGS', urgent:false, interest:null, pendingType:null },
+    mkJob('jw4a','Ridgeline Construction','Bulkley Sub','MP 90.0–91.5','Jun 29–Jul 3',5,['morning','afternoon'],'TIGS',false),
   ]},
   { label:'Week of Jun 29, 2026', jobs:[
-    { id:'jw5a', company:'Northgate Utilities', sub:'Cascade Sub', mp:'MP 92.0–93.0', dates:'Jul 7–11', days:5, shifts:['afternoon','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
-    { id:'jw5b', company:'CN Track Renewal', sub:'Wainwright Sub', mp:'MP 44.0–45.5', dates:'Jul 7–11', days:5, shifts:['morning'], req:'TIGS', urgent:false, interest:null, pendingType:null },
+    mkJob('jw5a','Northgate Utilities','Cascade Sub','MP 92.0–93.0','Jul 7–11',5,['afternoon','night'],'TIGS · CROR',false),
+    mkJob('jw5b','CN Track Renewal','Wainwright Sub','MP 44.0–45.5','Jul 7–11',5,['morning'],'TIGS',false),
   ]},
   { label:'Week of Jul 6, 2026', jobs:[
-    { id:'jw6a', company:'Westfield Pipeline', sub:'Edson Sub', mp:'MP 112.0–113.0', dates:'Jul 13–17', days:5, shifts:['morning','afternoon','night'], req:'TIGS · CROR', urgent:false, interest:null, pendingType:null },
+    mkJob('jw6a','Westfield Pipeline','Edson Sub','MP 112.0–113.0','Jul 13–17',5,['morning','afternoon','night'],'TIGS · CROR',false),
   ]},
 ];
 let jobWeekIdx = 1;
@@ -686,14 +705,28 @@ function renderOpenJobs() {
   const shiftColors = { morning:'#FFF9C4', afternoon:'#FFE0B2', night:'#E8EAF6' };
   const shiftText = { morning:'#7a6000', afternoon:'#7a3500', night:'#283593' };
   const shiftLabel = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
-  let html = '';
+  const fs = flagmanState;
+  const hoursLeft = fs.cap14day - fs.hours14day;
+  // 135h cap banner
+  let capHtml = '<div style="background:' + (hoursLeft < 20 ? '#FFF3CD' : '#E8F1F9') + ';border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;font-weight:600;color:' + (hoursLeft < 20 ? '#856404' : 'var(--cn-blue)') + ';">';
+  capHtml += '⏱ 14-day hours: ' + fs.hours14day + ' / ' + fs.cap14day + ' used &nbsp;·&nbsp; <strong>' + hoursLeft + 'h remaining</strong>';
+  capHtml += (hoursLeft < 20 ? ' ⚠ Approaching limit' : '') + '</div>';
+  let html = capHtml;
   if (week.jobs.length === 0) {
-    html = '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">No open jobs this week.</div>';
+    html += '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">No open jobs this week.</div>';
   } else {
     week.jobs.forEach(j => {
-      const expressed = j.interest !== null;
-      const multiShift = j.shifts.length > 1;
-      html += '<div class="interest-card' + (expressed ? ' expressed' : '') + '" id="' + j.id + '">';
+      // 135h cap check: estimated hours for this job vs remaining
+      const wouldBreach = j.hoursEst > hoursLeft;
+      // OT eligibility:
+      // - on active cycle day: can do Regular; can do OT only if regularInterest already expressed
+      // - off-cycle or vacation: OT only (no Regular)
+      const isOffOrVac = (fs.cycleStatus === 'off' || fs.cycleStatus === 'vacation');
+      const canRegular = !isOffOrVac && !wouldBreach;
+      const canOT = (isOffOrVac || j.regularInterest !== null) && !wouldBreach;
+      const hasRegular = j.regularInterest !== null;
+      const hasOT = j.otInterest !== null;
+      html += '<div class="interest-card' + (hasRegular || hasOT ? ' expressed' : '') + '" id="' + j.id + '">';
       html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">';
       html += '<div class="interest-company">' + j.company + '</div>';
       if (j.urgent) html += '<span style="font-size:10px;font-weight:700;color:var(--danger);">🔴 Urgent</span>';
@@ -702,40 +735,68 @@ function renderOpenJobs() {
       html += '<div class="interest-meta">' + j.sub + ' · ' + j.mp + ' · ' + j.dates + ' · ' + j.days + ' days</div>';
       html += '<div class="interest-tags">';
       html += '<span class="tag tag-sub">' + j.sub.split(' ')[0] + '</span>';
-      // show all available shifts as chips
       j.shifts.forEach(sh => {
         html += '<span class="tag" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';">' + shiftLabel[sh] + '</span>';
       });
       html += '<span class="tag" style="background:#D4EDDA;color:#1E7E34;">' + j.days + ' days</span>';
       html += '</div>';
-      html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Required: ' + j.req + '</div>';
-      if (expressed) {
-        // Show confirmed interest with shift
-        const interestShift = j.interest.shift ? ' · ' + shiftLabel[j.interest.shift] + ' shift' : '';
-        html += '<button style="width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:var(--success);color:#fff;" onclick="withdrawInterest(\'' + j.id + '\')">✓ Interested (' + j.interest.type + interestShift + ') — Tap to Withdraw</button>';
-      } else if (j.pendingType) {
-        // Shift selection step — shown after clicking Regular/OT on a multi-shift job
+      html += '<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Required: ' + j.req + ' &nbsp;·&nbsp; Est. ' + j.hoursEst + 'h</div>';
+      // 135h breach warning
+      if (wouldBreach) {
+        html += '<div style="background:#F8D7DA;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;color:var(--cn-red);margin-bottom:8px;">🚫 Cannot express interest — this job (' + j.hoursEst + 'h) would exceed your 135h/14-day limit (' + hoursLeft + 'h remaining).</div>';
+      } else if (j.pendingOTShift) {
+        // OT hours input step
         html += '<div style="background:#f0f7ff;border-radius:10px;padding:12px;border:1px solid var(--cn-light-blue);">';
-        html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">Select your preferred shift for ' + j.pendingType + ':</div>';
+        html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">How many OT hours for ' + shiftLabel[j.pendingOTShift] + '?</div>';
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">';
-        j.shifts.forEach(sh => {
-          html += '<div class="shift-opt" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';border:none;" onclick="confirmJobInterest(\'' + j.id + '\',\'' + sh + '\')">'
+        [2,3,4,5,6,7,8].forEach(h => {
+          html += '<div class="shift-opt" onclick="confirmOTHours(\'' + j.id + '\',' + h + ')">' + h + 'h</div>';
+        });
+        html += '</div>';
+        html += '<button style="width:100%;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--text-muted);" onclick="cancelPending(\'' + j.id + '\')">' + '← Back</button>';
+        html += '</div>';
+      } else if (j.pendingType) {
+        // Shift selection step
+        const availShifts = j.pendingType === 'Overtime' && hasRegular
+          ? j.shifts.filter(s => s !== j.regularInterest)  // OT on a different shift
+          : j.shifts;
+        html += '<div style="background:#f0f7ff;border-radius:10px;padding:12px;border:1px solid var(--cn-light-blue);">';
+        html += '<div style="font-size:12px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">Select shift for ' + j.pendingType + ':</div>';
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">';
+        availShifts.forEach(sh => {
+          html += '<div class="shift-opt" style="background:' + shiftColors[sh] + ';color:' + shiftText[sh] + ';border:none;" onclick="pickShiftForType(\'' + j.id + '\',\'' + sh + '\')">'
             + shiftLabel[sh] + '</div>';
         });
         html += '</div>';
-        html += '<button style="width:100%;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--text-muted);" onclick="cancelPending(\'' + j.id + '\')">← Back</button>';
+        html += '<button style="width:100%;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--text-muted);" onclick="cancelPending(\'' + j.id + '\')">' + '← Back</button>';
         html += '</div>';
       } else {
+        // Normal action buttons
+        if (hasRegular) {
+          html += '<div style="background:var(--success-bg);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;color:var(--success);margin-bottom:8px;">✓ Regular: ' + shiftLabel[j.regularInterest] + ' &nbsp;<button style="background:none;border:none;color:var(--cn-red);font-size:10px;font-weight:700;cursor:pointer;" onclick="withdrawRegular(\'' + j.id + '\')">[Withdraw]</button></div>';
+        }
+        if (hasOT) {
+          html += '<div style="background:#E8EAF6;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;color:#283593;margin-bottom:8px;">⏰ OT: ' + shiftLabel[j.otInterest.shift] + ' · ' + j.otInterest.hours + 'h &nbsp;<button style="background:none;border:none;color:var(--cn-red);font-size:10px;font-weight:700;cursor:pointer;" onclick="withdrawOT(\'' + j.id + '\')">[Withdraw]</button></div>';
+        }
         html += '<div class="interest-actions">';
-        html += '<button class="btn-interest btn-regular" onclick="expressJobInterest(\'' + j.id + '\',\'Regular Hours\')">👋 Regular Hours</button>';
-        html += '<button class="btn-interest btn-ot" onclick="expressJobInterest(\'' + j.id + '\',\'Overtime\')">⏰ Overtime</button>';
+        if (canRegular && !hasRegular) {
+          html += '<button class="btn-interest btn-regular" onclick="expressJobInterest(\'' + j.id + '\',\'Regular Hours\')">' + '👋 Regular Hours</button>';
+        } else if (!canRegular && !isOffOrVac && !hasRegular) {
+          html += '<button class="btn-interest" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#e9ecef;color:#aaa;cursor:not-allowed;">Regular (Active Cycle)</button>';
+        }
+        if (canOT && !hasOT) {
+          html += '<button class="btn-interest btn-ot" onclick="expressJobInterest(\'' + j.id + '\',\'Overtime\')">' + '⏰ Overtime</button>';
+        } else if (!canOT && !hasOT && !isOffOrVac) {
+          html += '<button class="btn-interest" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#e9ecef;color:#aaa;cursor:not-allowed;" title="Express regular interest first">⏰ OT (after Regular)</button>';
+        } else if (!canOT && !hasOT && isOffOrVac) {
+          html += '<button class="btn-interest btn-ot" onclick="expressJobInterest(\'' + j.id + '\',\'Overtime\')">' + '⏰ Overtime</button>';
+        }
         html += '</div>';
       }
       html += '</div>';
     });
   }
   document.getElementById('open-jobs-list').innerHTML = html;
-  // pagination dots
   let pgHtml = '';
   jobWeeks.forEach((_, i) => { pgHtml += '<div class="pg-dot' + (i === jobWeekIdx ? ' active' : '') + '"></div>'; });
   document.getElementById('open-jobs-pg').innerHTML = pgHtml;
@@ -747,40 +808,71 @@ function findJob(jobId) {
   }
   return null;
 }
+const shiftLabelMap = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
 function expressJobInterest(jobId, type) {
   const j = findJob(jobId);
   if (!j) return;
+  j.pendingType = type;
+  j.pendingOTShift = null;
   if (j.shifts.length === 1) {
-    // single shift — confirm immediately
-    j.interest = { type: type, shift: j.shifts[0] };
-    j.pendingType = null;
-    mToast('Interest expressed: ' + type + ' · ' + j.shifts[0] + ' ✓');
+    // single shift — go straight to OT hours picker if OT, else confirm immediately
+    if (type === 'Overtime') {
+      j.pendingOTShift = j.shifts[0];
+    } else {
+      j.regularInterest = j.shifts[0];
+      j.pendingType = null;
+      mToast('Regular interest: ' + shiftLabelMap[j.shifts[0]] + ' ✓');
+    }
+  }
+  // multi-shift: show shift picker (handled in renderOpenJobs)
+  renderOpenJobs();
+}
+function pickShiftForType(jobId, shift) {
+  const j = findJob(jobId);
+  if (!j) return;
+  if (j.pendingType === 'Overtime') {
+    j.pendingOTShift = shift;
+    // show hours picker next
   } else {
-    // multi-shift — show shift picker
-    j.pendingType = type;
+    j.regularInterest = shift;
+    j.pendingType = null;
+    mToast('Regular interest: ' + shiftLabelMap[shift] + ' ✓');
   }
   renderOpenJobs();
 }
-function confirmJobInterest(jobId, shift) {
+function confirmOTHours(jobId, hours) {
   const j = findJob(jobId);
   if (!j) return;
-  j.interest = { type: j.pendingType, shift: shift };
+  j.otInterest = { shift: j.pendingOTShift, hours: hours };
   j.pendingType = null;
+  j.pendingOTShift = null;
+  // update 14-day hours
+  flagmanState.hours14day += hours;
   renderOpenJobs();
-  const shiftLabel = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
-  mToast('Interest: ' + j.interest.type + ' · ' + shiftLabel[shift] + ' ✓');
+  mToast('OT interest: ' + shiftLabelMap[j.otInterest.shift] + ' · ' + hours + 'h ✓');
 }
 function cancelPending(jobId) {
   const j = findJob(jobId);
-  if (j) { j.pendingType = null; }
+  if (j) { j.pendingType = null; j.pendingOTShift = null; }
   renderOpenJobs();
 }
-function withdrawInterest(jobId) {
+function withdrawRegular(jobId) {
   const j = findJob(jobId);
-  if (j) { j.interest = null; j.pendingType = null; }
+  if (j) { j.regularInterest = null; j.otInterest = null; }
   renderOpenJobs();
-  mToast('Interest withdrawn');
+  mToast('Regular interest withdrawn');
 }
+function withdrawOT(jobId) {
+  const j = findJob(jobId);
+  if (j) {
+    if (j.otInterest) flagmanState.hours14day -= j.otInterest.hours;
+    j.otInterest = null;
+  }
+  renderOpenJobs();
+  mToast('OT interest withdrawn');
+}
+function withdrawInterest(jobId) { withdrawRegular(jobId); }
+function confirmJobInterest(jobId, shift) { pickShiftForType(jobId, shift); }
 function switchJobTab(tab) {
   ['open','upcoming','completed'].forEach(t => {
     document.getElementById('jobs-' + t).style.display = t === tab ? 'flex' : 'none';

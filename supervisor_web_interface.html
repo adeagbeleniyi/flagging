@@ -499,6 +499,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <tr><td>Jun 3 (Tue)</td><td><strong>Okafor, James</strong></td><td>EMP-0102</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>PRJ-721363 — Drumheller Municipal</td><td>Alberta</td><td>07:00 ✅</td><td>15:00 ✅</td></tr>
           <tr><td>Jun 3 (Tue)</td><td><strong>Ferreira, Marco</strong></td><td>EMP-0203</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-afternoon">Afternoon</span></td><td>15:00</td><td>23:00</td><td>8.0</td><td><span class="aa-code-badge" title="2nd shift differential">0210</span></td><td>PRJ-720312 — Cascadia Pipeline</td><td>BC</td><td>14:59 ✅</td><td>23:05 ✅</td></tr>
           <tr><td>Jun 3 (Tue)</td><td><strong>Varga, Stefan</strong></td><td>CON-0301</td><td><span class="badge badge-contracted">Contracted</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>PRJ-WW2026-04 — Metro Water</td><td>BC</td><td>07:00 ✅</td><td>15:00 ✅</td></tr>
+          <!-- Same-day Regular + OT split rows for Petrov, Daniel on Jun 3 -->
+          <tr><td>Jun 3 (Tue)</td><td><strong>Petrov, Daniel</strong></td><td>EMP-0103</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>PRJ-718527 — Apex Energy</td><td>Alberta</td><td>07:00 ✅</td><td>15:00 ✅</td></tr>
+          <tr style="background:#fff8e1;"><td>Jun 3 (Tue)</td><td><strong>Petrov, Daniel</strong></td><td>EMP-0103</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-afternoon">Afternoon (OT)</span></td><td>15:00</td><td>19:00</td><td>4.0</td><td><span class="aa-code-badge" title="OT w/2nd shift">0214</span></td><td>PRJ-718527 — Apex Energy (OT)</td><td>Alberta</td><td>15:00 ✅</td><td>19:02 ✅</td></tr>
           <tr style="background:#fff8e1;"><td>Jun 4 (Wed)</td><td><strong>Hartley, Marcus</strong></td><td>EMP-0101</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge" title="Overtime">0204</span></td><td>PRJ-718527 — Apex Energy (OT)</td><td>Alberta</td><td>07:00 ✅</td><td>—</td></tr>
           <tr><td>Jun 4 (Wed)</td><td><strong>Beaumont, Claude</strong></td><td>EMP-0106</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-morning">Morning</span></td><td>07:00</td><td>15:00</td><td>8.0</td><td><span class="aa-code-badge" title="Regular time">0100</span></td><td>PRJ-720900 — Northgate Utilities</td><td>BC</td><td>06:55 ✅</td><td>15:00 ✅</td></tr>
           <tr><td>Jun 4 (Wed)</td><td><strong>Kowalski, Piotr</strong></td><td>EMP-0107</td><td><span class="badge badge-cn">CN</span></td><td><span class="badge badge-night">Night</span></td><td>22:00</td><td>06:00</td><td>8.0</td><td><span class="aa-code-badge" title="3rd shift differential">0220</span></td><td>PRJ-717500 — Ridgecrest Drilling</td><td>Alberta</td><td>21:59 ✅</td><td>06:01 ✅</td></tr>
@@ -1455,13 +1458,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       </div>
       <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:10px;">STEP 3 — SELECT PRIMARY FLAGMAN</div>
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;">CN Employees</div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Tremblay, Luc','5&2','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div><div class="flagman-opt-name">Tremblay, Luc <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · BC · Seniority #2 · TIGS ✓ CROR ✓ eRail ✓ · 45km from site</div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Callahan, Brett','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div><div class="flagman-opt-name">Callahan, Brett <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #4 · TIGS ✓ CROR ✓ · 62km from site</div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Yamamoto, Dean','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-yellow"></div><div><div class="flagman-opt-name">Yamamoto, Dean <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #8 · TIGS ✓ · 90km from site · Delayed job in progress</div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Hartley, Marcus','5&2','Alberta')"><input type="radio" name="flagman-select"><div class="avail-dot dot-red"></div><div><div class="flagman-opt-name">Hartley, Marcus <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · Alberta · Seniority #1 · TIGS ✓ CROR ✓ eRail ✓ · Currently on another job</div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Tremblay, Luc','5&2','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Tremblay, Luc <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · BC · Seniority #2 · TIGS ✓ CROR ✓ eRail ✓ · 45km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 102/135h · 33h remaining</span></div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Callahan, Brett','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Callahan, Brett <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #4 · TIGS ✓ CROR ✓ · 62km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 88/135h · 47h remaining</span></div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Yamamoto, Dean','8&6','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-yellow"></div><div style="flex:1;"><div class="flagman-opt-name">Yamamoto, Dean <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">8&6 · BC · Seniority #8 · TIGS ✓ · 90km from site · Delayed job in progress</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#ffc107;">14-day: 96/135h · 39h remaining</span></div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Hartley, Marcus','5&2','Alberta')"><input type="radio" name="flagman-select"><div class="avail-dot dot-red"></div><div style="flex:1;"><div class="flagman-opt-name">Hartley, Marcus <span class="badge badge-cn">CN</span></div><div class="flagman-opt-meta">5&2 · Alberta · Seniority #1 · TIGS ✓ CROR ✓ eRail ✓ · Currently on another job</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#dc3545;">14-day: 118/135h · 17h remaining ⚠ Near limit</span></div></div></div>
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin:10px 0 6px;">Contracted Flagmen</div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Varga, Stefan','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div><div class="flagman-opt-name">Varga, Stefan <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Pacific Flag Inc. · TIGS ✓ CROR ✓ · 38km from site</div></div></div>
-      <div class="flagman-opt" onclick="selectFlagman(this,'Dubois, Remi','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div><div class="flagman-opt-name">Dubois, Remi <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Westcoast Safety Group · TIGS ✓ · 110km from site</div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Varga, Stefan','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Varga, Stefan <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Pacific Flag Inc. · TIGS ✓ CROR ✓ · 38km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 72/135h · 63h remaining</span></div></div></div>
+      <div class="flagman-opt" onclick="selectFlagman(this,'Dubois, Remi','9&5','BC')"><input type="radio" name="flagman-select"><div class="avail-dot dot-green"></div><div style="flex:1;"><div class="flagman-opt-name">Dubois, Remi <span class="badge badge-contracted">Contracted</span></div><div class="flagman-opt-meta">9&5 · Westcoast Safety Group · TIGS ✓ · 110km from site</div><div style="margin-top:4px;"><span style="font-size:10px;font-weight:700;color:#28a745;">14-day: 64/135h · 71h remaining</span></div></div></div>
       <div id="cycle-breakdown-section" style="display:none;margin-top:14px;padding:12px;background:#f8f9fa;border-radius:6px;border:1px solid var(--border);">
         <div style="font-size:11px;font-weight:700;color:var(--cn-blue);margin-bottom:8px;">📊 CYCLE BREAKDOWN</div>
         <div id="cycle-breakdown-content"></div>
@@ -1495,28 +1498,64 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   </div>
 </div>
 
-<!-- JOB INTEREST RANKING MODAL -->
+<!-- FLAGMAN ASSIGNMENT RANKING MODAL -->
 <div id="modal-interest" class="modal-overlay hidden">
-  <div class="modal" style="max-width:680px;">
-    <div class="modal-header"><h3>👷 Flagman Interest — Northgate Utilities · Cascade</h3><button class="modal-close" onclick="hideModal('modal-interest')">×</button></div>
+  <div class="modal" style="max-width:900px;">
+    <div class="modal-header">
+      <h3>👷 Assign Flagman — <span id="interest-job-title">Northgate Utilities · Cascade Sub</span></h3>
+      <button class="modal-close" onclick="hideModal('modal-interest')">×</button>
+    </div>
     <div class="modal-body">
-      <div class="alert alert-info">5 flagmen have expressed interest. Sort by one or more criteria to find the best fit.</div>
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-        <span style="font-size:11px;font-weight:600;color:var(--text-muted);align-self:center;">Sort by:</span>
-        <button class="btn btn-sm btn-blue" onclick="toast('Sorted by seniority','')">Seniority</button>
-        <button class="btn btn-sm btn-secondary" onclick="toast('Sorted by distance','')">Distance</button>
-        <button class="btn btn-sm btn-secondary" onclick="toast('Sorted by qualifications','')">Qualifications</button>
-        <button class="btn btn-sm btn-secondary" onclick="toast('Sorted by combined score','')">Combined Score</button>
+      <!-- Job summary strip -->
+      <div style="background:#f0f7ff;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;gap:20px;flex-wrap:wrap;">
+        <span><strong>Shift:</strong> Morning (07:00–15:00)</span>
+        <span><strong>Dates:</strong> Jun 9–27, 2026 (19 days)</span>
+        <span><strong>Required Quals:</strong> TIGS · CROR</span>
+        <span><strong>Flagmen needed:</strong> 2</span>
       </div>
-      <div>
-        <div class="rank-row"><div class="rank-num">1</div><div><div class="rank-name">Tremblay, Luc <span class="badge badge-cn">CN</span></div><div class="rank-meta">Seniority #2 · 45km from site · TIGS ✓ CROR ✓ eRail ✓ · Regular hours</div></div><div class="rank-score">Score: 96</div><button class="btn-approve btn-xs" onclick="toast('Tremblay, Luc assigned ✓','success');hideModal('modal-interest')">Assign</button></div>
-        <div class="rank-row"><div class="rank-num">2</div><div><div class="rank-name">Callahan, Brett <span class="badge badge-cn">CN</span></div><div class="rank-meta">Seniority #4 · 62km from site · TIGS ✓ CROR ✓ · Regular hours</div></div><div class="rank-score">Score: 83</div><button class="btn-approve btn-xs" onclick="toast('Callahan, Brett assigned ✓','success');hideModal('modal-interest')">Assign</button></div>
-        <div class="rank-row"><div class="rank-num">3</div><div><div class="rank-name">Varga, Stefan <span class="badge badge-contracted">Contracted</span></div><div class="rank-meta">Pacific Flag Inc. · 38km from site · TIGS ✓ CROR ✓ · Overtime</div></div><div class="rank-score">Score: 78</div><button class="btn-approve btn-xs" onclick="toast('Varga, Stefan assigned ✓','success');hideModal('modal-interest')">Assign</button></div>
-        <div class="rank-row"><div class="rank-num">4</div><div><div class="rank-name">Yamamoto, Dean <span class="badge badge-cn">CN</span></div><div class="rank-meta">Seniority #8 · 90km from site · TIGS ✓ · Regular hours</div></div><div class="rank-score">Score: 64</div><button class="btn-approve btn-xs" onclick="toast('Yamamoto, Dean assigned ✓','success');hideModal('modal-interest')">Assign</button></div>
-        <div class="rank-row"><div class="rank-num">5</div><div><div class="rank-name">Dubois, Remi <span class="badge badge-contracted">Contracted</span></div><div class="rank-meta">Westcoast Safety Group · 110km from site · TIGS ✓ · Overtime</div></div><div class="rank-score">Score: 57</div><button class="btn-approve btn-xs" onclick="toast('Dubois, Remi assigned ✓','success');hideModal('modal-interest')">Assign</button></div>
+      <!-- Tab toggle: Interested vs All -->
+      <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:6px;overflow:hidden;width:fit-content;">
+        <button id="itab-interested" class="btn btn-sm btn-blue" style="border-radius:0;border:none;" onclick="switchInterestTab('interested')">Interested (5)</button>
+        <button id="itab-all" class="btn btn-sm btn-secondary" style="border-radius:0;border:none;" onclick="switchInterestTab('all')">All Flagmen (16)</button>
+      </div>
+      <!-- Sort controls -->
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:11px;font-weight:700;color:var(--text-muted);">RANK BY:</span>
+        <button id="sort-seniority" class="btn btn-sm btn-blue" onclick="sortInterestList('seniority')">Seniority</button>
+        <button id="sort-proximity" class="btn btn-sm btn-secondary" onclick="sortInterestList('proximity')">Proximity</button>
+        <button id="sort-hours" class="btn btn-sm btn-secondary" onclick="sortInterestList('hours')">Hours Remaining</button>
+        <button id="sort-all" class="btn btn-sm btn-secondary" onclick="sortInterestList('all')">Combined Score</button>
+      </div>
+      <!-- Flagman ranking table -->
+      <div class="tbl-scroll" style="max-height:380px;overflow-y:auto;">
+        <table class="tbl" id="interest-table">
+          <thead>
+            <tr>
+              <th style="width:36px;">#</th>
+              <th>Flagman</th>
+              <th>Type</th>
+              <th>Cycle</th>
+              <th>Seniority</th>
+              <th>Distance</th>
+              <th>14-day Hours</th>
+              <th>Hours Left</th>
+              <th>Qualifications</th>
+              <th>Interest</th>
+              <th>Conflict</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="interest-tbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
+        ⚠ = Partial conflict (flagman has an assigned job on one or more days of this job span). Hover for details.
       </div>
     </div>
-    <div class="modal-footer"><button class="btn btn-secondary" onclick="hideModal('modal-interest')">Close</button></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="hideModal('modal-interest')">Close</button>
+      <button class="btn btn-primary" onclick="toast('Selected flagmen assigned ✓','success');hideModal('modal-interest')">Confirm Selection</button>
+    </div>
   </div>
 </div>
 
@@ -1786,6 +1825,115 @@ function updateAACode() {
   document.getElementById('aa-code-override').placeholder = entry.code;
   const descEl = document.getElementById('aa-code-desc');
   if (descEl) descEl.textContent = entry.desc;
+}
+
+// ── FLAGMAN INTEREST RANKING ──
+const allFlagmenData = [
+  { name:'Tremblay, Luc',   id:'EMP-0201', type:'CN',         cycle:'5&2',  seniority:2,  dist:45,  hrs14:102, quals:['TIGS','CROR','eRail'], interest:'Regular',  conflict:false, conflictNote:'' },
+  { name:'Callahan, Brett', id:'EMP-0202', type:'CN',         cycle:'8&6',  seniority:4,  dist:62,  hrs14:88,  quals:['TIGS','CROR'],          interest:'Regular',  conflict:false, conflictNote:'' },
+  { name:'Varga, Stefan',   id:'CON-0301', type:'Contracted', cycle:'9&5',  seniority:null,dist:38, hrs14:72,  quals:['TIGS','CROR'],          interest:'Overtime', conflict:false, conflictNote:'' },
+  { name:'Yamamoto, Dean',  id:'EMP-0205', type:'CN',         cycle:'8&6',  seniority:8,  dist:90,  hrs14:96,  quals:['TIGS'],                  interest:'Regular',  conflict:true,  conflictNote:'Jun 12–14 overlap with PRJ-720312' },
+  { name:'Dubois, Remi',    id:'CON-0302', type:'Contracted', cycle:'9&5',  seniority:null,dist:110,hrs14:64,  quals:['TIGS'],                  interest:'Overtime', conflict:false, conflictNote:'' },
+  { name:'Hartley, Marcus', id:'EMP-0101', type:'CN',         cycle:'5&2',  seniority:1,  dist:280, hrs14:118, quals:['TIGS','CROR','eRail'],   interest:null,       conflict:true,  conflictNote:'Jun 9–27 full overlap with PRJ-717500' },
+  { name:'Okafor, James',   id:'EMP-0102', type:'CN',         cycle:'5&2',  seniority:3,  dist:310, hrs14:80,  quals:['TIGS','CROR'],           interest:null,       conflict:false, conflictNote:'' },
+  { name:'Petrov, Daniel',  id:'EMP-0103', type:'CN',         cycle:'8&6',  seniority:5,  dist:295, hrs14:104, quals:['TIGS','CROR','eRail'],   interest:null,       conflict:false, conflictNote:'' },
+  { name:'Nguyen, Kevin',   id:'EMP-0104', type:'CN',         cycle:'8&6',  seniority:6,  dist:320, hrs14:88,  quals:['TIGS'],                  interest:null,       conflict:false, conflictNote:'' },
+  { name:'Larsson, Erik',   id:'EMP-0105', type:'CN',         cycle:'5&2',  seniority:7,  dist:270, hrs14:56,  quals:['TIGS','CROR'],           interest:null,       conflict:false, conflictNote:'' },
+  { name:'Beaumont, Claude',id:'EMP-0106', type:'CN',         cycle:'8&6',  seniority:9,  dist:55,  hrs14:72,  quals:['TIGS'],                  interest:null,       conflict:false, conflictNote:'' },
+  { name:'Kowalski, Piotr', id:'EMP-0107', type:'CN',         cycle:'5&2',  seniority:10, dist:75,  hrs14:96,  quals:['TIGS','CROR'],           interest:null,       conflict:true,  conflictNote:'Jun 15–18 overlap with PRJ-717500' },
+  { name:'Ferreira, Marco', id:'EMP-0203', type:'CN',         cycle:'8&6',  seniority:11, dist:48,  hrs14:80,  quals:['TIGS','CROR'],           interest:null,       conflict:false, conflictNote:'' },
+  { name:'Marchetti, Giulia',id:'CON-0303',type:'Contracted', cycle:'8&6',  seniority:null,dist:60, hrs14:48,  quals:['TIGS','CROR','eRail'],   interest:null,       conflict:false, conflictNote:'' },
+  { name:'Nakamura, Yuki',  id:'CON-0304', type:'Contracted', cycle:'9&5',  seniority:null,dist:95, hrs14:32,  quals:['TIGS'],                  interest:null,       conflict:false, conflictNote:'' },
+  { name:'Kowalczyk, Pav',  id:'CON-0305', type:'Contracted', cycle:'5&2',  seniority:null,dist:130,hrs14:56,  quals:['TIGS','CROR'],           interest:null,       conflict:false, conflictNote:'' },
+];
+let interestTab = 'interested';
+let interestSort = 'seniority';
+let selectedFlagmen = new Set();
+function openInterestModal(company, sub) {
+  document.getElementById('interest-job-title').textContent = (company||'Northgate Utilities') + ' · ' + (sub||'Cascade Sub');
+  selectedFlagmen.clear();
+  renderInterestTable();
+  showModal('modal-interest');
+}
+function switchInterestTab(tab) {
+  interestTab = tab;
+  document.getElementById('itab-interested').className = 'btn btn-sm ' + (tab==='interested' ? 'btn-blue' : 'btn-secondary');
+  document.getElementById('itab-all').className = 'btn btn-sm ' + (tab==='all' ? 'btn-blue' : 'btn-secondary');
+  document.getElementById('itab-interested').style.borderRadius = '0';
+  document.getElementById('itab-all').style.borderRadius = '0';
+  renderInterestTable();
+}
+function sortInterestList(by) {
+  interestSort = by;
+  ['seniority','proximity','hours','all'].forEach(s => {
+    document.getElementById('sort-'+s).className = 'btn btn-sm ' + (s===by ? 'btn-blue' : 'btn-secondary');
+  });
+  renderInterestTable();
+}
+function renderInterestTable() {
+  const cap = 135;
+  let data = allFlagmenData.filter(f => interestTab === 'interested' ? f.interest !== null : true);
+  // sort
+  data = [...data].sort((a,b) => {
+    if (interestSort === 'seniority') {
+      const sa = a.seniority || 999, sb = b.seniority || 999;
+      return sa - sb;
+    } else if (interestSort === 'proximity') {
+      return a.dist - b.dist;
+    } else if (interestSort === 'hours') {
+      return (cap - a.hrs14) - (cap - b.hrs14); // more hours left = higher rank (descending)
+    } else {
+      // combined: seniority score (lower = better) + distance score + hours score
+      const score = f => {
+        const s = f.seniority ? (f.seniority / 12) * 40 : 40;
+        const d = (f.dist / 350) * 30;
+        const h = ((cap - f.hrs14) / cap) * 30;
+        return s + d - h; // lower is better
+      };
+      return score(a) - score(b);
+    }
+  });
+  let html = '';
+  data.forEach((f, i) => {
+    const hoursLeft = cap - f.hrs14;
+    const hoursBarColor = hoursLeft < 20 ? '#dc3545' : hoursLeft < 40 ? '#ffc107' : '#28a745';
+    const hoursBarPct = Math.min(100, (f.hrs14 / cap) * 100);
+    const qualBadges = f.quals.map(q => '<span class="qual-chip qual-valid" style="font-size:9px;padding:1px 5px;">' + q + '</span>').join(' ');
+    const interestBadge = f.interest === 'Regular'
+      ? '<span style="font-size:10px;font-weight:700;color:#1E7E34;">Regular</span>'
+      : f.interest === 'Overtime'
+      ? '<span style="font-size:10px;font-weight:700;color:#283593;">OT</span>'
+      : '<span style="font-size:10px;color:#aaa;">None</span>';
+    const conflictCell = f.conflict
+      ? '<span style="color:#ffc107;font-weight:700;cursor:help;" title="' + f.conflictNote + '">⚠ Partial</span>'
+      : '<span style="color:#28a745;font-size:10px;">Clear</span>';
+    const typeBadge = f.type === 'CN'
+      ? '<span class="badge badge-cn">CN</span>'
+      : '<span class="badge badge-contracted">Contracted</span>';
+    const senDisplay = f.seniority ? '#' + f.seniority : '—';
+    const isSelected = selectedFlagmen.has(f.id);
+    html += '<tr style="background:' + (isSelected ? '#e8f5e9' : '') + ';">';
+    html += '<td style="font-weight:700;color:var(--cn-blue);">' + (i+1) + '</td>';
+    html += '<td><strong>' + f.name + '</strong><br><span style="font-size:10px;color:var(--text-muted);">' + f.id + '</span></td>';
+    html += '<td>' + typeBadge + '</td>';
+    html += '<td>' + f.cycle + '</td>';
+    html += '<td>' + senDisplay + '</td>';
+    html += '<td>' + f.dist + ' km</td>';
+    html += '<td><div style="width:80px;"><div style="height:6px;background:#e9ecef;border-radius:3px;"><div style="height:6px;width:' + hoursBarPct + '%;background:' + hoursBarColor + ';border-radius:3px;"></div></div><div style="font-size:10px;margin-top:2px;">' + f.hrs14 + ' / ' + cap + 'h</div></div></td>';
+    html += '<td><strong style="color:' + hoursBarColor + ';">' + hoursLeft + 'h</strong></td>';
+    html += '<td>' + qualBadges + '</td>';
+    html += '<td>' + interestBadge + '</td>';
+    html += '<td>' + conflictCell + '</td>';
+    html += '<td><button class="btn-approve btn-xs" style="background:' + (isSelected ? '#28a745' : 'var(--cn-blue)') + ';" onclick="toggleSelectFlagman(\'' + f.id + '\')">' + (isSelected ? '✓ Selected' : 'Select') + '</button></td>';
+    html += '</tr>';
+  });
+  document.getElementById('interest-tbody').innerHTML = html || '<tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px;">No flagmen found.</td></tr>';
+}
+function toggleSelectFlagman(id) {
+  if (selectedFlagmen.has(id)) selectedFlagmen.delete(id);
+  else selectedFlagmen.add(id);
+  renderInterestTable();
+  toast(selectedFlagmen.size + ' flagman(men) selected', '');
 }
 
 // ── ASSIGN MODAL ──
