@@ -970,6 +970,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 
 <!-- ══════════ VACATION MANAGEMENT ══════════ -->
 <div id="sec-vacation" class="page-section">
+  <!-- View toggle tabs -->
+  <div style="display:flex;align-items:center;gap:0;margin-bottom:16px;border:1px solid var(--border);border-radius:6px;overflow:hidden;width:fit-content;">
+    <button id="vac-tab-list" onclick="switchVacView('list')" style="padding:8px 20px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:var(--cn-dark);color:#fff;">☰ List View</button>
+    <button id="vac-tab-cal" onclick="switchVacView('calendar')" style="padding:8px 20px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:#f0f0f0;color:var(--text-secondary);">📅 Calendar View</button>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div id="vac-list-view">
   <div class="filter-bar">
     <input type="text" placeholder="🔍 Search flagman...">
     <select><option value="">All Regions</option><option>BC</option><option>Alberta</option></select>
@@ -979,7 +987,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       <span class="date-label">2026</span>
       <button onclick="toast('Next year','')">›</button>
     </div>
-    <button class="btn btn-sm btn-primary" onclick="showModal('modal-add-vacation')">+ Add Vacation Entry</button>
   </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
     <div class="stat-card"><div class="stat-label">Total Vacation Used YTD</div><div class="stat-value">112</div><div class="stat-sub">Days across all flagmen</div></div>
@@ -1010,6 +1017,41 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       </table>
     </div>
   </div>
+  </div><!-- end vac-list-view -->
+
+  <!-- CALENDAR VIEW -->
+  <div id="vac-cal-view" style="display:none;">
+    <div class="filter-bar">
+      <select id="vac-cal-region"><option value="">All Regions</option><option>BC</option><option>Alberta</option></select>
+      <select id="vac-cal-type"><option value="">All Types</option><option>CN Employee</option><option>Contracted</option></select>
+      <div class="date-nav" style="margin-left:auto;">
+        <button onclick="shiftVacCal(-1)">‹ Prev Month</button>
+        <span class="date-label" id="vac-cal-label">June 2026</span>
+        <button onclick="shiftVacCal(1)">Next Month ›</button>
+      </div>
+    </div>
+    <!-- Legend -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);align-self:center;">Legend:</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#FF9AA2;display:inline-block;"></span>Hartley</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#FFB7B2;display:inline-block;"></span>Tremblay</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#FFDAC1;display:inline-block;"></span>Okafor</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#E2F0CB;display:inline-block;"></span>Callahan</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#B5EAD7;display:inline-block;"></span>Petrov</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#C7CEEA;display:inline-block;"></span>Ferreira</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#F2C6DE;display:inline-block;"></span>Nguyen</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#D4E6F1;display:inline-block;"></span>Yamamoto</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#D5E8D4;display:inline-block;"></span>Larsson</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#FFF2CC;display:inline-block;"></span>Kowalski</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;"><span style="width:14px;height:14px;border-radius:3px;background:#E1D5E7;display:inline-block;"></span>Beaumont</span>
+    </div>
+    <div class="card">
+      <div class="card-body" style="padding:0;">
+        <div id="vac-cal-grid"></div>
+      </div>
+    </div>
+  </div><!-- end vac-cal-view -->
+
 </div>
 
 <!-- ══════════ INCOMING REQUESTS ══════════ -->
@@ -1931,6 +1973,89 @@ function loadRequestDetail(id) {
   } else {
     document.getElementById('req-detail-body').innerHTML = '<div style="padding:20px;font-size:12px;color:var(--text-muted);">Request details not available in demo.</div>';
   }
+}
+
+// ── VACATION VIEW TOGGLE ──
+let vacCalOffset = 0;
+const vacationData = [
+  { name:'Hartley, Marcus',  color:'#FF9AA2', ranges:[{s:'2026-08-10',e:'2026-08-14'}] },
+  { name:'Tremblay, Luc',   color:'#FFB7B2', ranges:[{s:'2026-06-02',e:'2026-06-08'},{s:'2026-09-07',e:'2026-09-11'}] },
+  { name:'Okafor, James',   color:'#FFDAC1', ranges:[{s:'2026-07-20',e:'2026-07-24'}] },
+  { name:'Callahan, Brett', color:'#E2F0CB', ranges:[{s:'2026-07-06',e:'2026-07-10'}] },
+  { name:'Petrov, Daniel',  color:'#B5EAD7', ranges:[{s:'2026-09-01',e:'2026-09-03'}] },
+  { name:'Ferreira, Marco', color:'#C7CEEA', ranges:[{s:'2026-06-03',e:'2026-06-08'},{s:'2026-10-12',e:'2026-10-16'}] },
+  { name:'Nguyen, Kevin',   color:'#F2C6DE', ranges:[{s:'2026-08-03',e:'2026-08-07'}] },
+  { name:'Yamamoto, Dean',  color:'#D4E6F1', ranges:[{s:'2026-09-14',e:'2026-09-18'}] },
+  { name:'Larsson, Erik',   color:'#D5E8D4', ranges:[{s:'2026-10-05',e:'2026-10-09'}] },
+  { name:'Kowalski, Piotr', color:'#FFF2CC', ranges:[{s:'2026-07-28',e:'2026-08-01'}] },
+  { name:'Beaumont, Claude',color:'#E1D5E7', ranges:[{s:'2026-08-17',e:'2026-08-21'}] },
+];
+function switchVacView(view) {
+  const isList = view === 'list';
+  document.getElementById('vac-list-view').style.display = isList ? '' : 'none';
+  document.getElementById('vac-cal-view').style.display = isList ? 'none' : '';
+  document.getElementById('vac-tab-list').style.background = isList ? 'var(--cn-dark)' : '#f0f0f0';
+  document.getElementById('vac-tab-list').style.color = isList ? '#fff' : 'var(--text-secondary)';
+  document.getElementById('vac-tab-cal').style.background = isList ? '#f0f0f0' : 'var(--cn-dark)';
+  document.getElementById('vac-tab-cal').style.color = isList ? 'var(--text-secondary)' : '#fff';
+  if (!isList) renderVacCalendar();
+}
+function shiftVacCal(dir) {
+  vacCalOffset += dir;
+  renderVacCalendar();
+}
+function renderVacCalendar() {
+  const base = new Date(2026, 5, 1); // June 2026
+  base.setMonth(base.getMonth() + vacCalOffset);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('vac-cal-label').textContent = monthNames[month] + ' ' + year;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+  // Build day-of-month to flagmen map
+  const dayMap = {};
+  vacationData.forEach(f => {
+    f.ranges.forEach(r => {
+      const s = new Date(r.s), e = new Date(r.e);
+      for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+        if (d.getFullYear() === year && d.getMonth() === month) {
+          const k = d.getDate();
+          if (!dayMap[k]) dayMap[k] = [];
+          dayMap[k].push({ name: f.name.split(',')[0], color: f.color });
+        }
+      }
+    });
+  });
+  const dayHeaders = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);border-left:1px solid var(--border);border-top:1px solid var(--border);">';
+  dayHeaders.forEach(d => {
+    html += '<div style="padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);background:#f8f9fa;border-right:1px solid var(--border);border-bottom:1px solid var(--border);">' + d + '</div>';
+  });
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div style="min-height:80px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:#fafafa;"></div>';
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isToday = year === 2026 && month === 5 && day === 4;
+    const entries = dayMap[day] || [];
+    html += '<div style="min-height:80px;padding:4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:' + (isToday ? '#fff8e1' : '#fff') + ';">';
+    html += '<div style="font-size:11px;font-weight:700;color:' + (isToday ? 'var(--cn-red)' : 'var(--cn-dark)') + ';margin-bottom:4px;">' + day + (isToday ? ' ●' : '') + '</div>';
+    entries.forEach(e => {
+      html += '<div style="background:' + e.color + ';border-radius:3px;padding:2px 5px;font-size:9px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + e.name + '</div>';
+    });
+    html += '</div>';
+  }
+  // Fill remaining cells
+  const totalCells = firstDay + daysInMonth;
+  const remainder = totalCells % 7;
+  if (remainder > 0) {
+    for (let i = 0; i < 7 - remainder; i++) {
+      html += '<div style="min-height:80px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:#fafafa;"></div>';
+    }
+  }
+  html += '</div>';
+  document.getElementById('vac-cal-grid').innerHTML = html;
 }
 
 // ── TABLE FILTER ──
