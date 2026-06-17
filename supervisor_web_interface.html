@@ -2461,9 +2461,9 @@ function renderWizStep() {
       ${shiftNote}
       <div class="form-grid-2">
         <div class="form-group"><label class="form-label">Shift</label>
-          <select class="form-control" id="wiz-shift" onchange="updateAACode()">${shiftOptions}</select></div>
+          <select class="form-control" id="wiz-shift">${shiftOptions}</select></div>
         <div class="form-group"><label class="form-label">Shift Type</label>
-          <select class="form-control" id="wiz-type" onchange="updateAACode()">
+          <select class="form-control" id="wiz-type">
             <option value="regular">Regular (10h standard)</option>
             <option value="overtime">Overtime</option>
           </select></div>
@@ -2756,18 +2756,7 @@ function confirmOffDay(dateStr) {
   showToast(`Coverage confirmed for ${dateStr}`, 'success');
 }
 
-function updateAACode() {
-  const shift = document.getElementById('wiz-shift')?.value || 'morning';
-  const type = document.getElementById('wiz-type')?.value || 'regular';
-  const map = {
-    'morning-regular': ['0100','Regular time'],
-    'morning-overtime': ['0204','Overtime'],
-    'afternoon-regular': ['0210','2nd shift differential'],
-    'afternoon-overtime': ['0214','Overtime w/2nd shift'],
-    'night-regular': ['0220','3rd shift differential'],
-    'night-overtime': ['0224','Overtime w/3rd shift'],
-  };
-  const [code, desc] = map[`${shift}-${type}`] || ['0100','Regular time'];
+// updateAACode removed — A/A codes no longer used
 function filterTimesheet() {
   showToast('Filter applied', 'info');
 }
