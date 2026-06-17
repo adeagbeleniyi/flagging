@@ -45,12 +45,7 @@ body{font-family:'Inter',sans-serif;background:#1a1a2e;min-height:100vh;display:
 .ci-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 .ci-cell label{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;}
 .ci-cell span{display:block;font-size:13px;font-weight:600;color:#fff;margin-top:2px;}
-.ci-btns{display:flex;gap:10px;}
-.ci-btn{flex:1;padding:11px;border-radius:10px;font-size:13px;font-weight:700;border:none;cursor:pointer;}
-.ci-in{background:#4caf50;color:#fff;}
-.ci-out{background:#B5091D;color:#fff;}
-.ci-done{background:rgba(255,255,255,.2);color:rgba(255,255,255,.7);cursor:default;}
-.ci-timer{font-size:11px;color:rgba(255,255,255,.65);text-align:center;margin-top:8px;}
+
 /* Overlap card */
 .ov-card{background:linear-gradient(135deg,#7b1fa2,#4a148c);border-radius:14px;padding:16px;margin-bottom:12px;color:#fff;}
 .ov-title{font-size:14px;font-weight:700;margin-bottom:6px;}
@@ -192,11 +187,7 @@ input:checked+.tslider:before{transform:translateX(20px);}
               <div class="ci-cell"><label>Job #</label><span>PRJ-720312</span></div>
               <div class="ci-cell"><label>Regular Hours</label><span>10h max</span></div>
             </div>
-            <div class="ci-btns">
-              <button class="ci-btn ci-in" id="ci-btn" onclick="doCheckIn()">✅ Check In</button>
-              <button class="ci-btn ci-out" id="co-btn" onclick="doCheckOut()">Check Out</button>
-            </div>
-            <div class="ci-timer" id="ci-timer"></div>
+
           </div>
 
           <!-- 14-day hours -->
@@ -376,14 +367,7 @@ input:checked+.tslider:before{transform:translateX(20px);}
               </div>
               <div class="ni-unread"></div>
             </div>
-            <div class="ni-item">
-              <div class="ni-icon" style="background:#e8f5e9">✅</div>
-              <div class="ni-body">
-                <div class="ni-title">Check-Out Confirmed</div>
-                <div class="ni-desc">Jun 3 check-out at 16:45. Total: 10.75h. Regular: 10h (A/A 0100) · OT: 0.75h (A/A 0204) — two rows in Daily Flagging Record.</div>
-                <div class="ni-time">Jun 3 · 4:45 PM</div>
-              </div>
-            </div>
+
             <div class="ni-item">
               <div class="ni-icon" style="background:#ffebee">⚠️</div>
               <div class="ni-body">
@@ -451,10 +435,7 @@ input:checked+.tslider:before{transform:translateX(20px);}
               <div><div class="qual-name">CROR</div><div class="qual-dates">Obtained: Jan 8, 2021 · Expires: Jul 15, 2026</div></div>
               <span class="qs-expiring">Expiring</span>
             </div>
-            <div class="qual-row">
-              <div><div class="qual-name">eRail Safe · #ERS-44712</div><div class="qual-dates">Obtained: Jun 5, 2022 · Expires: Jun 5, 2025</div></div>
-              <span class="qs-expired">Expired</span>
-            </div>
+
           </div>
 
           <!-- Protection sign-off -->
@@ -511,35 +492,7 @@ input:checked+.tslider:before{transform:translateX(20px);}
 </div>
 
 <script>
-// ===== CHECK-IN =====
-let checkedIn = false;
-let timerInterval = null;
-let startTime = null;
-function doCheckIn() {
-  if (checkedIn) return;
-  checkedIn = true;
-  startTime = new Date();
-  document.getElementById('ci-btn').textContent = '✓ Checked In ' + startTime.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  document.getElementById('ci-btn').className = 'ci-btn ci-done';
-  document.getElementById('ci-timer').textContent = '⏱ On shift: 0h 00m · Regular hours: 10h max';
-  timerInterval = setInterval(() => {
-    const elapsed = Math.floor((new Date() - startTime) / 60000);
-    const h = Math.floor(elapsed / 60), m = elapsed % 60;
-    const regular = Math.min(elapsed, 600);
-    const ot = Math.max(0, elapsed - 600);
-    let txt = `⏱ On shift: ${h}h ${String(m).padStart(2,'0')}m · Regular: ${Math.floor(regular/60)}h ${regular%60}m`;
-    if (ot > 0) txt += ` · OT: ${Math.floor(ot/60)}h ${ot%60}m (A/A 0204)`;
-    document.getElementById('ci-timer').textContent = txt;
-  }, 1000);
-}
-function doCheckOut() {
-  if (!checkedIn) { alert('Please check in first.'); return; }
-  clearInterval(timerInterval);
-  const now = new Date();
-  document.getElementById('co-btn').textContent = '✓ Checked Out ' + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  document.getElementById('co-btn').className = 'ci-btn ci-done';
-  document.getElementById('ci-timer').textContent = '✅ Shift complete. Daily Flagging Record updated.';
-}
+
 
 // ===== OVERTIME WEEKS =====
 const otWeeks = [
