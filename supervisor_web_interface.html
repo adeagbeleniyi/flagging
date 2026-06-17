@@ -3087,10 +3087,12 @@ function showPage(sectionId) {
   }
 }
 
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const sec = item.getAttribute('data-section');
-    if (sec) showPage(sec);
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const sec = item.getAttribute('data-section');
+      if (sec) showPage(sec);
+    });
   });
 });
 
