@@ -2426,7 +2426,12 @@ let vacYear = 2026;
 
 // ===== CYCLE HELPER =====
 function toggleCycleAB(val) {
-  document.getElementById('fm-cycle-ab').style.display = (val === '8&6' || val === '9&5') ? 'block' : 'none';
+  const cycleAbEl = document.getElementById('cycle-ab-group') || document.getElementById('fm-cycle-ab');
+  if (cycleAbEl) {
+    const sel = document.getElementById('cycle-select');
+    const v = val || (sel ? sel.value : '');
+    cycleAbEl.style.display = (v === '8-6' || v === '9-5' || v === '8&6' || v === '9&5') ? 'block' : 'none';
+  }
 }
 
 // ===== FLAGMAN SAVE =====
