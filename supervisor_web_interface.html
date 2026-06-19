@@ -3780,20 +3780,22 @@ function renderWizardStep() {
           </div>`;
         }
       } else {
-        onDays = primary.cycle === '9&5' ? 9 : 8;
-        const offDaysCount = primary.cycle === '9&5' ? 5 : 6;
-        const cycleLen = onDays + offDaysCount;
+        // Use the same CYCLE_REF + CYCLE_OFFSETS logic as isOnCycle() so A/B cycles mirror correctly
+        const [onCount, offCount] = primary.cycle.split('&').map(Number);
+        const cycleLen = onCount + offCount;
+        const fmOffset = CYCLE_OFFSETS[primary.name] || 0;
         for (let d = 0; d < totalDays; d++) {
-          pos = d % cycleLen;
-          const isOff = pos >= onDays;
           date = new Date(jobStart); date.setDate(jobStart.getDate() + d);
+          const diff = Math.floor((date - CYCLE_REF) / 86400000);
+          const pos = ((diff - fmOffset) % cycleLen + cycleLen) % cycleLen;
+          // A-group: ON when pos < onCount; B-group: ON when pos >= onCount
+          const isOff = primary.ab === 'B' ? pos < onCount : pos >= onCount;
           const dateStr = date.toISOString().slice(0,10);
           if (isOff) { offDays.push(dateStr); allOffDates.add(dateStr); }
-          const isOverlap = pos === onDays - 1 || pos === onDays;
-          cycleHtml += `<div style="text-align:center;padding:4px 6px;border-radius:4px;font-size:10px;background:${isOverlap?'#e9d5ff':isOff?'#f3f4f6':'#FFB6C1'};color:${isOverlap?'#5b21b6':isOff?'#6b7280':'#7b0021'};">
+          cycleHtml += `<div style="text-align:center;padding:4px 6px;border-radius:4px;font-size:10px;background:${isOff?'#f3f4f6':'#FFB6C1'};color:${isOff?'#6b7280':'#7b0021'};">
             <div>${date.toLocaleDateString('en-CA',{weekday:'short'})}</div>
             <div>${date.getDate()}</div>
-            <div>${isOverlap?'↔':''}${isOff?'OFF':'ON'}</div>
+            <div>${isOff?'OFF':'ON'}</div>
           </div>`;
         }
       }
@@ -3874,7 +3876,7 @@ function renderWizardStep() {
     body.innerHTML = `
       <h3 style="margin:0 0 14px;font-size:15px;">Step 3 — Cycle Breakdown & Off-Day Coverage</h3>
       ${allCycleBlocks}
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">Legend: <span style="background:#FFB6C1;padding:1px 6px;border-radius:3px;">ON</span> <span style="background:#f3f4f6;padding:1px 6px;border-radius:3px;">OFF</span> <span style="background:#e9d5ff;padding:1px 6px;border-radius:3px;">↔ Overlap/Handoff</span></div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">Legend: <span style="background:#FFB6C1;padding:1px 6px;border-radius:3px;">ON</span> <span style="background:#f3f4f6;padding:1px 6px;border-radius:3px;">OFF</span></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <div style="font-weight:700;font-size:13px;color:var(--cn-dark);">Off-Day Coverage</div>
         <button class="btn btn-primary btn-sm" style="font-size:12px;" onclick="
