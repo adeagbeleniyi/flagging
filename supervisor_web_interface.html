@@ -132,7 +132,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 .cell-light-blue{background:#ADD8E6;color:#005A9C;}
 .cell-orange{background:#FFA500;color:#fff;}
 .cell-empty{background:#f0f0f0;color:#aaa;font-size:10px;font-weight:600;text-align:center;padding:6px 4px;}
-.cell-overlap{background:#e9d5ff;color:#6d28d9;font-size:9px;font-weight:700;text-align:center;padding:4px 3px;border-radius:4px;}
+
 .legend{display:flex;flex-wrap:wrap;gap:12px;padding:12px 18px;border-top:1px solid var(--border);}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary);}
 .legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
@@ -768,6 +768,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         <input type="text" placeholder="🔍 Search flagman…">
         <select><option>All Cycles</option><option>5&2</option><option>8&6 A-Cycle</option><option>8&6 B-Cycle</option><option>9&5 A-Cycle</option><option>9&5 B-Cycle</option></select>
         <select><option>All Statuses</option><option>On Cycle</option><option>Off Cycle</option><option>On Vacation</option></select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#374151;margin-left:auto;">
+          📅 View Date:
+          <input type="date" id="sched-list-date" value="2026-06-04" style="font-size:12px;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;" onchange="refreshListAssignButtons()">
+        </label>
       </div>
       <div class="card">
         <div class="tbl-scroll">
@@ -775,7 +779,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
             <thead><tr><th>Flagman</th><th>Type</th><th>Cycle</th><th>A/B <span title="A and B are mirror cycles: when A is on-shift, B is off-shift" style="cursor:help;color:#9ca3af;font-weight:400">ⓘ</span></th><th>Region</th><th>Current Status</th><th>Current Job</th><th>Next On-Cycle</th><th>Off Days Remaining</th></tr></thead>
             <tbody>
               <tr><td><strong>Tremblay, Luc</strong></td><td><span class="badge badge-cn">CN</span></td><td>9&5</td><td><span class="cycle-badge-a">A</span></td><td>BC</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720312</td><td>—</td><td>—</td></tr>
-              <tr><td><strong>Callahan, Brett</strong></td><td><span class="badge badge-cn">CN</span></td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>BC</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720312 (handoff)</td><td>—</td><td>—</td></tr>
+              <tr><td><strong>Callahan, Brett</strong></td><td><span class="badge badge-cn">CN</span></td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>BC</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720312</td><td>—</td><td>—</td></tr>
               <tr><td><strong>Hartley, Marcus</strong></td><td><span class="badge badge-cn">CN</span></td><td>5&2</td><td><span class="cycle-badge-52">Fixed</span></td><td>Alberta</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720415</td><td>—</td><td>—</td></tr>
               <tr><td><strong>Petrov, Daniel</strong></td><td><span class="badge badge-cn">CN</span></td><td>8&6</td><td><span class="cycle-badge-a">A</span></td><td>Alberta</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720890</td><td>—</td><td>—</td></tr>
               <tr><td><strong>Ferreira, Marco</strong></td><td><span class="badge badge-cn">CN</span></td><td>8&6</td><td><span class="cycle-badge-b">B</span></td><td>BC</td><td><span class="badge badge-complete">Off Cycle</span></td><td>—</td><td>Jun 10</td><td>6</td></tr>
@@ -886,7 +890,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><div class="cell-empty">OFF</div></td>
                 <td><div class="cell-empty">OFF</div></td>
                 <td><div class="cell-empty">OFF</div></td>
-                <td><div class="cell-overlap">↔ Overlap<br>PM</div></td>
+                <td><div class="cell-empty">OFF</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>Available</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>Available</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>Available</div></td>
@@ -922,7 +926,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
-                <td><div class="cell-overlap">↔ Overlap<br>AM+PM</div></td>
+                <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
@@ -934,7 +938,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
                 <td><div class="cell-empty">OFF</div></td>
                 <td><div class="cell-empty">OFF</div></td>
                 <td><div class="cell-empty">OFF</div></td>
-                <td><div class="cell-overlap">↔ Overlap<br>PM</div></td>
+                <td><div class="cell-empty">OFF</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
                 <td><div class="cell-job cell-pink-on">AM<br>PRJ-720312</div></td>
@@ -994,11 +998,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <div class="legend-item"><div class="legend-dot" style="background:#FF69B4;"></div> Night Shift</div>
           <div class="legend-item"><div class="legend-dot" style="background:#ADD8E6;"></div> Overtime Day</div>
           <div class="legend-item"><div class="legend-dot" style="background:#FFA500;"></div> Vacation/PLD</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#e9d5ff;"></div> Overlap/Handoff</div>
+
           <div class="legend-item"><div class="legend-dot" style="background:#f0f0f0;"></div> Off Cycle</div>
         </div>
       </div>
-      <div class="alert alert-warning" style="margin-top:8px;">↔ <strong>Overlap cells</strong> indicate a handoff day where both the outgoing and incoming flagman work partial hours. These are recorded separately in the Daily Flagging Record.</div>
+
     </div>
 
     <!-- CALENDAR VIEW -->
@@ -1781,15 +1785,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <!-- TOAST CONTAINER -->
 <div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;"></div>
 
-<!-- OVERLAP NOTIFICATION -->
-<div id="overlap-notification" style="display:none;position:fixed;top:70px;right:20px;z-index:8000;background:#fff;border:2px solid #e9d5ff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:14px 18px;max-width:320px;">
-  <div style="font-weight:700;color:#7c3aed;margin-bottom:6px;">↔ Handoff Overlap Alert</div>
-  <div style="font-size:12px;color:#374151;">Tremblay (9&5 A) and Callahan (9&5 B) have an overlap handoff on <strong>Jun 4</strong> at PRJ-720312. Both flagmen will work partial hours. Records have been created in the Daily Flagging Record.</div>
-  <div style="display:flex;gap:8px;margin-top:10px;">
-    <button class="btn btn-xs btn-primary" onclick="showPage('sec-dfr');document.getElementById('overlap-notification').style.display='none'">View Record</button>
-    <button class="btn btn-xs btn-secondary" onclick="document.getElementById('overlap-notification').style.display='none'">Dismiss</button>
-  </div>
-</div>
+
 
 <style>
 /* Wizard steps */
@@ -1818,7 +1814,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 .cell-pink-on{background:#FFB6C1;color:#7b0021;}
 .cell-dark-pink{background:#FF69B4;color:#fff;}
 .cell-light-blue{background:#ADD8E6;color:#00416a;}
-.cell-overlap{background:#e9d5ff;color:#5b21b6;border-radius:4px;padding:3px 4px;font-size:10px;}
+
 .cell-empty{color:#9ca3af;font-size:10px;}
 .legend{display:flex;flex-wrap:wrap;gap:12px;padding:12px 16px;border-top:1px solid #e9ecef;}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;}
@@ -3101,10 +3097,7 @@ function showPage(sectionId) {
   if (sectionId === 'sec-schedule') setTimeout(initListAssignButtons, 100);
   if (sectionId === 'sec-overtime') { setTimeout(renderOvertimeTable, 50); }
   if (sectionId === 'sec-vacation') renderVacCal();
-  // Show overlap notification on schedule
-  if (sectionId === 'sec-schedule') {
-    setTimeout(() => { const n = document.getElementById('overlap-notification'); if(n) n.style.display = 'block'; }, 800);
-  }
+
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -3293,10 +3286,12 @@ function renderSchedCal() {
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     isToday = dateStr === '2026-06-04';
-    const workers = getFlagmenOnDate(dateStr);
+    // Only show flagmen who have an actual job assigned (not just "Available")
+    const workers = getFlagmenOnDate(dateStr).filter(fm => fm.job && fm.job !== 'Available');
     const shown = workers.slice(0, 3);
     const extra = workers.length - shown.length;
     const bgStyle = isToday ? 'background:#fef9c3;border-color:var(--cn-red);' : '';
+    // Calendar cells are read-only — clicking opens a detail view only, no assign button
     html += `<div onclick="openDayModal('${dateStr}')" style="min-height:80px;border:1px solid #e9ecef;border-radius:6px;padding:5px;cursor:pointer;transition:box-shadow .15s;${bgStyle}" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='none'">`
       + `<div style="font-size:12px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--cn-red)':'#374151'};">${d}${isToday?' ●':''}</div>`
       + shown.map(fm => `<div style="background:${fm.color};border-radius:3px;font-size:9px;padding:1px 4px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${fm.name.split(',')[0]}</div>`).join('')
@@ -3310,7 +3305,8 @@ function renderSchedCal() {
 function openDayModal(dateStr) {
   date = new Date(dateStr + 'T00:00:00');
   const label = date.toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const workers = getFlagmenOnDate(dateStr);
+  // Calendar view: only show flagmen with actual job assignments
+  const workers = getFlagmenOnDate(dateStr).filter(fm => fm.job && fm.job !== 'Available');
   modal = document.getElementById('modal-day-detail');
   if (!modal) return;
   document.getElementById('day-modal-title').textContent = label;
@@ -3318,11 +3314,9 @@ function openDayModal(dateStr) {
   if (workers.length === 0) {
     body.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No flagmen assigned on this date.</p>';
   } else {
-    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th><th>Action</th></tr></thead><tbody>'
+    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th></tr></thead><tbody>'
       + workers.map(fm => {
-          const onDay = isOnCycle(fm, date);
-          return '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td>'
-          + '<td><button class="btn btn-sm btn-primary" style="font-size:11px;padding:3px 8px;" onclick="closeModal(&quot;modal-day-detail&quot;);openCellAssign(&quot;'+fm.name+'&quot;,&quot;'+dateStr+'&quot;,'+onDay+')">Assign</button></td></tr>';
+          return '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td></tr>';
         }).join('')
       + '</tbody></table>';
   }
@@ -3470,6 +3464,19 @@ function initWeeklyClickHandlers() {
 }
 
 // ═══════════════════════════════════════════════════════════ LIST VIEW ASSIGN INIT
+function getListDate() {
+  const el = document.getElementById('sched-list-date');
+  return el ? el.value : '2026-06-04';
+}
+
+function refreshListAssignButtons() {
+  // Remove existing assign column cells and re-inject with new date
+  const tbl = document.querySelector('#sched-list table.tbl');
+  if (!tbl) return;
+  tbl.querySelectorAll('.assign-col').forEach(el => el.remove());
+  initListAssignButtons();
+}
+
 function initListAssignButtons() {
   const tbl = document.querySelector('#sched-list table.tbl');
   if (!tbl) return;
@@ -3480,17 +3487,18 @@ function initListAssignButtons() {
     th.textContent = 'Assign';
     thead.appendChild(th);
   }
-  const today = new Date('2026-06-04');
+  const dateStr = getListDate();
+  const selDate = new Date(dateStr + 'T00:00:00');
   tbl.querySelectorAll('tbody tr').forEach(row => {
     if (row.querySelector('td.assign-col')) return;
     const nameCell = row.querySelector('td strong');
     if (!nameCell) return;
     const flagmanName = nameCell.textContent.trim();
     const fm = SCHED_FLAGMEN.find(f => f.name === flagmanName);
-    const onDay = fm ? isOnCycle(fm, today) : true;
+    const onDay = fm ? isOnCycle(fm, selDate) : true;
     const td = document.createElement('td');
     td.className = 'assign-col';
-    td.innerHTML = `<button class="btn btn-sm btn-primary" style="font-size:11px;padding:3px 8px;" onclick="openCellAssign('${flagmanName}','2026-06-04',${onDay})">Assign</button>`;
+    td.innerHTML = `<button class="btn btn-sm btn-primary" style="font-size:11px;padding:3px 8px;" onclick="openCellAssign('${flagmanName}','${dateStr}',${onDay})">Assign</button>`;
     row.appendChild(td);
   });
 }
