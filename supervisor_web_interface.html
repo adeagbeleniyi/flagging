@@ -772,7 +772,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       <div class="card">
         <div class="tbl-scroll">
           <table class="tbl">
-            <thead><tr><th>Flagman</th><th>Type</th><th>Cycle</th><th>A/B</th><th>Region</th><th>Current Status</th><th>Current Job</th><th>Next On-Cycle</th><th>Off Days Remaining</th></tr></thead>
+            <thead><tr><th>Flagman</th><th>Type</th><th>Cycle</th><th>A/B <span title="A and B are mirror cycles: when A is on-shift, B is off-shift" style="cursor:help;color:#9ca3af;font-weight:400">ⓘ</span></th><th>Region</th><th>Current Status</th><th>Current Job</th><th>Next On-Cycle</th><th>Off Days Remaining</th></tr></thead>
             <tbody>
               <tr><td><strong>Tremblay, Luc</strong></td><td><span class="badge badge-cn">CN</span></td><td>9&5</td><td><span class="cycle-badge-a">A</span></td><td>BC</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720312</td><td>—</td><td>—</td></tr>
               <tr><td><strong>Callahan, Brett</strong></td><td><span class="badge badge-cn">CN</span></td><td>9&5</td><td><span class="cycle-badge-b">B</span></td><td>BC</td><td><span class="badge badge-inprogress">On Cycle</span></td><td>PRJ-720312 (handoff)</td><td>—</td><td>—</td></tr>
@@ -1965,12 +1965,16 @@ function renderSchedule() {
 
   // Cycle start offsets (days since 2026-01-05 Monday)
   const cycleStarts = {
-    'Tremblay, Luc': 0, 'Hartley, Marcus': 0, 'Okafor, James': 0, 'Larsson, Erik': 0, 'Okonkwo, Tunde': 0,
-    'Callahan, Brett': 0, 'Yamamoto, Dean': 0, 'Nguyen, Kevin': 0,
-    'Ferreira, Marco': 8, 'Petrov, Daniel': 8,
-    'Beaumont, Claude': 0, 'Varga, Stefan': 0,
-    'Kowalski, Piotr': 9, 'Dubois, Remi': 9,
-    'Marchetti, Lena': 8,
+    // 5&2 — fixed Mon-Fri
+    'Hartley, Marcus':0,'Larsson, Erik':0,'Okafor, James':0,'Kowalski, Piotr':0,'Okonkwo, Tunde':0,
+    // 8&6 pairs — A=0, B=8 (mirror)
+    'Tremblay, Luc':0,'Callahan, Brett':8,
+    'Petrov, Daniel':0,'Ferreira, Marco':8,
+    'Nguyen, Kevin':0,'Yamamoto, Dean':8,
+    'Marchetti, Lena':8,
+    // 9&5 pairs — A=0, B=9 (mirror)
+    'Beaumont, Claude':0,'Marchetti, Giulio':9,
+    'Varga, Stefan':0,'Dubois, Remi':9,
   };
 
   const refDate = new Date('2026-01-05');
@@ -3093,6 +3097,8 @@ function showPage(sectionId) {
   // Header is self-contained in each section's .page-header
   // Trigger calendar renders
   if (sectionId === 'sec-schedule') renderSchedCal();
+  if (sectionId === 'sec-schedule') setTimeout(initWeeklyClickHandlers, 100);
+  if (sectionId === 'sec-schedule') setTimeout(initListAssignButtons, 100);
   if (sectionId === 'sec-overtime') { setTimeout(renderOvertimeTable, 50); }
   if (sectionId === 'sec-vacation') renderVacCal();
   // Show overlap notification on schedule
@@ -3165,6 +3171,8 @@ function switchSchedView(v, el) {
   const p = document.getElementById('sched-'+v); if(p) p.classList.add('active');
   el.classList.add('active');
   if (v === 'calendar') renderSchedCal();
+  if (v === 'weekly') setTimeout(initWeeklyClickHandlers, 50);
+  if (v === 'list') setTimeout(initListAssignButtons, 50);
 }
 function switchFlagmanTab(tab, el) {
   document.querySelectorAll('#sec-flagmen .tab-pane').forEach(p => p.classList.remove('active'));
@@ -3226,13 +3234,37 @@ const SCHED_FLAGMEN = [
 ];
 const CYCLE_REF = new Date('2026-01-05'); // Monday reference
 const CYCLE_OFFSETS = {
+  // 5&2 — fixed Mon-Fri, no offset needed
   'Hartley, Marcus':0,'Larsson, Erik':0,'Okafor, James':0,'Kowalski, Piotr':0,'Okonkwo, Tunde':0,
-  'Tremblay, Luc':0,'Yamamoto, Dean':0,'Nguyen, Kevin':0,
-  'Ferreira, Marco':8,'Petrov, Daniel':8,'Nakamura, Yuki':8,
-  'Beaumont, Claude':0,'Varga, Stefan':0,
-  'Callahan, Brett':14,'Kowalski, Piotr':0,
-  'Marchetti, Giulio':9,'Dubois, Remi':9,
+  // 8&6 pairs — A starts at 0, B starts at 8 (mirror: A-on = B-off)
+  'Tremblay, Luc':0,    // 8&6 A  (PRJ-720312 handoff pair)
+  'Callahan, Brett':8,  // 8&6 B  (PRJ-720312 handoff pair) — offset = on_days(8)
+  'Petrov, Daniel':0,   // 8&6 A
+  'Ferreira, Marco':8,  // 8&6 B  — offset = on_days(8)
+  'Nguyen, Kevin':0,    // 8&6 A
+  'Yamamoto, Dean':8,   // 8&6 B  — offset = on_days(8)
+  'Nakamura, Yuki':8,   // 8&6 B (contracted)
+  // 9&5 pairs — A starts at 0, B starts at 9 (mirror: A-on = B-off)
+  'Beaumont, Claude':0,  // 9&5 A
+  'Marchetti, Giulio':9, // 9&5 B — offset = on_days(9)
+  'Varga, Stefan':0,     // 9&5 A (contracted)
+  'Dubois, Remi':9,      // 9&5 B (contracted) — offset = on_days(9)
 };
+// ═══════════════════════════════════════════════════════════ ACTIVE JOBS DATA
+const ACTIVE_JOBS_DATA = [
+  { id:'PRJ-720312', company:'Northgate Utilities',      subdivision:'Coquitlam',  shift:'Morning',   stime:'07:00', etime:'15:00' },
+  { id:'PRJ-720415', company:'Ridgeline Construction',   subdivision:'Wainwright', shift:'Afternoon', stime:'15:00', etime:'23:00' },
+  { id:'PRJ-720890', company:'Westfield Pipeline',       subdivision:'Edson',      shift:'Night',     stime:'23:00', etime:'07:00' },
+  { id:'PRJ-721100', company:'Apex Energy Corp',         subdivision:'Kamloops',   shift:'Morning',   stime:'07:00', etime:'15:00' },
+  { id:'PRJ-721250', company:'Meridian Rail Services',   subdivision:'Coquitlam',  shift:'Morning',   stime:'07:00', etime:'15:00' },
+  { id:'PRJ-721400', company:'Stonebridge Excavation',   subdivision:'Wainwright', shift:'Night',     stime:'23:00', etime:'07:00' },
+  { id:'PRJ-721600', company:'Cascade Energy',           subdivision:'Jasper',     shift:'Morning',   stime:'07:00', etime:'15:00' },
+  { id:'PRJ-721750', company:'Northern Rail Corp',       subdivision:'Edson',      shift:'Afternoon', stime:'15:00', etime:'23:00' },
+  { id:'PRJ-721900', company:'Highpoint Infrastructure', subdivision:'Coquitlam',  shift:'Morning',   stime:'07:00', etime:'15:00' },
+  { id:'PRJ-722100', company:'Pacific Telecom',          subdivision:'Kamloops',   shift:'Morning',   stime:'07:00', etime:'15:00' },
+  { id:'PRJ-722300', company:'Summit Utilities',         subdivision:'Jasper',     shift:'Afternoon', stime:'15:00', etime:'23:00' },
+];
+
 function isOnCycle(fm, date) {
   diff = Math.floor((date - CYCLE_REF) / 86400000);
   if (fm.cycle === '5&2') { const dow = date.getDay(); return dow >= 1 && dow <= 5; }
@@ -3286,13 +3318,182 @@ function openDayModal(dateStr) {
   if (workers.length === 0) {
     body.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No flagmen assigned on this date.</p>';
   } else {
-    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th></tr></thead><tbody>'
-      + workers.map(fm => '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td></tr>').join('')
+    body.innerHTML = '<table class="tbl" style="width:100%"><thead><tr><th>Flagman</th><th>ID</th><th>Type</th><th>Cycle</th><th>Shift</th><th>Job</th><th>Region</th><th>Action</th></tr></thead><tbody>'
+      + workers.map(fm => {
+          const onDay = isOnCycle(fm, date);
+          return '<tr><td><strong>'+fm.name+'</strong></td><td style="font-size:11px;color:#6b7280">'+fm.id+'</td><td>'+fm.type+'</td><td>'+fm.cycle+(fm.group?' ('+fm.group+')':'')+'</td><td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+fm.color+';">'+fm.shift+'</span></td><td style="font-size:11px">'+fm.job+'</td><td>'+fm.region+'</td>'
+          + '<td><button class="btn btn-sm btn-primary" style="font-size:11px;padding:3px 8px;" onclick="closeModal(&quot;modal-day-detail&quot;);openCellAssign(&quot;'+fm.name+'&quot;,&quot;'+dateStr+'&quot;,'+onDay+')">Assign</button></td></tr>';
+        }).join('')
       + '</tbody></table>';
   }
   modal.classList.add('open');
 }
 
+
+// ═══════════════════════════════════════════════════════════ CELL ASSIGN PANEL
+let _cellAssignData = {};
+
+function openCellAssign(flagmanName, dateStr, isOnDay) {
+  _cellAssignData = { flagmanName, dateStr, isOnDay };
+  const date = new Date(dateStr + 'T00:00:00');
+  const dateLabel = date.toLocaleDateString('en-CA', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  const dayType = isOnDay ? 'Working Day' : 'Off Day';
+  const dayBadge = isOnDay
+    ? '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">Working Day</span>'
+    : '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">Off Day — OT applies</span>';
+
+  document.getElementById('ca-flagman').textContent = flagmanName;
+  document.getElementById('ca-date').textContent = dateLabel;
+  document.getElementById('ca-daytype').innerHTML = dayBadge;
+  document.getElementById('ca-job-search').value = '';
+  document.getElementById('ca-job-results').innerHTML = '';
+  document.getElementById('ca-selected-job').innerHTML = '';
+  document.getElementById('ca-shift').value = '';
+  document.getElementById('ca-stime').value = '';
+  document.getElementById('ca-etime').value = '';
+  document.getElementById('ca-classification').innerHTML = '';
+  document.getElementById('ca-confirm-btn').disabled = true;
+  _cellAssignData.selectedJob = null;
+  openModal('modal-cell-assign');
+}
+
+function searchCellJobs() {
+  const q = document.getElementById('ca-job-search').value.toLowerCase();
+  const results = document.getElementById('ca-job-results');
+  if (!q) { results.innerHTML = ''; return; }
+  const matches = ACTIVE_JOBS_DATA.filter(j =>
+    j.id.toLowerCase().includes(q) ||
+    j.company.toLowerCase().includes(q) ||
+    j.subdivision.toLowerCase().includes(q)
+  );
+  if (matches.length === 0) {
+    results.innerHTML = '<div style="padding:8px;color:#9ca3af;font-size:12px;">No jobs found</div>';
+    return;
+  }
+  results.innerHTML = matches.map(j =>
+    `<div onclick="selectCellJob('${j.id}')" style="padding:8px 10px;cursor:pointer;border-bottom:1px solid #f3f4f6;font-size:12px;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background=''">`
+    + `<strong>${j.id}</strong> — ${j.company} <span style="color:#9ca3af">(${j.subdivision})</span>`
+    + `<span style="float:right;font-size:11px;color:#6b7280">${j.shift} ${j.stime}–${j.etime}</span></div>`
+  ).join('');
+}
+
+function selectCellJob(jobId) {
+  const job = ACTIVE_JOBS_DATA.find(j => j.id === jobId);
+  if (!job) return;
+  _cellAssignData.selectedJob = job;
+  document.getElementById('ca-job-results').innerHTML = '';
+  document.getElementById('ca-job-search').value = '';
+  document.getElementById('ca-selected-job').innerHTML =
+    `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 12px;font-size:12px;">`
+    + `<strong>${job.id}</strong> — ${job.company} · ${job.subdivision}`
+    + `<button onclick="clearCellJob()" style="float:right;background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;">✕</button></div>`;
+  // Pre-fill shift and times from job defaults
+  document.getElementById('ca-shift').value = job.shift;
+  document.getElementById('ca-stime').value = job.stime;
+  document.getElementById('ca-etime').value = job.etime;
+  updateCellClassification();
+}
+
+function clearCellJob() {
+  _cellAssignData.selectedJob = null;
+  document.getElementById('ca-selected-job').innerHTML = '';
+  document.getElementById('ca-classification').innerHTML = '';
+  document.getElementById('ca-confirm-btn').disabled = true;
+}
+
+function updateCellClassification() {
+  const stime = document.getElementById('ca-stime').value;
+  const etime = document.getElementById('ca-etime').value;
+  if (!_cellAssignData.selectedJob || !stime || !etime) {
+    document.getElementById('ca-classification').innerHTML = '';
+    document.getElementById('ca-confirm-btn').disabled = true;
+    return;
+  }
+  // Calculate hours
+  let [sh, sm] = stime.split(':').map(Number);
+  let [eh, em] = etime.split(':').map(Number);
+  let hrs = (eh * 60 + em - sh * 60 - sm + 1440) % 1440 / 60;
+  const isOT = !_cellAssignData.isOnDay || hrs > 10;
+  const cls = isOT ? 'Overtime' : 'Regular';
+  const reason = !_cellAssignData.isOnDay ? 'off day' : hrs > 10 ? `${hrs.toFixed(1)}h > 10h threshold` : `${hrs.toFixed(1)}h on working day`;
+  const color = isOT ? '#fee2e2' : '#d1fae5';
+  const textColor = isOT ? '#991b1b' : '#065f46';
+  document.getElementById('ca-classification').innerHTML =
+    `<div style="background:${color};color:${textColor};padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;">`
+    + `Classification: <strong>${cls}</strong> <span style="font-weight:400">(${reason})</span></div>`;
+  document.getElementById('ca-confirm-btn').disabled = false;
+}
+
+function confirmCellAssign() {
+  const { flagmanName, dateStr, selectedJob } = _cellAssignData;
+  if (!selectedJob) return;
+  const shift = document.getElementById('ca-shift').value;
+  const stime = document.getElementById('ca-stime').value;
+  const etime = document.getElementById('ca-etime').value;
+  const cls = document.getElementById('ca-classification').textContent.includes('Overtime') ? 'OT' : 'Regular';
+  // Update the SCHED_FLAGMEN entry
+  const fm = SCHED_FLAGMEN.find(f => f.name === flagmanName);
+  if (fm) { fm.job = selectedJob.id; fm.shift = shift + (cls==='OT'?' OT':''); }
+  closeModal('modal-cell-assign');
+  showToast(`${flagmanName} assigned to ${selectedJob.id} on ${dateStr} (${cls})`, 'success');
+  // Re-render calendar if active
+  if (document.getElementById('sched-calendar').classList.contains('active')) renderSchedCal();
+}
+
+// ═══════════════════════════════════════════════════════════ WEEKLY VIEW CLICK INIT
+function initWeeklyClickHandlers() {
+  const tbody = document.querySelector('#sched-weekly table.sg-table tbody');
+  if (!tbody) return;
+  // Week start is Jun 1 2026 + schedWeekOffset*7
+  const base = new Date(2026, 5, 1);
+  base.setDate(base.getDate() + schedWeekOffset * 7);
+  // Monday of that week
+  const weekStart = new Date(base);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+
+  tbody.querySelectorAll('tr').forEach(row => {
+    const nameCell = row.querySelector('td.name-cell');
+    if (!nameCell) return;
+    const flagmanName = nameCell.textContent.replace(/CN|CTR/g,'').trim();
+    const dataCells = row.querySelectorAll('td:not(.name-cell):not(.cycle-cell)');
+    dataCells.forEach((td, i) => {
+      const d = new Date(weekStart);
+      d.setDate(weekStart.getDate() + i);
+      const dateStr = d.toISOString().slice(0,10);
+      const fm = SCHED_FLAGMEN.find(f => flagmanName.startsWith(f.name.split(',')[0]));
+      const onDay = fm ? isOnCycle(fm, d) : true;
+      td.style.cursor = 'pointer';
+      td.title = `Click to assign job to ${flagmanName} on ${dateStr}`;
+      td.onclick = () => openCellAssign(flagmanName, dateStr, onDay);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════ LIST VIEW ASSIGN INIT
+function initListAssignButtons() {
+  const tbl = document.querySelector('#sched-list table.tbl');
+  if (!tbl) return;
+  const thead = tbl.querySelector('thead tr');
+  if (thead && !thead.querySelector('th.assign-col')) {
+    const th = document.createElement('th');
+    th.className = 'assign-col';
+    th.textContent = 'Assign';
+    thead.appendChild(th);
+  }
+  const today = new Date('2026-06-04');
+  tbl.querySelectorAll('tbody tr').forEach(row => {
+    if (row.querySelector('td.assign-col')) return;
+    const nameCell = row.querySelector('td strong');
+    if (!nameCell) return;
+    const flagmanName = nameCell.textContent.trim();
+    const fm = SCHED_FLAGMEN.find(f => f.name === flagmanName);
+    const onDay = fm ? isOnCycle(fm, today) : true;
+    const td = document.createElement('td');
+    td.className = 'assign-col';
+    td.innerHTML = `<button class="btn btn-sm btn-primary" style="font-size:11px;padding:3px 8px;" onclick="openCellAssign('${flagmanName}','2026-06-04',${onDay})">Assign</button>`;
+    row.appendChild(td);
+  });
+}
 // ═══════════════════════════════════════════════════════════ VACATION CALENDAR
 let vacMonthOffset = 0;
 function shiftVacCal(dir) { vacMonthOffset += dir; renderVacCal(); }
@@ -4241,6 +4442,57 @@ function previewReqFile(url, name, type) {
 
 
 <!-- modal-rule-editor removed — A/A codes no longer used -->
+
+
+<!-- ══════════════════════════════════════════════════════════ CELL ASSIGN MODAL -->
+<div class="modal-overlay" id="modal-cell-assign">
+  <div class="modal" style="max-width:520px;width:95%">
+    <div class="modal-header">
+      <h3 class="modal-title">Assign Job to Flagman</h3>
+      <button class="modal-close" onclick="closeModal('modal-cell-assign')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;background:#f9fafb;padding:10px;border-radius:6px;">
+        <div><span style="font-size:11px;color:#6b7280;display:block">Flagman</span><strong id="ca-flagman" style="font-size:13px"></strong></div>
+        <div><span style="font-size:11px;color:#6b7280;display:block">Date</span><strong id="ca-date" style="font-size:13px"></strong></div>
+        <div style="grid-column:1/-1"><span style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Day Type</span><span id="ca-daytype"></span></div>
+      </div>
+
+      <div class="form-group">
+        <label>Search Job / Project</label>
+        <input type="text" id="ca-job-search" class="form-control" placeholder="Type job #, company, or subdivision…" oninput="searchCellJobs()">
+        <div id="ca-job-results" style="border:1px solid #e5e7eb;border-radius:6px;margin-top:4px;max-height:160px;overflow-y:auto;"></div>
+        <div id="ca-selected-job" style="margin-top:6px;"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label>Shift</label>
+          <select id="ca-shift" class="form-control" onchange="updateCellClassification()">
+            <option value="">— Select —</option>
+            <option>Morning</option>
+            <option>Afternoon</option>
+            <option>Night</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Start Time</label>
+          <input type="time" id="ca-stime" class="form-control" onchange="updateCellClassification()">
+        </div>
+        <div class="form-group">
+          <label>End Time</label>
+          <input type="time" id="ca-etime" class="form-control" onchange="updateCellClassification()">
+        </div>
+      </div>
+
+      <div id="ca-classification" style="margin-top:4px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-cell-assign')">Cancel</button>
+      <button id="ca-confirm-btn" class="btn btn-primary" onclick="confirmCellAssign()" disabled>Confirm Assignment</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
