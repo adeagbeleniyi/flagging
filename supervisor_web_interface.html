@@ -1321,22 +1321,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div class="card">
       <div class="tbl-scroll">
         <table class="tbl" id="ext-companies-table">
-          <thead><tr><th>SAP Company ID</th><th>Company Name</th><th>Primary Contact</th><th>Email</th><th>Billing Type</th><th>Region</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>SAP Company ID</th><th>Company Name</th><th>Primary Contact</th><th>Email</th><th>Region</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             <tr data-ext-company="Northgate Utilities">
-              <td><code>SAP-00421</code></td><td>Northgate Utilities</td><td>R. Kowalczyk</td><td>r.kowalczyk@northgate.ca</td><td>Cost Code</td><td>BC</td><td><span class="badge badge-active">Active</span></td>
+              <td><code>SAP-00421</code></td><td>Northgate Utilities</td><td>R. Kowalczyk</td><td>r.kowalczyk@northgate.ca</td><td>BC</td><td><span class="badge badge-active">Active</span></td>
               <td><button class="btn btn-xs btn-edit" onclick="toast('Edit company opened','success')">Edit</button></td>
             </tr>
             <tr data-ext-company="Pacific Rail Services">
-              <td><code>SAP-00438</code></td><td>Pacific Rail Services</td><td>M. Okonkwo</td><td>m.okonkwo@pacificrail.ca</td><td>Network Code</td><td>BC</td><td><span class="badge badge-active">Active</span></td>
+              <td><code>SAP-00438</code></td><td>Pacific Rail Services</td><td>M. Okonkwo</td><td>m.okonkwo@pacificrail.ca</td><td>BC</td><td><span class="badge badge-active">Active</span></td>
               <td><button class="btn btn-xs btn-edit" onclick="toast('Edit company opened','success')">Edit</button></td>
             </tr>
             <tr data-ext-company="Westbridge Construction">
-              <td><code>SAP-00512</code></td><td>Westbridge Construction</td><td>T. Nguyen</td><td>t.nguyen@westbridge.ca</td><td>Project ID</td><td>Alberta</td><td><span class="badge badge-active">Active</span></td>
+              <td><code>SAP-00512</code></td><td>Westbridge Construction</td><td>T. Nguyen</td><td>t.nguyen@westbridge.ca</td><td>Alberta</td><td><span class="badge badge-active">Active</span></td>
               <td><button class="btn btn-xs btn-edit" onclick="toast('Edit company opened','success')">Edit</button></td>
             </tr>
             <tr data-ext-company="Summit Track Solutions">
-              <td><code>SAP-00589</code></td><td>Summit Track Solutions</td><td>A. Patel</td><td>a.patel@summittrack.ca</td><td>Cost Code</td><td>Alberta</td><td><span class="badge badge-inactive">Inactive</span></td>
+              <td><code>SAP-00589</code></td><td>Summit Track Solutions</td><td>A. Patel</td><td>a.patel@summittrack.ca</td><td>Alberta</td><td><span class="badge badge-inactive">Inactive</span></td>
               <td><button class="btn btn-xs btn-edit" onclick="toast('Edit company opened','success')">Edit</button></td>
             </tr>
           </tbody>
@@ -1737,14 +1737,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
         <div class="form-group"><label>Primary Contact Name <span style="color:var(--danger);">*</span></label><input class="form-control" type="text" placeholder="Full name"></div>
         <div class="form-group"><label>Contact Email <span style="color:var(--danger);">*</span></label><input class="form-control" type="email" placeholder="contact@company.ca"></div>
         <div class="form-group"><label>Contact Phone</label><input class="form-control" type="tel" placeholder="(xxx) xxx-xxxx"></div>
-        <div class="form-group"><label>Billing Type <span style="color:var(--danger);">*</span></label>
-          <select class="form-control">
-            <option value="">— Select —</option>
-            <option>Cost Code</option>
-            <option>Network Code</option>
-            <option>Project ID</option>
-          </select>
-        </div>
         <div class="form-group"><label>Region</label><select class="form-control"><option>BC</option><option>Alberta</option><option>Both</option></select></div>
       </div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px;"><span style="color:var(--danger);">*</span> Required fields</div>
