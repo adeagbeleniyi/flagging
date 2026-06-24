@@ -276,7 +276,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   <div class="sidebar-section">
     <div class="sidebar-label">People</div>
     <div class="nav-item" data-section="sec-flagmen"><span class="icon">👷</span> Flagmen</div>
-    <div class="nav-item" data-section="sec-companies"><span class="icon">🏢</span> Contracting Companies</div>
+    <div class="nav-item" data-section="sec-companies"><span class="icon">🏢</span> External Companies</div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
@@ -290,13 +290,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
     <div class="nav-item" data-section="sec-requests"><span class="icon">📥</span> Incoming Requests <span class="nav-badge" id="badge-req">5</span></div>
     <div class="nav-item" data-section="sec-submit"><span class="icon">📝</span> Submit a Request</div>
   </div>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Administration</div>
-    <div class="nav-item" data-section="sec-export"><span class="icon">📤</span> Export Schedules</div>
-    <div class="nav-item" data-section="sec-reports"><span class="icon">📊</span> Reports</div>
-    <div class="nav-item" data-section="sec-settings"><span class="icon">⚙️</span> Settings</div>
-  </div>
+
 </aside>
 
 <!-- MAIN CONTENT -->
@@ -1261,7 +1255,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <!-- ══════════════════════════════════════════════════════════ CONTRACTING COMPANIES -->
 <div class="page-section" id="sec-companies">
   <div class="page-header">
-    <div><h1>Contracting Companies</h1><div class="sub">2 active companies · 4 contractors</div></div>
+    <div><h1>External Companies</h1><div class="sub">2 active companies · 4 contractors</div></div>
     <div class="hdr-actions">
       <button class="btn btn-primary btn-sm" onclick="openModal('modal-add-company')">+ Add Company</button>
     </div>
@@ -1583,50 +1577,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════ EXPORT -->
-<div class="page-section" id="sec-export">
-  <div class="page-header"><div><h1>Export Schedules</h1></div></div>
-  <div class="content"><div class="card" style="max-width:500px;">
-    <div class="card-header">Export Options</div>
-    <div class="card-body">
-      <div class="form-group"><label>Region</label><select class="form-control"><option>All Regions</option><option>BC</option><option>Alberta</option></select></div>
-      <div class="form-group"><label>Week</label><input class="form-control" type="week"></div>
-      <div class="form-group"><label>Format</label><select class="form-control"><option>Excel (.xlsx)</option><option>PDF</option><option>CSV</option></select></div>
-      <div class="form-group"><label>Flagman Type</label><select class="form-control"><option>All</option><option>CN Employees</option><option>Contracted</option></select></div>
-      <button class="btn btn-primary" onclick="toast('Schedule exported successfully','success')">⬇ Download Schedule</button>
-    </div>
-  </div></div>
-</div>
 
-<!-- ══════════════════════════════════════════════════════════ REPORTS -->
-<div class="page-section" id="sec-reports">
-  <div class="page-header"><div><h1>Reports</h1></div></div>
-  <div class="content"><div class="card" style="max-width:500px;">
-    <div class="card-header">Generate Report</div>
-    <div class="card-body">
-      <div class="form-group"><label>Report Type</label><select class="form-control"><option>Flagman Utilization</option><option>OT Summary</option><option>Job Completion</option><option>Qualification Expiry</option><option>Seniority Report</option></select></div>
-      <div class="form-group"><label>Date Range</label><div style="display:flex;gap:8px;"><input class="form-control" type="date"><input class="form-control" type="date"></div></div>
-      <div class="form-group"><label>Region</label><select class="form-control"><option>All</option><option>BC</option><option>Alberta</option></select></div>
-      <button class="btn btn-primary" onclick="toast('Report generated','success')">📊 Generate Report</button>
-    </div>
-  </div></div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════ SETTINGS -->
-<div class="page-section" id="sec-settings">
-  <div class="page-header"><div><h1>Settings</h1></div></div>
-  <div class="content">
-<div class="card" style="max-width:700px;">
-      <div class="card-header">Notification Preferences</div>
-      <div class="card-body">
-        <div class="form-group"><label>OT Reminder Day</label><select class="form-control"><option>Friday</option><option>Thursday</option><option>Wednesday</option></select></div>
-        <div class="form-group"><label>OT Deadline Time</label><input class="form-control" type="time" value="17:00"></div>
-        <div class="form-group"><label>Qualification Expiry Warning (days before)</label><input class="form-control" type="number" value="30"></div>
-        <button class="btn btn-primary" onclick="toast('Settings saved','success')">Save Settings</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 </main><!-- end main-content -->
 </div><!-- end app-container -->
@@ -1707,15 +1658,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
 <!-- ADD COMPANY MODAL -->
 <div class="modal-overlay" id="modal-add-company" onclick="if(event.target===this)closeModal('modal-add-company')">
   <div class="modal-box" style="display:flex;flex-direction:column;overflow:hidden;max-width:500px;">
-    <div class="modal-header"><h3>Add Contracting Company</h3><button class="modal-close" onclick="closeModal('modal-add-company')">✕</button></div>
+    <div class="modal-header"><h3>Add External Company</h3><button class="modal-close" onclick="closeModal('modal-add-company')">✕</button></div>
     <div class="modal-body">
-      <div class="form-group"><label>Company Name</label><input class="form-control" type="text" placeholder="e.g. Ironwood Track Services"></div>
-      <div class="form-group"><label>Company Email</label><input class="form-control" type="email" placeholder="info@company.ca"></div>
-      <div class="form-group"><label>Primary Contact Name</label><input class="form-control" type="text"></div>
-      <div class="form-group"><label>Phone</label><input class="form-control" type="tel"></div>
-      <div class="form-group"><label>Region</label><select class="form-control"><option>BC</option><option>Alberta</option><option>Both</option></select></div>
+      <div class="alert alert-info" style="font-size:12px;">Add companies that have been onboarded in SAP. The SAP Company ID must match the record in SAP exactly.</div>
+      <div class="form-grid-2">
+        <div class="form-group"><label>SAP Company ID <span style="color:var(--danger);">*</span></label><input class="form-control" type="text" placeholder="e.g. SAP-00421"></div>
+        <div class="form-group"><label>Company Name <span style="color:var(--danger);">*</span></label><input class="form-control" type="text" placeholder="e.g. Northgate Utilities"></div>
+        <div class="form-group"><label>Primary Contact Name <span style="color:var(--danger);">*</span></label><input class="form-control" type="text" placeholder="Full name"></div>
+        <div class="form-group"><label>Contact Email <span style="color:var(--danger);">*</span></label><input class="form-control" type="email" placeholder="contact@company.ca"></div>
+        <div class="form-group"><label>Contact Phone</label><input class="form-control" type="tel" placeholder="(xxx) xxx-xxxx"></div>
+        <div class="form-group"><label>Billing Type <span style="color:var(--danger);">*</span></label>
+          <select class="form-control">
+            <option value="">— Select —</option>
+            <option>Cost Code</option>
+            <option>Network Code</option>
+            <option>Project ID</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Region</label><select class="form-control"><option>BC</option><option>Alberta</option><option>Both</option></select></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;"><span style="color:var(--danger);">*</span> Required fields</div>
     </div>
-    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-add-company')">Cancel</button><button class="btn btn-primary" onclick="toast('Company added','success');closeModal('modal-add-company')">Save Company</button></div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-add-company')">Cancel</button><button class="btn btn-primary" onclick="toast('External company added successfully','success');closeModal('modal-add-company')">Save Company</button></div>
   </div>
 </div>
 
@@ -3095,14 +3059,12 @@ const pageConfig = {
   dfr:         { title:'Daily Flagging Record', section:'sec-dfr' },
   schedule:    { title:'Schedule',            section:'sec-schedule' },
   flagmen:     { title:'Flagmen',             section:'sec-flagmen' },
-  companies:   { title:'Contracting Companies', section:'sec-companies' },
+  companies:   { title:'External Companies', section:'sec-companies' },
   overtime:    { title:'Overtime Availability', section:'sec-overtime' },
   vacation:    { title:'Vacation Management', section:'sec-vacation' },
   requests:    { title:'Incoming Requests',   section:'sec-requests' },
   submit:      { title:'Flagging Request Portal', section:'sec-submit' },
-  export:      { title:'Export Schedules',    section:'sec-export' },
-  reports:     { title:'Reports',             section:'sec-reports' },
-  settings:    { title:'Settings',            section:'sec-settings' },
+
 };
 
 function showPage(sectionId) {
