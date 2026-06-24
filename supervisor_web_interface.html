@@ -292,7 +292,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-section">
-    <div class="sidebar-label">Tools</div>
+    <div class="sidebar-label">Administration</div>
     <div class="nav-item" data-section="sec-export"><span class="icon">📤</span> Export Schedules</div>
     <div class="nav-item" data-section="sec-reports"><span class="icon">📊</span> Reports</div>
     <div class="nav-item" data-section="sec-settings"><span class="icon">⚙️</span> Settings</div>
@@ -315,9 +315,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
       <div class="stat-card red" onclick="showPage('sec-requests')"><div class="stat-label">Pending Review</div><div class="stat-value">3</div><div class="stat-sub">Awaiting approval</div></div>
       <div class="stat-card green" onclick="showPage('sec-flagmen')"><div class="stat-label">Flagmen Available</div><div class="stat-value">8</div><div class="stat-sub">3 on vacation</div></div>
       <div class="stat-card orange" onclick="showPage('sec-overtime')"><div class="stat-label">OT Responses</div><div class="stat-value">5</div><div class="stat-sub">8 pending</div></div>
-      <div class="stat-card purple" onclick="showPage('sec-dfr')"><div class="stat-label">Overlap Alerts</div><div class="stat-value">2</div><div class="stat-sub">Handoff today</div></div>
+
     </div>
-    <div class="overlap-alert">🔄 <strong>Handoff Alert:</strong> Tremblay, Luc (9&5 A-cycle) ends today on PRJ-720312 · Coquitlam. Incoming: Callahan, Brett (B-cycle) overlaps Jun 4 PM shift. Overlap hours recorded in Daily Flagging Record.</div>
+
     <div class="two-col">
       <div class="card">
         <div class="card-header"><h2>Active Jobs — Today</h2><div class="card-actions"><button class="btn btn-sm btn-blue" onclick="showPage('sec-jobs')">View All</button></div></div>
@@ -1453,8 +1453,30 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primar
           <!-- Section 1 -->
           <div class="form-section-title">1. Requester Information</div>
           <div class="form-grid-2">
-            <div class="form-group"><label>Requester Type</label><select class="form-control"><option>External Company</option><option>Internal CN Department</option></select></div>
-            <div class="form-group"><label>Company / Department Name</label><input class="form-control" type="text" placeholder="e.g. Northgate Utilities"></div>
+            <div class="form-group">
+              <label>Requester Type</label>
+              <select class="form-control" id="req-type-select" onchange="toggleRequesterFields()">
+                <option value="external">External Company</option>
+                <option value="internal">Internal CN Department</option>
+              </select>
+            </div>
+            <!-- External: company dropdown -->
+            <div class="form-group" id="req-company-group">
+              <label>Company Name</label>
+              <select class="form-control" id="req-company-select">
+                <option value="">— Select Company —</option>
+                <option>Northgate Utilities</option>
+                <option>Pacific Rail Services</option>
+                <option>Westbridge Construction</option>
+                <option>Summit Track Solutions</option>
+                <option>Ironclad Infrastructure</option>
+              </select>
+            </div>
+            <!-- Internal: department text field -->
+            <div class="form-group" id="req-dept-group" style="display:none;">
+              <label>Department Name</label>
+              <input class="form-control" id="req-dept-input" type="text" placeholder="e.g. CN Track Renewal — Western Region">
+            </div>
             <div class="form-group"><label>Contact Name</label><input class="form-control" type="text" placeholder="Full name"></div>
             <div class="form-group"><label>Phone</label><input class="form-control" type="tel" placeholder="(xxx) xxx-xxxx"></div>
             <div class="form-group"><label>Email</label><input class="form-control" type="email" placeholder="contact@company.com"></div>
@@ -4096,6 +4118,12 @@ chatData = {
 // sendChatMsg: defined in second script block
 
 // ═══════════════════════════════════════════════════════════ MISC
+function toggleRequesterFields() {
+  const type = document.getElementById('req-type-select').value;
+  document.getElementById('req-company-group').style.display = type === 'external' ? '' : 'none';
+  document.getElementById('req-dept-group').style.display   = type === 'internal' ? '' : 'none';
+}
+
 function toggleBillingField() {
   type = document.getElementById('billing-type')?.value;
   const label = document.getElementById('billing-code-label');
